@@ -10,6 +10,7 @@ class App extends Component {
     clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
     code: ``,
     jwtUrl: `http://localhost:8000/api/login/social/jwt_user/`,
+    apiBaseUrl: `http://localhost:8000/`,
     redirectUri: `postmessage`,
   };
 

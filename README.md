@@ -1,3 +1,32 @@
+# Roadmap
+
+- 🔥 🔥 🔥Testing w/ backend API permission
+    - read objects
+    - user auth setup - basic login/logout/username UI
+    - create an object (by POST) w/ login status
+    - update/delete an object
+- [ ] Material UI: which library to use? Or build our own, or both? How about google's native mdc components?
+- [ ] Consider using Redux.
+
+## Initial UI Design Mockups
+
+Home page outlining all applications.
+
+![Application List](docs/img/frontend/ApplicationList.png)
+
+Add a company to start registering applications for a company.
+
+![Application](docs/img/frontend/Application.png)
+
+Add updates to applications.
+
+![Company Application](docs/img/frontend/CompanyApplication.png)
+
+## Reflection for Frontend UI: 
+
+Is this easier to use than spreadsheet? The UI should make the registering process as quick as possible. If we split into too many steps and pages, it'll dramatically slow down the process.
+But sure, we're still not sure what is the best and what are the needs. We can always iterate the layout or process at a later point.
+
 # Reference
 
 Repos
