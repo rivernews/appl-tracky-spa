@@ -18,12 +18,12 @@
                 -  **What's best practice of React project folder structure?**
             - [x] Make the new component work with `App.tsx`
             - [x] display login status
-            - [x] Send auth data in request! 🔥 🔥 🔥Need to solve the [`OPTION` problem](https://stackoverflow.com/questions/45557941/401-error-jwt-token-not-found-using-fetch).
+            - [x] Send auth data in request! Need to solve the [`OPTION` problem](https://stackoverflow.com/questions/45557941/401-error-jwt-token-not-found-using-fetch).
                 - [DRF's issue page discussing the issue](https://github.com/encode/django-rest-framework/issues/5616), mentioned the `django-cors-header` django app should solve the issue. [This post gives some clues of how to setup client and server headers](https://medium.com/@xinganwang/a-practical-guide-to-cors-51e8fd329a1f).
                 - **Important**: Don't use Bearer! We are using jwt so use `JWT` instead! Also, when you don't have api login token yet, don't specify things in Authentication header, leave it empty. If you pass a `Authentication: JWT `, you'll be rejected by server.
             - [x] create an object (by POST) w/ login status
             - [x] update/delete an object
-            - [ ] establish login/logout mechanism
+            - [ ] 🔥 🔥 🔥 <Component Design> establish login/logout mechanism
                 - Store login data as global state --> learn redux!
             - DONE. Fetch new action?
 - [ ] Material UI: which library to use? Or build our own, or both? How about google's native mdc components?
