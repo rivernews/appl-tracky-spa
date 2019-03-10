@@ -10,7 +10,7 @@ Appl Tracky is a job application tracker that aims to replace your convoluted, m
 
 ### **Front End ([This Repo](https://github.com/rivernews/appl-tracky-spa)):** React
 
-This is the main page for front end, also the primary public-facing page for the whole project. More details such as UI mockups will be covered in later sections in this document. For development progress and latest work, please refer to `docs/dev`.
+This is the main page for front end, also the primary public-facing page for the whole project. More details such as UI mockups will be covered in later sections in this document. For development progress and latest work, please refer to [`docs/dev`](docs/dev).
 
 ### **Back End ([Repo](https://github.com/rivernews/appl-tracky-api)):** Django w/ REST API, JWT & Social Auth
 
@@ -19,6 +19,10 @@ For more details about backend API server, please refer to the backend repo.
 ### **DevOps Infrastructure ([Repo, share w/ back end repo](https://github.com/rivernews/appl-tracky-api)):** Nginx (web server), AWS (host), Docker (virtualize), Terraform (provisioning)
 
 Details about backend web (static) server, and other DevOps stuff, please refer to backend repo.
+
+### Design
+
+By Sketch.app!
 
 ## UI Design Mockups
 
