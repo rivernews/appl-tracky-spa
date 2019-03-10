@@ -1,10 +1,10 @@
 # Appl Tracky
 
-Okay, Appl Tracky, I admit that this is never the most creative name. It's more of an alias used during development. I'm sure we can figure out a cool, clever and design-ish app name. Before that, let's be patient and stick to `appl tracky` (after all, all the infrastructures e.g. load balancer, cluster, even subdomain, are either prefixed or suffixed after that ... ah-oh, damn!).
+Okay, Appl Tracky, I admit it's never the most creative name. It's more of an alias used during development. I'm sure we can figure out a cool, clever and design-ish app name. Before that, let's be patient and stick to `appl tracky` (after all, all the infrastructures e.g. load balancer, cluster, even subdomain, are either prefixed or suffixed after that ... ah-oh, damn!).
 
 ## What it does
 
-It's common to use a spreadsheet to keep track of jobs you applied or want to apply for. It turns out, however, those small cells can only store text and are hard to scale. If you want to do anything beyond, things will soon get convoluted. This app is designed to solve this problem - make the tracking easier, faster and more reliable. It's a job application tracker that aims to replace spreadsheet. 
+Appl Tracky is a job application tracker that aims to replace your convoluted, messy spreadsheet workflow. It's common to use a spreadsheet to keep track of jobs you applied or want to apply for. It turns out, however, those small cells can only store text and are hard to scale. This app is designed to solve this problem - make the tracking easier, faster and more reliable. 
 
 ## Tech stack
 
