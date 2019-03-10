@@ -1,37 +1,26 @@
-# Roadmap
+# Appl Tracky
 
-- Testing w/ backend API permission
-    - [x] ~~read objects~~ The API requires auth to access API. Without auth, nothing in API is accessible.
-    - [ ] user auth setup - basic login/logout/username UI. Write a basic auth component
-        - What we want to achieve
-            - A unit that can manage login state
-            - *not thinking about making an independent component, and how it interact w/ other component yet!*
-        - Sketch the spec
-            - @input == props: ?
-            - UI user input == username, password
-            - UI event trigger == login button
-            - state (tided to UI view) == logged in username, login status
-            - data == token data <--- **should I store this data in local var or in local state?**
-            - @output == onChange when got token data <--- **How does React handle event / bottom-up data flow? What is the best practice**
-        - Current action planned
-            - Migrate current code into a new component.
-                -  **What's best practice of React project folder structure?**
-            - [x] Make the new component work with `App.tsx`
-            - [x] display login status
-            - [x] Send auth data in request! Need to solve the [`OPTION` problem](https://stackoverflow.com/questions/45557941/401-error-jwt-token-not-found-using-fetch).
-                - [DRF's issue page discussing the issue](https://github.com/encode/django-rest-framework/issues/5616), mentioned the `django-cors-header` django app should solve the issue. [This post gives some clues of how to setup client and server headers](https://medium.com/@xinganwang/a-practical-guide-to-cors-51e8fd329a1f).
-                - **Important**: Don't use Bearer! We are using jwt so use `JWT` instead! Also, when you don't have api login token yet, don't specify things in Authentication header, leave it empty. If you pass a `Authentication: JWT `, you'll be rejected by server.
-            - [x] create an object (by POST) w/ login status
-            - [x] update/delete an object
-            - [ ] 🔥 🔥 🔥 <Component Design> establish login/logout mechanism
-                - Store login data as global state --> learn redux!
-            - DONE. Fetch new action?
-- [ ] Material UI: which library to use? Or build our own, or both? How about google's native mdc components?
-- [ ] Build Navigation
-- [ ] Build the UI (basic)
-- [ ] Consider using Redux.
+Okay, Appl Tracky, I admit that this is never the most creative name. It's more of an alias used during development. I'm sure we can figure out a cool, clever and design-ish app name. Before that, let's be patient and stick to `appl tracky` (after all, all the infrastructures e.g. load balancer, cluster, even subdomain, are either prefixed or suffixed after that ... ah-oh, damn!).
 
-## Initial UI Design Mockups
+## What it does
+
+It's common to use a spreadsheet to keep track of jobs you applied or want to apply for. It turns out, however, those small cells can only store text and are hard to scale. If you want to do anything beyond, things will soon get convoluted. This app is designed to solve this problem - make the tracking easier, faster and more reliable. It's a job application tracker that aims to replace spreadsheet. 
+
+## Tech stack
+
+### **Front End ([This Repo](https://github.com/rivernews/appl-tracky-spa)):** React
+
+This is the main page for front end, also the primary public-facing page for the whole project. More details such as UI mockups will be covered in later sections in this document. For development progress and latest work, please refer to `docs/dev`.
+
+### **Back End ([Repo](https://github.com/rivernews/appl-tracky-api)):** Django w/ REST API, JWT & Social Auth
+
+For more details about backend API server, please refer to the backend repo.
+
+### **DevOps Infrastructure ([Repo, share w/ back end repo](https://github.com/rivernews/appl-tracky-api)):** Nginx (web server), AWS (host), Docker (virtualize), Terraform (provisioning)
+
+Details about backend web (static) server, and other DevOps stuff, please refer to backend repo.
+
+## UI Design Mockups
 
 Home page outlining all applications.
 
@@ -45,41 +34,8 @@ Add updates to applications.
 
 ![Company Application](docs/img/frontend/CompanyApplication.png)
 
-## Reflection for Frontend UI: 
+## Project Motivation
 
-Is this easier to use than spreadsheet? The UI should make the registering process as quick as possible. If we split into too many steps and pages, it'll dramatically slow down the process.
-But sure, we're still not sure what is the best and what are the needs. We can always iterate the layout or process at a later point.
+During this season of job searching (as of March 2019), many people must be crazy working with some spreadsheet keeping track of their job application, especially when you're applying for 50+ or even 100+. When a recruiter finally get back to you and invite you to an interview, you don't want to ask that disastrous question - "Could you tell me what is the position I was applying to?" Surprisingly, there aren't many tools out there so far - just google "job application track tool" and you'll see not many options. Seems like most of us are still using a spreadsheet, including me. An option out there is called Huntr (https://huntr.co/), and it looks like a Trello board. But it charges you once you add more than 40 records. The UI is beautiful, but it's a bit too complicate for me. 
 
-# Reference
-
-Repos
-- [This repo](https://github.com/rivernews/appl-tracky-spa)
-- [The backend api repo](https://github.com/rivernews/appl-tracky-spa)
-
-Production sites
-- [Live production website](https://rivernews.github.io/appl-tracky-spa/)
-- [Live backend endpoint](https://appl-tracky-api-https.shaungc.com/)
-
-Technologies
-
-- [How to use create-react-app](https://github.com/facebook/create-react-app)
-- [**Use typescript with React**](https://alligator.io/react/typescript-with-react/#create-react-app-and-typescript) while using `create-react-app` to scaffold the project.
-- [Deploy repo to github as a live website using gh-pages](https://github.com/gitname/react-gh-pages)
-    - If you got a 404 page, and you made sure your homepage url is correct in `package.json`, chances are the page is updating so may need some time reflecting the new deployment. In short: be faithful & patient!
-
-- Learnings & Readings
-    - Generic
-        - [5 Tools for Faster Development in React](https://blog.bitsrc.io/5-tools-for-faster-development-in-react-676f134050f2): project management tools, devTools, ...
-    - Coding Style
-        - [FB Official Doc: React Project's File Structure](https://reactjs.org/docs/faq-structure.html): "Don’t overthink it".
-        - **[How To Write Better Code in React](https://blog.bitsrc.io/how-to-write-better-code-in-react-best-practices-b8ca87d462b0): Share and reuse components, propTypes , Know when to make new components**
-    - Ways to do things
-        - [Where to Hold React Component Data: state, store, static, and this](https://medium.freecodecamp.org/where-do-i-belong-a-guide-to-saving-react-component-data-in-state-store-static-and-this-c49b335e2a00): local state, redux, ...
-        - [Is it bad practice to nest states in React?](https://stackoverflow.com/questions/51427445/is-it-bad-practice-to-nest-states-in-react). Should I nest state? Best practice to design state structure?
-        - What is the equivalence of Angular @output, @input == onChange trigger, props in React?
-    - Good quality UI libraries
-        - **[11 React UI Component Libraries you Should Know in 2019](https://blog.bitsrc.io/11-react-component-libraries-you-should-know-178eb1dd6aa4): React Material-UI, Material Components Web, ...**
-    - Reflections
-        - A good way to get to know React is to compare Angular to its equivalance in React.
-            - @input and @output
-            - Service <---> state management?
+In this project I want to build a Job Application Tracking System that can help you keep track of every application you sent and any hiring process you're currently in. Another thing I want to integrate into the system, is to have a Glassdoor/Indeed rating ready to review, so you can filter out companies that you don't think you want to work at first and stop wasting time going through the hiring process. Of course, rating is just one factor you might consider, there are way more like product, tech stack, team culture, and many things you can only know after you get into the process, but those are out of scope of this app. Anyway, in terms of data, first I'll retrieve a [dataset on company ratings](https://github.com/rivernews/fortune-500-analysis) from Glassdoor & Indeed, load that into database, then think of ways to port that in our system. Second, I'll build the tracking system for end users, which requires you to login. Once signed in, you can lookup a company's rating if there's one, you can start tracking application progress for a company, link to the job post, give a datetime, mark a status like "applied / technical interview prep / waiting (for interview time confirmation) ..." (ideally you can create your own status), and add some side notes. In terms of tech stack, we are having React + Django REST, so Django as an API, not doing too much, just serving the data.
