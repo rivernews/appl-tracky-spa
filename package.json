@@ -4,6 +4,9 @@
   "private": true,
   "homepage": "https://rivernews.github.io/appl-tracky-spa",
   "dependencies": {
+    "@material/react-material-icon": "^0.10.0",
+    "@material/react-ripple": "^0.10.0",
+    "@material/react-top-app-bar": "^0.9.0",
     "@types/jest": "24.0.9",
     "@types/node": "11.10.4",
     "@types/react": "16.8.6",

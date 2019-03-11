@@ -23,10 +23,19 @@
                 - **Important**: Don't use Bearer! We are using jwt so use `JWT` instead! Also, when you don't have api login token yet, don't specify things in Authentication header, leave it empty. If you pass a `Authentication: JWT `, you'll be rejected by server.
             - [x] create an object (by POST) w/ login status
             - [x] update/delete an object
-            - [ ] 🔥 🔥 🔥 <Component Design> establish login/logout mechanism
-                - Store login data as global state --> learn redux!
+            - [ ] ⏸ <Component Design> establish login/logout mechanism
+                - ⏸ Store login data as global state --> learn redux!
+                - We found out that in order to build user auth, we will work on global login state, routing, and base navigation UI - all will be deeply coupled with and depend on the UI library - if we are using one. So, a better workflow might be to determine a UI library first (or build on our own from scratch). If we're using 3rd party library, we can have all the nav UI & routing support as well, hopefully the hook to user auth too. So we will move on and come back later.
             - DONE. Fetch new action?
 - [ ] Material UI: which library to use? Or build our own, or both? How about google's native mdc components?
+    - Besides links in the Reference section, can also refer to [our previous project research result](https://github.com/rivernews/si649-data-learn-viz-sort-public).
+    - What we need: nav bar, tab, icon, ...
+    - The [Official MDC for React](https://github.com/material-components/material-components-web-react/tree/master) looks great, but indeed if some components not provided, you have to write an adapter w/ the MDC vanilla JS.
+    - There isn't any perfect one out there. So pick one, hopefully easy to customize, and start.
+    - Material UI vs MDC-React
+        - We're using MDC-React, but things like routing are not out of the box, probably less support than material UI, which has bigger community. (in terms of routing, actually material UI doesn't have that out of the box as well)
+        - MDC-React's visual effect is closer to mockup, which uses mdc's themer.
+        - 🔥 🔥 🔥 Let's use MDC-React! And, we have to figure out react routing by ourselves. Time to get to work, dirty work!
 - [ ] Build Navigation
 - [ ] Build the UI (basic)
 - [ ] Consider using Redux.
