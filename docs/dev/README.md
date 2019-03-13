@@ -39,8 +39,30 @@
 
 ### Building User Interface
 
-- [ ] 🔥 🔥 🔥 Select a library, build routing, build Navigation
-- [ ] Consider using Redux or context API to deal with global login status
+**We'll skip details of UI, just the functionality first!**
+
+- [ ] Select a library, build routing, build Navigation
+    - [ ] We're using [MDC-React](https://github.com/material-components/material-components-web-react/tree/master) cuz closer to MDC design and so to our mockup.
+    - [x] Use the top app bar ([API doc](https://github.com/material-components/material-components-web-react/tree/master/packages/top-app-bar), [demo page](https://material-components.github.io/material-components-web-catalog/#/component/top-app-bar)). Build routing. 
+        - [react-router](https://reacttraining.com/react-router/web/guides/quick-start). We're using Typescript so will need [its type as well](https://www.npmjs.com/package/@types/react-router-dom).
+            - Some issue with typing for `react-router`, [see this post](https://github.com/kstevens715/rubyles-previous/commit/90246949eadfa6fca08c6122652ff13dfd351079) to fix the `component` prop error that complaints `... is not assignable to ...`.
+    - We need some state management now: `<SocialAuth>` will login for us, but how can `<HomePage>` get that logged in state and udpate its view? (conditionally, either landing page or user home page)
+- [ ] Consider using Redux or context API to deal with global login status / state management.
+    - [We can use Redux](https://stackoverflow.com/a/49569203/9814131). Also for learning purpose. Watch out using w/ Typescript.
+        - Learn [Redux basic](https://redux.js.org/introduction/getting-started)
+            - Medium, 39K, [Understanding Redux: The World’s Easiest Guide to Beginning Redux](https://medium.freecodecamp.org/understanding-redux-the-worlds-easiest-guide-to-beginning-redux-c695f45546f6).
+            - [Summarizing the 3 components of Redux](https://redux.js.org/introduction/three-principles). Fast and clear.
+
+        - Learn [Redux + React](https://redux.js.org/basics/usage-with-react) (official). [A compact one.](https://medium.freecodecamp.org/a-beginners-guide-to-redux-9f652cbdc519).
+            1. Write reducer functions, define action objects.
+            1. Initiate the store object, wrap your app in it.
+            1. Connecting the store (global state) to a local component using `connect()`, `mapStateToProps()`. This will "inject" part of the global state to your local component.
+            1. Read/write to global store in local component: read the state by accessing `this.props.yourStatePropName`; write by calling `this.props.dispatch(actionObject)`, and React should handle the view update for you.
+                - Note that by writing action creator functions, it's a good way to write more succinct code. In short, write action (creator) function instead of object. 
+
+        - Learn [Redux + React + TypeScript](https://github.com/piotrwitek/react-redux-typescript-guide#redux---typing-patterns), **[official guide for typescript](https://redux.js.org/recipes/usage-with-typescript)**, or search google for more.
+            - `npm i -S react-redux`, `npm i -D @types/react-redux`
+            - The official guide is not a good place to put together react, redux and typescript since it has to be un-opiniated. The github page for typing pattern is good, but it's more of best practice lookup, doesn't describe the flow to setup and the rationale behine each step. It'd be great if we can find a tutorial that puts these three together: react/redux/ts. 🔥 🔥 🔥 
 - [ ] Build the page UI (basic)
 
 ## UX Design: Reflection for Frontend UI: 
@@ -52,11 +74,16 @@ But sure, we're still not sure what is the best and what are the needs. We can a
 
 Repos
 - [This repo](https://github.com/rivernews/appl-tracky-spa)
-- [The backend api repo](https://github.com/rivernews/appl-tracky-spa)
+- [This repo dev diary](https://github.com/rivernews/appl-tracky-spa/tree/master/docs/dev)
+- [The backend api repo](https://github.com/rivernews/appl-tracky-api)
 
 Production sites
 - [Live production website](https://rivernews.github.io/appl-tracky-spa/)
 - [Live backend endpoint](https://appl-tracky-api-https.shaungc.com/)
+
+Tools
+
+- [Material Icons](https://material.io/tools/icons/)
 
 Technologies
 
