@@ -35,12 +35,15 @@
     - Material UI vs MDC-React
         - We're using MDC-React, but things like routing are not out of the box, probably less support than material UI, which has bigger community. (in terms of routing, actually material UI doesn't have that out of the box as well)
         - MDC-React's visual effect is closer to mockup, which uses mdc's themer.
-        - 🔥 🔥 🔥 Let's use MDC-React! And, we have to figure out react routing by ourselves. Time to get to work, dirty work!
-- [ ] Build Navigation
-- [ ] Build the UI (basic)
-- [ ] Consider using Redux.
+        - Let's use MDC-React! And, we have to figure out react routing by ourselves. Time to get to work, dirty work!
 
-## Reflection for Frontend UI: 
+### Building User Interface
+
+- [ ] 🔥 🔥 🔥 Select a library, build routing, build Navigation
+- [ ] Consider using Redux or context API to deal with global login status
+- [ ] Build the page UI (basic)
+
+## UX Design: Reflection for Frontend UI: 
 
 Is this easier to use than spreadsheet? The UI should make the registering process as quick as possible. If we split into too many steps and pages, it'll dramatically slow down the process.
 But sure, we're still not sure what is the best and what are the needs. We can always iterate the layout or process at a later point.
