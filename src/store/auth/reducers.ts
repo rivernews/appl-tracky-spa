@@ -1,19 +1,27 @@
-import { AuthStateType, AuthActionTypeNames, UpdateAuthActionTypes } from "./types";
+import { 
+    /** store */
+    IAuthState, 
+    /** action */
+    AuthActionNames, TUpdateAuthAction 
+} from "./types";
 
-const initialState: AuthStateType = {
+const initialState: IAuthState = {
     isLogin: false,
     token: "",
     userName: "",
     expireDateTime: ""
 }
 
-export const authReducer = (state = initialState, action: UpdateAuthActionTypes): AuthStateType => {
+export const authReducer = (state = initialState, action: TUpdateAuthAction): IAuthState => {
     switch (action.type) {
-        case AuthActionTypeNames.UPDATE_AUTH:
+        case AuthActionNames.UPDATE_AUTH:
             return {
                 ...state,
                 ...action.payload
             }
+        
+        // add reducer for new actions here
+        // ...
     
         default:
             return state

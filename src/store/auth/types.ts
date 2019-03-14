@@ -1,17 +1,30 @@
-export interface AuthStateType {
+/**
+ * Store Types
+ */
+export interface IAuthState {
     isLogin: boolean,
     userName: string,
     token: string,
     expireDateTime: string,
 }
 
-export const enum AuthActionTypeNames {
+// add more state types for this reducer - auth reducer
+// ...
+
+/**
+ * Action Types
+ */
+export enum AuthActionNames {
     UPDATE_AUTH = "Update auth"
+
+    // 1. add more action for this reducer - auth reducer
+    // 2. write the type interface for the action below
+    // ...
 }
 
-interface UpdateAuthActionType {
-    type: typeof AuthActionTypeNames.UPDATE_AUTH
-    payload: AuthStateType
+export interface IUpdateAuthAction {
+    type: typeof AuthActionNames.UPDATE_AUTH;
+    payload: IAuthState;
 }
 
-export type UpdateAuthActionTypes = UpdateAuthActionType // use union | ... | ... to add more action types
+export type TUpdateAuthAction = IUpdateAuthAction // use union | ... | ... to add more action types

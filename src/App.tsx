@@ -12,30 +12,16 @@ import "@material/react-ripple/dist/ripple.css";
 // import {withRipple} from '@material/react-ripple';
 
 // ours
-import { AppState } from "./store/app-store";
-import { AuthStateType } from "./store/auth/types";
-import { updateAuthAction } from "./store/auth/actions";
 import logo from "./logo.svg";
 import "./App.css";
 
 // routing & pages
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { HomePage } from "./pages/home-page/home";
+import HomePage from  "./pages/home-page/home";
 import { UserProfilePage } from "./pages/user-profile-page/user-profile";
 
-const mapStateToProps = (state: AppState) => ({
-    auth: state.auth
-})
 
-interface AppPropsType {
-    // action creator type
-    udpateAuthAction: typeof updateAuthAction
-
-    // store (state) type
-    auth: AuthStateType
-}
-
-class App extends Component<AppPropsType> {
+class App extends Component {
 
   componentDidMount() {
 

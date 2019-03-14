@@ -1,31 +1,41 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
-import { SocialAuth } from "../../components/social-auth/social-auth";
-import { LandingPage } from "../landing-page/landing-page";
-import { UserHomePage } from "../user-home-page/user-home-page";
+/** redux */
+import { connect } from "react-redux";
+import { IRootState } from "../../store/types";
+import { IAuthState } from "../../store/auth/types";
 
-class HomePage extends Component<any, any> {
+import LandingPage from "../landing-page/landing-page";
+import UserHomePage from "../user-home-page/user-home-page";
+
+class HomePage extends Component<{ auth: IAuthState }, any> {
   static propTypes = {
-    // prop: PropTypes
-  }
+    //
+  };
 
   render() {
+    console.log("check auth", this.props.auth);
     return (
       <div>
         <h1>Home Page works!</h1>
-        <hr></hr>
-        <SocialAuth />
-        <hr></hr>
+        <hr />
         {/* 
             if logged in, show UserHomePage
             else, show LandingPage
         */}
+        {
+            (this.props.auth.isLogin) ? <UserHomePage /> : <LandingPage />
+        }
       </div>
-    )
+    );
   }
 }
 
-export {
-    HomePage
-}
+const mapStateToProps = (store: IRootState) => {
+  return {
+    auth: store.auth
+  };
+};
+
+export default connect(mapStateToProps)(HomePage);

@@ -1,8 +1,11 @@
-import { AuthStateType, AuthActionTypeNames } from "./types";
+import { IAuthState, AuthActionNames } from "./types";
 
-export const updateAuthAction = (newUpdate: AuthStateType) => {
+export const AUpdateAuth = (newUpdate: IAuthState) => {
   return {
-    type: AuthActionTypeNames.UPDATE_AUTH,
+    type: AuthActionNames.UPDATE_AUTH,
     payload: newUpdate
   };
 };
+
+// write new actions here for this reducer - auth reducer
+// ...
