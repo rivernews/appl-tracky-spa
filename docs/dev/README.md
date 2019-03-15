@@ -1,4 +1,4 @@
-# Roadmap
+# Development Diary & Roadmap
 
 - Testing w/ backend API permission
     - [x] ~~read objects~~ The API requires auth to access API. Without auth, nothing in API is accessible.
@@ -52,14 +52,12 @@
         - Learn [Redux basic](https://redux.js.org/introduction/getting-started)
             - Medium, 39K, [Understanding Redux: The World’s Easiest Guide to Beginning Redux](https://medium.freecodecamp.org/understanding-redux-the-worlds-easiest-guide-to-beginning-redux-c695f45546f6).
             - [Summarizing the 3 components of Redux](https://redux.js.org/introduction/three-principles). Fast and clear.
-
         - Learn [Redux + React](https://redux.js.org/basics/usage-with-react) (official). [A compact one.](https://medium.freecodecamp.org/a-beginners-guide-to-redux-9f652cbdc519).
             1. Write reducer functions, define action objects.
             1. Initiate the store object, wrap your app in it.
             1. Connecting the store (global state) to a local component using `connect()`, `mapStateToProps()`. This will "inject" part of the global state to your local component.
             1. Read/write to global store in local component: read the state by accessing `this.props.yourStatePropName`; write by calling `this.props.dispatch(actionObject)`, and React should handle the view update for you.
                 - Note that by writing action creator functions, it's a good way to write more succinct code. In short, write action (creator) function instead of object. 
-
 - [x] Learn [Redux + React + TypeScript](https://github.com/piotrwitek/react-redux-typescript-guide#redux---typing-patterns), **[official guide for typescript](https://redux.js.org/recipes/usage-with-typescript)**, or search google for more.
     - [Install dependencies](https://medium.com/@pongsatt/how-to-use-redux-in-typescript-ad0b5fe77933): `npm i -S react-redux`, `npm i -D @types/react-redux`
     - The official guide is not a good place to put together react, redux and typescript since it has to be un-opiniated. The github page for typing pattern is good, but it's more of best practice lookup, doesn't describe the flow to setup and the rationale behine each step. It'd be great if we can find a tutorial that puts these three together: react/redux/ts. 
