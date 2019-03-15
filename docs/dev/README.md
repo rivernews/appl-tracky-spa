@@ -60,12 +60,17 @@
             1. Read/write to global store in local component: read the state by accessing `this.props.yourStatePropName`; write by calling `this.props.dispatch(actionObject)`, and React should handle the view update for you.
                 - Note that by writing action creator functions, it's a good way to write more succinct code. In short, write action (creator) function instead of object. 
 
-        - Learn [Redux + React + TypeScript](https://github.com/piotrwitek/react-redux-typescript-guide#redux---typing-patterns), **[official guide for typescript](https://redux.js.org/recipes/usage-with-typescript)**, or search google for more.
-            - [Install dependencies](https://medium.com/@pongsatt/how-to-use-redux-in-typescript-ad0b5fe77933): `npm i -S react-redux`, `npm i -D @types/react-redux`
-            - The official guide is not a good place to put together react, redux and typescript since it has to be un-opiniated. The github page for typing pattern is good, but it's more of best practice lookup, doesn't describe the flow to setup and the rationale behine each step. It'd be great if we can find a tutorial that puts these three together: react/redux/ts. 
-            - [Really good post & Archi](https://blog.usejournal.com/using-react-with-redux-and-typescript-c7ec48c211f6).
-            - We can now read store. 1) implement `mapStateToProps()`, 2) `connect()`.
-            - 🔥 🔥 🔥 Now how to write store, i.e., dispatch? This will be done in `<SocialAuth />`.   
+- Learn [Redux + React + TypeScript](https://github.com/piotrwitek/react-redux-typescript-guide#redux---typing-patterns), **[official guide for typescript](https://redux.js.org/recipes/usage-with-typescript)**, or search google for more.
+    - [Install dependencies](https://medium.com/@pongsatt/how-to-use-redux-in-typescript-ad0b5fe77933): `npm i -S react-redux`, `npm i -D @types/react-redux`
+    - The official guide is not a good place to put together react, redux and typescript since it has to be un-opiniated. The github page for typing pattern is good, but it's more of best practice lookup, doesn't describe the flow to setup and the rationale behine each step. It'd be great if we can find a tutorial that puts these three together: react/redux/ts. 
+    - [Really good post & Archi](https://blog.usejournal.com/using-react-with-redux-and-typescript-c7ec48c211f6).
+    - We can now read store. 1) implement `mapStateToProps()`, 2) `connect()`.
+    - Now how to write to store, i.e., dispatch? This will be done in `<SocialAuth />`.
+- Know how to use `mapDispatchToProps()` in Typescript.
+    - 🔥 🔥 🔥 Know what is `mapDispatchToProps`
+        - [SO Post: What is mapDispatchToProps?](https://stackoverflow.com/a/40068198/9814131)
+        - [Container Components](https://medium.com/@learnreact/container-components-c0e67432e005)
+    - Know how to use `mapDispatchToProps` in Typescript. (how to setup typings properly)
 - [ ] Build the page UI (basic)
 
 ## UX Design: Reflection for Frontend UI: 
