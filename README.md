@@ -24,19 +24,38 @@ Details about backend web (static) server, and other DevOps stuff, please refer 
 
 By Sketch.app!
 
-## UI Design Mockups
+## UI Mockups & Component Structure
 
-Home page outlining all applications.
+### Landing page
 
-![Application List](docs/img/frontend/ApplicationList.png)
+![Landing Page](docs/img/mockups/Desktop/LandingPage.png)
 
-Add a company to start registering applications for a company.
+![Entry Page](docs/img/React%20Component/Entry%20Page.png)
 
-![Application](docs/img/frontend/Application.png)
+### Routing
 
-Add updates to applications.
+![Entry Page](docs/img/React%20Component/User%20Pages.png)
 
-![Company Application](docs/img/frontend/CompanyApplication.png)
+### Home page outlining all applications.
+
+![Application List](docs/img/mockups/Desktop/ApplicationList.png)
+![Application List Page](docs/img/React%20Component/User%20Application%20Page.png)
+
+### Add a company to start registering applications for a company.
+
+![Add Company](docs/img/mockups/Desktop/AddCompany.png)
+
+![Add Company Component](docs/img/React%20Component/Add%20Company%20Page.png)
+
+### Add updates to applications.
+
+![Company Application](docs/img/mockups/Desktop/CompanyApplication.png)
+![User Company Application Page](docs/img/React%20Component/User%20Company%20Application%20Page.png)
+
+### User profile page.
+
+![User Profile](docs/img/mockups/Desktop/UserProfile.png)
+![User Profile Page](docs/img/React%20Component/User%20Profile%20Page.png)
 
 ## Project Motivation
 
