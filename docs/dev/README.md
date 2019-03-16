@@ -65,12 +65,13 @@
     - We can now read store. 1) implement `mapStateToProps()`, 2) `connect()`.
     - Now how to write to store, i.e., dispatch? This will be done in `<SocialAuth />`.
 - Know how to use `mapDispatchToProps()` in Typescript.
-    - 🔥 🔥 🔥 Know what is `mapDispatchToProps`
+    - Know what is `mapDispatchToProps`
         - [SO Post: What is mapDispatchToProps?](https://stackoverflow.com/a/40068198/9814131)
         - [Container Components](https://medium.com/@learnreact/container-components-c0e67432e005)
     - Know how to use `mapDispatchToProps` in Typescript. (how to setup typings properly)
 - [ ] Comply the "Container Component" convention / pattern. [The SO post](https://stackoverflow.com/a/40068198/9814131) describe what it actually looks like (also the Medium post in the answer), and [this post](https://www.thegreatcodeadventure.com/the-react-plus-redux-container-pattern/) has some really good illustration, and a high level step-by-step guide to use Container Component pattern to facilitate usage of dispatch.
-    1. Design our components.
+    1. [x] Design our components and the structure.
+    1. [ ] 🔥 🔥 🔥 Implement the nested structure.
 - [ ] Build the page UI (basic)
 
 ## UX Design: Reflection for Frontend UI: 
