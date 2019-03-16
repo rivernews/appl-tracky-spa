@@ -28,34 +28,27 @@ By Sketch.app!
 
 ### Landing page
 
-![Landing Page](docs/img/mockups/Desktop/LandingPage.png)
+![Landing Page](docs/img/TechMockup/entry-page.png)
 
-![Entry Page](docs/img/React%20Component/Entry%20Page.png)
+### Internal (Login) Page Routes
 
-### Routing
-
-![Entry Page](docs/img/React%20Component/User%20Pages.png)
+![Internal Pages](docs/img/TechMockup/internal-page-routes.png)
 
 ### Home page outlining all applications.
 
-![Application List](docs/img/mockups/Desktop/ApplicationList.png)
-![Application List Page](docs/img/React%20Component/User%20Application%20Page.png)
+![Application List](docs/img/TechMockup/user-app-page.png)
 
 ### Add a company to start registering applications for a company.
 
-![Add Company](docs/img/mockups/Desktop/AddCompany.png)
-
-![Add Company Component](docs/img/React%20Component/Add%20Company%20Page.png)
+![Add Company](docs/img/TechMockup/add-com-page.png)
 
 ### Add updates to applications.
 
-![Company Application](docs/img/mockups/Desktop/CompanyApplication.png)
-![User Company Application Page](docs/img/React%20Component/User%20Company%20Application%20Page.png)
+![Company Application](docs/img/TechMockup/user-com-app-page.png)
 
 ### User profile page.
 
-![User Profile](docs/img/mockups/Desktop/UserProfile.png)
-![User Profile Page](docs/img/React%20Component/User%20Profile%20Page.png)
+![User Profile](docs/img/TechMockup/user-profile-page.png)
 
 ## Project Motivation
 
