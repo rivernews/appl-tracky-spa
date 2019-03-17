@@ -86,6 +86,10 @@
 
 🔥 🔥 🔥 
 
+React component planning - navigation and routed pages:
+
+![Navigation](../img/dev-plan/internal-page-nav.png)
+
 - [ ] Build the page UI (basic)
 
 ## UX Design: Reflection for Frontend UI: 
