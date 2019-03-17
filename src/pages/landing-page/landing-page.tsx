@@ -7,21 +7,23 @@ import { IRootState } from "../../store/types";
 import { IAuthState } from "../../store/auth/types";
 
 /** components */
-import { SocialAuth } from "../../components/social-auth/social-auth";
-import UserInfo from "../../components/user-info/user-info";
+import SocialAuthButtonContainer from "../../components/social-auth/social-auth-button-container";
 
-class LandingPage extends Component<any, any> {
+let styles = {
+    backgroundColor: "purple",
+    color: "white"
+}
+
+export class LandingPage extends Component<any, any> {
   static propTypes = {
     // prop: PropTypes
   };
 
   render() {
     return (
-      <div>
+      <div className="LandingPage" style={styles}>
         <h1>Landing Page works!</h1>
-        <SocialAuth />
-        <hr></hr>
-        <UserInfo auth={this.props.auth} />
+        <SocialAuthButtonContainer />
       </div>
     );
   }
@@ -33,4 +35,4 @@ const mapStateToProps = (store: IRootState) => {
   };
 };
 
-export default connect(mapStateToProps)(LandingPage);
+export default connect(mapStateToProps)(LandingPage)

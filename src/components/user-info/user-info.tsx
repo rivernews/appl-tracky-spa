@@ -7,7 +7,7 @@ interface UserInfoProps {
     auth: IAuthState
 }
 
-export default class UserInfo extends Component<UserInfoProps, any> {
+export class UserInfo extends Component<UserInfoProps, any> {
 
   render() {
     return (

@@ -2,7 +2,7 @@ import {
     /** store */
     IAuthState, 
     /** action */
-    AuthActionNames, TUpdateAuthAction 
+    AuthActionNames, TAuthActions 
 } from "./types";
 
 const initialState: IAuthState = {
@@ -12,7 +12,7 @@ const initialState: IAuthState = {
     expireDateTime: ""
 }
 
-export const authReducer = (state = initialState, action: TUpdateAuthAction): IAuthState => {
+export const authReducer = (state = initialState, action: TAuthActions): IAuthState => {
     switch (action.type) {
         case AuthActionNames.UPDATE_AUTH:
             return {

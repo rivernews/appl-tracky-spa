@@ -71,7 +71,21 @@
     - Know how to use `mapDispatchToProps` in Typescript. (how to setup typings properly)
 - [ ] Comply the "Container Component" convention / pattern. [The SO post](https://stackoverflow.com/a/40068198/9814131) describe what it actually looks like (also the Medium post in the answer), and [this post](https://www.thegreatcodeadventure.com/the-react-plus-redux-container-pattern/) has some really good illustration, and a high level step-by-step guide to use Container Component pattern to facilitate usage of dispatch.
     1. [x] Design our components and the structure.
-    1. [ ] 🔥 🔥 🔥 Implement the nested structure.
+    1. [x] Draw a put-everything-together tech mockup
+
+#### Root Component Planning
+
+![Root component planning](../img/dev-plan/auth-global.png)
+
+- [x] Refactor root structure to reflect plan
+- [x] Top App Bar - put a logout button, make sure it works. Can use isLogin:true to debuf top app bar.
+- [x] Put a login button in landing page. Wire up update auth to redux store when logged in.
+- [x] Test logisn/logout and see if conditional rendering works!
+
+#### Initialize pages and navigations
+
+🔥 🔥 🔥 
+
 - [ ] Build the page UI (basic)
 
 ## UX Design: Reflection for Frontend UI: 
@@ -117,3 +131,7 @@ Technologies
         - A good way to get to know React is to compare Angular to its equivalance in React.
             - @input and @output
             - Service <---> state management?
+
+Caveats & Troubleshooting
+
+- Interface optional callback dilemma. See [SO: Declare optional Event callback in Typescript React](https://stackoverflow.com/a/52367308/9814131) for solution.

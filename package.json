@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://rivernews.github.io/appl-tracky-spa",
   "dependencies": {
+    "@material/react-button": "^0.10.0",
     "@material/react-material-icon": "^0.10.0",
     "@material/react-ripple": "^0.10.0",
     "@material/react-top-app-bar": "^0.9.0",
@@ -40,5 +41,8 @@
   ],
   "devDependencies": {
     "gh-pages": "^2.0.1"
+  },
+  "prettier": {
+    "tabWidth": 4
   }
 }

@@ -26,6 +26,8 @@ By Sketch.app!
 
 ## UI Mockups & Component Structure
 
+Special credit to [The React + Redux Container Pattern](https://www.thegreatcodeadventure.com/the-react-plus-redux-container-pattern/) by Sophie DeBenedetto, the react component diagrams below are inspired by this post.
+
 ### Landing page
 
 ![Landing Page](docs/img/TechMockup/entry-page.png)

@@ -27,4 +27,4 @@ export interface IUpdateAuthAction {
     payload: IAuthState;
 }
 
-export type TUpdateAuthAction = IUpdateAuthAction // use union | ... | ... to add more action types
+export type TAuthActions = IUpdateAuthAction // use union | ... | ... to add more action types
