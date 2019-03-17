@@ -84,13 +84,17 @@
 
 #### Initialize pages and navigations
 
-🔥 🔥 🔥 
-
 React component planning - navigation and routed pages:
 
 ![Navigation](../img/dev-plan/internal-page-nav.png)
 
-- [ ] Build the page UI (basic)
+- [ ] 🔥 🔥 🔥 Initialize page components for user app/add com/user com app page
+- [ ] Add minimal necessary UI for navigation
+- [ ] Add navigation transition between pages
+
+---
+
+- [ ] Reflection on next steps and roadmaps.
 
 ## UX Design: Reflection for Frontend UI: 
 
