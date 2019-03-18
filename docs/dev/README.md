@@ -1,5 +1,7 @@
 # Development Diary & Roadmap
 
+## Hook up React and Backend REST API
+
 - Testing w/ backend API permission
     - [x] ~~read objects~~ The API requires auth to access API. Without auth, nothing in API is accessible.
     - [ ] user auth setup - basic login/logout/username UI. Write a basic auth component
@@ -37,7 +39,7 @@
         - MDC-React's visual effect is closer to mockup, which uses mdc's themer.
         - Let's use MDC-React! And, we have to figure out react routing by ourselves. Time to get to work, dirty work!
 
-### Building User Interface
+## UI Library & State Management Setup
 
 **We'll skip details of UI, just the functionality first!**
 
@@ -73,7 +75,7 @@
     1. [x] Design our components and the structure.
     1. [x] Draw a put-everything-together tech mockup
 
-#### Root Component Planning
+## Root Component Planning & User Authentication (Login)
 
 ![Root component planning](../img/dev-plan/auth-global.png)
 
@@ -82,7 +84,7 @@
 - [x] Put a login button in landing page. Wire up update auth to redux store when logged in.
 - [x] Test logisn/logout and see if conditional rendering works!
 
-#### Initialize pages and navigations
+## Initialize Pages, Routings and Navigations
 
 React component planning - navigation and routed pages:
 
@@ -109,22 +111,20 @@ React component planning - navigation and routed pages:
 
     - [x] Login/logout nav is done, but add company button we have some issues. Seems like it forces refresh, and so our global store is lost. Solution: change `href` to `onClick` and navigate programatically.
 
-#### Managing various phases for a http-request-related redux action?
-    - 🔥 🔥 🔥 If action failed, how can we know and how to change the view to reflect the error state?
-    - If action takes a long time, how can we have an intermediate state and have the view change correspondedly?
+### Managing various phases for a http-request-related redux action?
+
+- 🔥 🔥 🔥 If action failed, how can we know and how to change the view to reflect the error state?
+- If action takes a long time, how can we have an intermediate state and have the view change correspondedly?
 
 - [ ] Add logout POST to django server
+
+## CRUD-functioning User Interface
 
 - [ ] Think about next steps - "CRUD" & forms to create com & app & status
 
 ---
 
 - [ ] Reflection on next steps and roadmaps.
-
-## UX Design: Reflection for Frontend UI: 
-
-Is this easier to use than spreadsheet? The UI should make the registering process as quick as possible. If we split into too many steps and pages, it'll dramatically slow down the process.
-But sure, we're still not sure what is the best and what are the needs. We can always iterate the layout or process at a later point.
 
 # Reference
 
