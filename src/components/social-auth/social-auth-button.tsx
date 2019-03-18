@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
 /** Redux */
 import { Dispatch } from "redux";
@@ -8,18 +9,16 @@ import { IUpdateAuthAction, IAuthState } from "../../store/auth/types";
 import { UpdateAuth } from "../../store/auth/actions";
 
 /** Components */
-import { GoogleLogin } from "react-google-login";
-import { GoogleLogout } from "react-google-login";
 import { SocialAuthLoginButton } from "./social-auth-login-button";
 import { SocialAuthLogoutButton } from "./social-auth-logout-button";
 
-interface ISocialAuthButtonContainerProps {
+interface ISocialAuthButtonProps extends RouteComponentProps {
     auth: IAuthState;
     updateAuth: (newAuthState: IAuthState) => void;
 }
 
-class SocialAuthButtonContainer extends Component<
-    ISocialAuthButtonContainerProps
+class SocialAuthButton extends Component<
+    ISocialAuthButtonProps
 > {
     state = {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
@@ -62,12 +61,14 @@ class SocialAuthButtonContainer extends Component<
             userFirstName: ``,
             userLastName: ``
         });
+
         this.props.updateAuth({
             isLogin: false,
             userName: "",
             token: "",
             expireDateTime: ""
         });
+        this.props.history.push("/");
     };
 
     apiLogin = () => {
@@ -89,6 +90,7 @@ class SocialAuthButtonContainer extends Component<
                         userLastName: jsonData.last_name,
                         apiLoginToken: jsonData.token
                     });
+
                     this.props.updateAuth({
                         isLogin: true,
                         userName: `${jsonData.first_name} ${
@@ -97,6 +99,9 @@ class SocialAuthButtonContainer extends Component<
                         token: jsonData.token,
                         expireDateTime: ""
                     });
+
+                    this.props.history.push("/home/");
+
                 } else {
                     console.warn("API login failure.");
                 }
@@ -223,25 +228,15 @@ const mapStateToProps = (store: IRootState) => {
 
 function mapDispatchToProps(dispatch: Dispatch<IUpdateAuthAction>) {
     return {
-        updateAuth: ({
-            isLogin,
-            userName,
-            token,
-            expireDateTime
-        }: IAuthState) => {
+        updateAuth: (newAuthState: IAuthState) => {
             dispatch(
-                UpdateAuth({
-                    isLogin,
-                    userName,
-                    token,
-                    expireDateTime
-                })
+                UpdateAuth(newAuthState)
             );
         }
     };
 }
 
-export default connect(
+export const SocialAuthButtonContainer = withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
-)(SocialAuthButtonContainer);
+)(SocialAuthButton));

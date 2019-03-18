@@ -1,0 +1,62 @@
+{
+	// Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+    // }
+    "Container Component": {
+        "scope": "typescriptreact",
+        "prefix": "cc",
+        "body": [
+            "import React, { Component } from \"react\";",
+            "import { withRouter } from \"react-router-dom\";",
+            "",
+            "/** Redux */",
+            "import { connect } from \"react-redux\";",
+            "import { Dispatch } from \"redux\";",
+            "import { IRootState } from \"../../store/types\";",
+            "",
+            "/** Components */",
+            "",
+            "interface I${1}Props {",
+            "\t",
+            "}",
+            "",
+            "class ${1:${TM_FILENAME_BASE/([a-z])([a-z]*)[-]{0,1}/${1:/upcase}$2/g}} extends Component<I${1}Props> {",
+            "\trender() {",
+            "\t\treturn (",
+            "\t\t\t<div className=\"${1}\">",
+            "\t\t\t\t${0:<h1>$1 Works!</h1>}",
+            "\t\t\t</div>",
+            "\t\t)",
+            "\t}",
+            "}",
+            "",
+            "const mapStateToProps = (store: IRootState) => ({",
+            "\t// prop: store.prop",
+            "});",
+            "",
+            "const mapDispatchToProps = {",
+            "\t// actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))",
+            "};",
+            "",
+            "export const ${1}Container = withRouter(connect(",
+            "\tmapStateToProps,",
+            "\tmapDispatchToProps",
+            ")($1));",
+            "",
+            
+        ]
+    }
+}

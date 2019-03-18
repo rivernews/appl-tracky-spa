@@ -1,38 +1,47 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
+import { withRouter } from "react-router-dom";
 
-/** redux */
+/** Redux */
 import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
 import { IAuthState } from "../../store/auth/types";
 
-/** components */
-import SocialAuthButtonContainer from "../../components/social-auth/social-auth-button-container";
+/** Components */
+import { SocialAuthButtonContainer } from "../../components/social-auth/social-auth-button";
 
 let styles = {
     backgroundColor: "purple",
     color: "white"
-}
-
-export class LandingPage extends Component<any, any> {
-  static propTypes = {
-    // prop: PropTypes
-  };
-
-  render() {
-    return (
-      <div className="LandingPage" style={styles}>
-        <h1>Landing Page works!</h1>
-        <SocialAuthButtonContainer />
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (store: IRootState) => {
-  return {
-    auth: store.auth
-  };
 };
 
-export default connect(mapStateToProps)(LandingPage)
+interface ILandingPageProps {
+    auth: IAuthState;
+}
+
+class LandingPage extends Component<ILandingPageProps> {
+    render() {
+        return (
+            <div className="LandingPage" style={styles}>
+                <h1>LandingPage Works!</h1>
+                <SocialAuthButtonContainer />
+            </div>
+        );
+    }
+}
+
+const mapStateToProps = (state: IRootState) => ({
+    // prop: state.prop
+    auth: state.auth
+});
+
+const mapDispatchToProps = {
+    // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
+};
+
+export const LandingPageContainer = withRouter(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(LandingPage)
+);

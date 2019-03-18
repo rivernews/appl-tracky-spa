@@ -88,9 +88,15 @@ React component planning - navigation and routed pages:
 
 ![Navigation](../img/dev-plan/internal-page-nav.png)
 
-- [ ] 🔥 🔥 🔥 Initialize page components for user app/add com/user com app page
-- [ ] Add minimal necessary UI for navigation
+- [x] Initialize page components for user app/add com/user com app page
+- [x] Add minimal necessary UI for navigation
 - [ ] Add navigation transition between pages
+    - [x] Resolve issue when [using redux with react-router](https://stackoverflow.com/a/42124328/9814131).
+    - [ ] 🔥 🔥 🔥 Login/logout nav is done, but add company button we have some issues. Seems like it forces refresh, and so our global store is lost.
+
+- [ ] Add logout POST to django server
+
+- [ ] Think about next steps - "CRUD" & forms to create com & app & status
 
 ---
 
@@ -115,6 +121,8 @@ Production sites
 Tools
 
 - [Material Icons](https://material.io/tools/icons/)
+- [How to write VScode snippet](https://code.visualstudio.com/docs/editor/userdefinedsnippets)
+- [React Router quick reference to match, location and history](https://medium.freecodecamp.org/hitchhikers-guide-to-react-router-v4-4b12e369d10)
 
 Technologies
 

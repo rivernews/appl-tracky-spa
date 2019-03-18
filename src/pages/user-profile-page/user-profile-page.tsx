@@ -7,14 +7,10 @@ import { IAuthState } from "../../store/auth/types";
 
 /** Routes & pages */
 import { UserInfo } from "../../components/user-info/user-info";
+import { withRouter } from 'react-router-dom';
 
 /** Components */
-import { GoogleLogout } from "react-google-login";
-import SocialAuthButtonContainer from "../../components/social-auth/social-auth-button-container";
-// mdc react
-import "@material/react-button/dist/button.css";
-import MaterialIcon from "@material/react-material-icon";
-import Button from "@material/react-button";
+import { SocialAuthButtonContainer } from "../../components/social-auth/social-auth-button";
 
 interface IUserProfilePageProps {
     auth: IAuthState;
@@ -38,4 +34,4 @@ const mapStateToProps = (store: IRootState) => {
     };
 };
 
-export default connect(mapStateToProps)(UserProfilePage);
+export const UserProfilePageContainer = withRouter(connect(mapStateToProps)(UserProfilePage));
