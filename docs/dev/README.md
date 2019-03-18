@@ -91,8 +91,27 @@ React component planning - navigation and routed pages:
 - [x] Initialize page components for user app/add com/user com app page
 - [x] Add minimal necessary UI for navigation
 - [ ] Add navigation transition between pages
-    - [x] Resolve issue when [using redux with react-router](https://stackoverflow.com/a/42124328/9814131).
-    - [ ] 🔥 🔥 🔥 Login/logout nav is done, but add company button we have some issues. Seems like it forces refresh, and so our global store is lost.
+    - [x] Resolve issue when [using redux with react-router](https://stackoverflow.com/a/42124328/9814131). Also how to navigate progamically.
+        - [What is `exact` in `<Route>`](https://stackoverflow.com/questions/49162311/react-difference-between-route-exact-path-and-route-path)
+        - How to get `params` from route?
+            1. Router: define the route `<Route path="/to/your/page/:param/">`
+            1. Source page: either use `<Link to="/to/your/page/param-value-here/">` or `<a href ...>`
+            1. To navigate programatically, or retreieve `params`, you need react-router's props "injected" into your component's prop first. There are three router props: `location`, `history` and `match`, and after injected, you can access them in your component like `this.props.location`.
+                - `this.props.history.push("to/your/page/param-vale/")` will let you navigate programatically.
+                - `this.props.match.params["param-value"]` will let you retrieve `params`.
+            1. To inject these props, first `import { RouteComponentProps, withRouter } from "react-router-dom";`
+            1. `withRouter` will inject router props to your component props. Wrap your redux `connect()` in it and use it like `export default withRouter(connect(...)(YourComponent));`.
+            1. `RouteComponentProps` is for your component's props type checking. There're many ways to setup, but basically, you can use `RouteComponentProps` literally as type, this will give typings for the three router props: `location`, `history` and `match`. To also do strict type checking on `params`, you can define a `IParamsInterface` and use it like `RouteComponentProps<IParamsInterface>`. Then, the `IParamsInterface` will do type checking on `this.props.match.params`.
+            1. To put this router props typing to your component's props, there're many way to do it:
+                - If you already have a component props interface, you can let it extend `RouteComponentProps<IParamsInterface>`. Or if your component don't need to retrieve `params` and just want the router props, then you can do `interface IMyComponentProps extends RouteComponentProps { ... }`
+                - If your component doesn't have props interface, you can just use router props typing directly on the component like `class MyComponent<RouteComponentProps> extends React.Component {...}`. 
+
+
+    - [x] Login/logout nav is done, but add company button we have some issues. Seems like it forces refresh, and so our global store is lost. Solution: change `href` to `onClick` and navigate programatically.
+
+#### Managing various phases for a http-request-related redux action?
+    - 🔥 🔥 🔥 If action failed, how can we know and how to change the view to reflect the error state?
+    - If action takes a long time, how can we have an intermediate state and have the view change correspondedly?
 
 - [ ] Add logout POST to django server
 
