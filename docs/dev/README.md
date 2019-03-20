@@ -119,6 +119,12 @@ Keywords: async action, api, request, data fetch + redux + typescript
 
 First of all, there must be a place to 1) handle API request, e.g. a Promise that has `.then()` and `.catch()` block. Then there should be someone to 2) trigger updates on views, or, 2) trigger updates on state plus a 3) conditional rendering logic in view or side effects updating the view.
 
+**Three Aync Key Parts:**
+
+1. API request and response handling
+1. Trigger state update
+1. State change reflects on view change, perhaps by conditional rendering
+
 When considering redux in this setting, redux can handle state updating, and provide its state for conditional rendering. However, it does not do API request, so all the `fetch()`, `.then()`, `.catch()` cannot be in redux. Also, it cannot do any side effects to udpate the view, say, navigate to another page, in any of `reducer` and `action`.
 
 Putting this all together, first, as a transition from synchronous to asynchronous, one action now has to be extended to 3 or even more actions, to distinguish states like start request, request success, request fail (or timeout). In terms of store structure, it will at least add a new property e.g. status, that can store the async state = requesting, succeed, failed, ....
@@ -126,6 +132,9 @@ Putting this all together, first, as a transition from synchronous to asynchrono
 After some preliminary research, seems like we can use `react-thunk` or `react-saga`. But what the heck are they doing? Time for having a cup of coffee and read🔥 🔥 🔥 !
 
 - [Redux-Thunk vs. Redux-Saga](https://decembersoft.com/posts/redux-thunk-vs-redux-saga/)
+    - Redux-Thunk: middleware for action creators. thunk --hijacks-- action creator --creates-- action --dispatches-- reducer --changes-- state/store. In terms of the async key parts mentioned above, the 1st step happens in the "thunk" aka middleware. 2nd step is the action creator & dispatch. 3rd step will be implement elsewhere in your component.
+    - Redux-Saga: a generator version of redux-thunk, and has some benefits over it. But also more complicated.
+    - *Article does not touch on step by step tutorial to use either of them.
 - [Redux-Thunk vs. Redux-Saga @ Medium](https://medium.com/@shoshanarosenfield/redux-thunk-vs-redux-saga-93fe82878b2d)
 - Supplementary
     - [Redux official: Async Actions](https://redux.js.org/advanced/async-actions)
