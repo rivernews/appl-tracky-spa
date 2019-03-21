@@ -129,7 +129,7 @@ When considering redux in this setting, redux can handle state updating, and pro
 
 Putting this all together, first, as a transition from synchronous to asynchronous, one action now has to be extended to 3 or even more actions, to distinguish states like start request, request success, request fail (or timeout). In terms of store structure, it will at least add a new property e.g. status, that can store the async state = requesting, succeed, failed, ....
 
-After some preliminary research, seems like we can use `react-thunk` or `react-saga`. But what the heck are they doing? Time for having a cup of coffee and read🔥 🔥 🔥 !
+After some preliminary research, seems like we can use `react-thunk` or `react-saga`. But what the heck are they doing? Time for having a cup of coffee and read!
 
 - [Redux-Thunk vs. Redux-Saga](https://decembersoft.com/posts/redux-thunk-vs-redux-saga/)
     - Redux-Thunk: middleware for action creators. thunk --hijacks-- action creator --creates-- action --dispatches-- reducer --changes-- state/store. In terms of the async key parts mentioned above, the 1st step happens in the "thunk" aka middleware. 2nd step is the action creator & dispatch. 3rd step will be implement elsewhere in your component.
@@ -139,6 +139,13 @@ After some preliminary research, seems like we can use `react-thunk` or `react-s
 - Supplementary
     - [Redux official: Async Actions](https://redux.js.org/advanced/async-actions)
     - [Asynchronous Redux Actions Using Redux Thunk @ Alligator.io](https://alligator.io/redux/redux-thunk/)
+
+- Seems like saga is a popular choice, but is quite complicated. 
+    - [This quick small redux-saga tutorial](https://flaviocopes.com/redux-saga/) sets up a simple saga example.
+    - [This is redux-saga's official tutorial](https://redux-saga.js.org/docs/introduction/BeginnerTutorial.html)🔥🔥🔥
+- To test out saga, we do need a typescript setup. Including how to install typings.
+    - `npm i -S redux-saga`.
+    - But seems like there're little tutorial about step by step setup for ts+redux-saga. We can just use `any` type as a work around as for now. As such, the saga official tutorial becomes quite valuable.
 
 - [ ] Add logout POST to django server
 

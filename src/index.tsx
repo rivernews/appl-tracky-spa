@@ -6,10 +6,13 @@ import * as serviceWorker from './serviceWorker';
 
 /** redux */
 import { Provider } from "react-redux";
-import { Store, createStore } from "redux";
+import { Store, createStore, applyMiddleware } from "redux";
 /** root store */
 import { IRootState } from "./store/types";
 import { RootReducer } from "./store/reducers";
+
+/** sagas */
+import createSagaMiddleware from 'redux-saga';
 
 /** types */
 interface IRootProps {
@@ -25,8 +28,19 @@ const Root: React.SFC<IRootProps> = (props) => {
     );
 };
 
+/** setup saga */
+const sagaMiddleware = createSagaMiddleware();
+
 /** generate the singleton store from redux */
-const store = createStore<IRootState, any, any, any>(RootReducer);
+const store = createStore<IRootState, any, any, any>(
+    RootReducer,
+    applyMiddleware(sagaMiddleware)
+);
+
+/** run saga */
+// sagaMiddleware.run(
+//     // add saga here
+// )
 
 ReactDOM.render(<Root store={store} />, document.getElementById('root'));
 
