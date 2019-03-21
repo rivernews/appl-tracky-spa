@@ -3,7 +3,7 @@ import React, { Component } from "react";
 /** Redux */
 import { connect } from "react-redux";
 import { IRootState } from "../../store/types";
-import { IAuthState } from "../../store/auth/types";
+import { IUpdateAuthState } from "../../store/auth/types";
 
 /** Routing & Pages */
 import {
@@ -31,7 +31,7 @@ import "@material/react-ripple/dist/ripple.css";
 // import {withRipple} from '@material/react-ripple';
 
 interface IPageRoutesProps extends RouteComponentProps {
-    auth: IAuthState;
+    auth: IUpdateAuthState;
 }
 
 class PageRoutes extends Component<IPageRoutesProps> {

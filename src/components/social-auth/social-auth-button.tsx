@@ -5,16 +5,17 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "../../store/types";
-import { IUpdateAuthAction, IAuthState } from "../../store/auth/types";
-import { UpdateAuth } from "../../store/auth/actions";
+import { IUpdateAuthAction, IRequestedAuthAction, TAuthActions, IUpdateAuthState } from "../../store/auth/types";
+import { UpdateAuth, RequestedAuth } from "../../store/auth/actions";
 
 /** Components */
 import { SocialAuthLoginButton } from "./social-auth-login-button";
 import { SocialAuthLogoutButton } from "./social-auth-logout-button";
 
 interface ISocialAuthButtonProps extends RouteComponentProps {
-    auth: IAuthState;
-    updateAuth: (newAuthState: IAuthState) => void;
+    auth: IUpdateAuthState;
+    updateAuth: (newAuthState: IUpdateAuthState) => void;
+    requestedAuth: (socialAuthToken: string) => void;
 }
 
 class SocialAuthButton extends Component<
@@ -43,7 +44,8 @@ class SocialAuthButton extends Component<
                 code: googleOauthResponse.code
             },
             () => {
-                this.apiLogin();
+                // this.apiLogin();
+                this.props.requestedAuth(this.state.code);
             }
         );
     };
@@ -65,7 +67,7 @@ class SocialAuthButton extends Component<
         this.props.updateAuth({
             isLogin: false,
             userName: "",
-            token: "",
+            apiToken: "",
             expireDateTime: ""
         });
         this.props.history.push("/");
@@ -93,10 +95,8 @@ class SocialAuthButton extends Component<
 
                     this.props.updateAuth({
                         isLogin: true,
-                        userName: `${jsonData.first_name} ${
-                            jsonData.last_name
-                        }`,
-                        token: jsonData.token,
+                        userName: `${jsonData.first_name} ${jsonData.last_name}`,
+                        apiToken: jsonData.token,
                         expireDateTime: ""
                     });
 
@@ -226,11 +226,16 @@ const mapStateToProps = (store: IRootState) => {
     };
 };
 
-function mapDispatchToProps(dispatch: Dispatch<IUpdateAuthAction>) {
+function mapDispatchToProps(dispatch: Dispatch<TAuthActions>) {
     return {
-        updateAuth: (newAuthState: IAuthState) => {
+        updateAuth: (newAuthState: IUpdateAuthState) => {
             dispatch(
                 UpdateAuth(newAuthState)
+            );
+        },
+        requestedAuth: (socialAuthToken: string) => {
+            dispatch(
+                RequestedAuth(socialAuthToken)
             );
         }
     };

@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { IAuthState } from "../../store/auth/types";
+import { IUpdateAuthState } from "../../store/auth/types";
 
 interface UserInfoProps {
-    auth: IAuthState
+    auth: IUpdateAuthState
 }
 
 export class UserInfo extends Component<UserInfoProps, any> {
@@ -13,9 +13,9 @@ export class UserInfo extends Component<UserInfoProps, any> {
     return (
       <div>
         <h1>User Info</h1>
-        <div>Logged in: {this.props.auth.isLogin.toString()}</div>
+        <div>Logged in: {this.props.auth.isLogin && this.props.auth.isLogin.toString() || "undefine"}</div>
         <div>User Name: {this.props.auth.userName || "(empty)"}</div>
-        <div>Token (for API): {this.props.auth.token || "(empty)"}</div>
+        <div>Token (for API): {this.props.auth.apiToken || "(empty)"}</div>
       </div>
     )
   }

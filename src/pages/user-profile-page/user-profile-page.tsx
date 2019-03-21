@@ -3,7 +3,7 @@ import React, { Component } from "react";
 /** redux */
 import { connect } from "react-redux";
 import { IRootState } from "../../store/types";
-import { IAuthState } from "../../store/auth/types";
+import { IUpdateAuthState } from "../../store/auth/types";
 
 /** Routes & pages */
 import { UserInfo } from "../../components/user-info/user-info";
@@ -13,7 +13,7 @@ import { withRouter } from 'react-router-dom';
 import { SocialAuthButtonContainer } from "../../components/social-auth/social-auth-button";
 
 interface IUserProfilePageProps {
-    auth: IAuthState;
+    auth: IUpdateAuthState;
 }
 
 class UserProfilePage extends Component<IUserProfilePageProps, any> {

@@ -5,7 +5,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
-import { IAuthState } from "../../store/auth/types";
+import { IUpdateAuthState } from "../../store/auth/types";
 
 /** Components */
 import { SocialAuthButtonContainer } from "../../components/social-auth/social-auth-button";
@@ -16,7 +16,7 @@ let styles = {
 };
 
 interface ILandingPageProps {
-    auth: IAuthState;
+    auth: IUpdateAuthState;
 }
 
 class LandingPage extends Component<ILandingPageProps> {

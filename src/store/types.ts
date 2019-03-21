@@ -1,7 +1,7 @@
-import { IAuthState } from "./auth/types";
+import { IUpdateAuthState } from "./auth/types";
 
 export interface IRootState {
-    auth: IAuthState
+    auth: IUpdateAuthState
 
     // add more state types here here (for each reducer)
     // ...

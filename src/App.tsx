@@ -4,7 +4,7 @@ import React, { Component } from "react";
 /** Redux */
 import { connect } from "react-redux";
 import { IRootState } from "./store/types";
-import { IAuthState } from "./store/auth/types";
+import { IUpdateAuthState } from "./store/auth/types";
 
 /** Routes & pages */
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
@@ -14,7 +14,7 @@ import { PageRoutesContainer } from "./pages/page-routes/page-routes";
 import "./App.css";
 
 interface IAppProps {
-    auth: IAuthState;
+    auth: IUpdateAuthState;
 }
 
 class App extends Component<IAppProps> {

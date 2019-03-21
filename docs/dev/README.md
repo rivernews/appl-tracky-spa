@@ -145,10 +145,16 @@ After some preliminary research, seems like we can use `react-thunk` or `react-s
     - [This is redux-saga's official tutorial](https://redux-saga.js.org/docs/introduction/BeginnerTutorial.html) 🔥🔥
 - To test out saga, we do need a typescript setup. Including how to install typings.
     - `npm i -S redux-saga`.
-    - But seems like there're little tutorial about step by step setup for ts+redux-saga. We can just use `any` type as a work around as for now. As such, the saga official tutorial becomes quite valuable. 🔥🔥
+    - But seems like there're little tutorial about step by step setup for ts+redux-saga. We can just use `any` type as a work around as for now. As such, the saga official tutorial becomes quite valuable.
 - Start thinking about what actions & what reducers you need for API call.
     - login/logout action? or combined as single action (but are their associated async action set the same)?
-    - associated API call actions basics - request, success, fail.🔥🔥🔥
+    - associated API call actions basics - request, success, fail.
+    - Also a API call utility function.
+        - [x] We have a REST API class now. Then, give another util for login/logout. (handle both social auth & backend auth)
+        - [x] Then use these util func to write your update auth saga.
+        - But - are we going to write request/success/fail for all api actions in the future? Indeed it's repetitive and tedious. See this [redux action routine package](https://github.com/afitiskin/redux-saga-routines) to automatically create those for you.
+
+- OK, we finish sagas and now the login should work, theoretically. But, we use programatical navigation. How do we do navigation in saga?🔥🔥🔥
 
 - [ ] Add logout POST to django server
 

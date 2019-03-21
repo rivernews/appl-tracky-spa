@@ -13,6 +13,7 @@ import { RootReducer } from "./store/reducers";
 
 /** sagas */
 import createSagaMiddleware from 'redux-saga';
+import { authSaga } from "./sagas/auth/sagas";
 
 /** types */
 interface IRootProps {
@@ -38,9 +39,10 @@ const store = createStore<IRootState, any, any, any>(
 );
 
 /** run saga */
-// sagaMiddleware.run(
-//     // add saga here
-// )
+sagaMiddleware.run(
+    // add saga here
+    authSaga
+)
 
 ReactDOM.render(<Root store={store} />, document.getElementById('root'));
 
