@@ -141,11 +141,14 @@ After some preliminary research, seems like we can use `react-thunk` or `react-s
     - [Asynchronous Redux Actions Using Redux Thunk @ Alligator.io](https://alligator.io/redux/redux-thunk/)
 
 - Seems like saga is a popular choice, but is quite complicated. 
-    - [This quick small redux-saga tutorial](https://flaviocopes.com/redux-saga/) sets up a simple saga example.
-    - [This is redux-saga's official tutorial](https://redux-saga.js.org/docs/introduction/BeginnerTutorial.html)🔥🔥🔥
+    - [This quick small redux-saga tutorial](https://flaviocopes.com/redux-saga/) sets up a in-depth yet quick saga example.
+    - [This is redux-saga's official tutorial](https://redux-saga.js.org/docs/introduction/BeginnerTutorial.html) 🔥🔥
 - To test out saga, we do need a typescript setup. Including how to install typings.
     - `npm i -S redux-saga`.
-    - But seems like there're little tutorial about step by step setup for ts+redux-saga. We can just use `any` type as a work around as for now. As such, the saga official tutorial becomes quite valuable.
+    - But seems like there're little tutorial about step by step setup for ts+redux-saga. We can just use `any` type as a work around as for now. As such, the saga official tutorial becomes quite valuable. 🔥🔥
+- Start thinking about what actions & what reducers you need for API call.
+    - login/logout action? or combined as single action (but are their associated async action set the same)?
+    - associated API call actions basics - request, success, fail.🔥🔥🔥
 
 - [ ] Add logout POST to django server
 
