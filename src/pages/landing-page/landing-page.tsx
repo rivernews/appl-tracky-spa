@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 /** Redux */
 import { connect } from "react-redux";
@@ -15,7 +15,7 @@ let styles = {
     color: "white"
 };
 
-interface ILandingPageProps {
+interface ILandingPageProps extends RouteComponentProps {
     auth: IUpdateAuthState;
 }
 

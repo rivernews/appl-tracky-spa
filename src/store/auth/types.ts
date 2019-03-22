@@ -15,9 +15,13 @@ export interface IUpdateAuthState {
 }
 
 // async partial store types
-export interface IRequestedAuthState {
+export interface IRequestedLoginAuthState {
     requestStatus: RequestStatus
     socialAuthToken: string
+}
+
+export interface IRequestedLogoutAuthState {
+    requestStatus: RequestStatus
 }
 
 export interface ISuccessAuthState {
@@ -45,7 +49,8 @@ export interface IFailureAuthState {
 
 export enum AuthActionNames {
     UPDATE_AUTH = "Update auth",
-    REQUESTED_AUTH = "Requested auth",
+    REQUESTED_LOGIN_AUTH = "Requested login auth",
+    REQUESTED_LOGOUT_AUTH = "Requested logout auth",
     SUCCESS_AUTH = "Success auth",
     FAILURE_AUTH = "Failure auth",
 
@@ -59,9 +64,14 @@ export interface IUpdateAuthAction {
     payload: IUpdateAuthState;
 }
 
-export interface IRequestedAuthAction {
-    type: typeof AuthActionNames.REQUESTED_AUTH;
-    payload: IRequestedAuthState;
+export interface IRequestedLoginAuthAction {
+    type: typeof AuthActionNames.REQUESTED_LOGIN_AUTH;
+    payload: IRequestedLoginAuthState;
+}
+
+export interface IRequestedLogoutAuthAction {
+    type: typeof AuthActionNames.REQUESTED_LOGOUT_AUTH;
+    payload: IRequestedLogoutAuthState;
 }
 
 export interface ISuccessAuthAction {
@@ -75,4 +85,4 @@ export interface IFailureAuthAction {
 }
 
 // use union | ... | ... to add more action types
-export type TAuthActions = IUpdateAuthAction | IRequestedAuthAction | ISuccessAuthAction | IFailureAuthAction
+export type TAuthActions = IUpdateAuthAction | IRequestedLoginAuthAction | IRequestedLogoutAuthAction | ISuccessAuthAction | IFailureAuthAction

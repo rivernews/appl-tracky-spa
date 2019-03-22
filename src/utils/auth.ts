@@ -44,12 +44,14 @@ class Authentication {
             });
     }
 
-    socialLogout = () => {
-
-    }
-
-    serverLogout = () => {
-
+    serverLogout = async () => {
+        console.log("server logout...");
+        // no server-side invalidate implement at this point (a common case for JWT, however)
+        this.state.userEmail = "";
+        this.state.userFirstName = ""
+        this.state.userLastName = ""
+        this.state.apiLoginToken = restApi.state.apiLoginToken = "";
+        return;
     }
 }
 

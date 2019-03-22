@@ -7,12 +7,12 @@ import { IUpdateAuthState } from "../../store/auth/types";
 
 /** Routes & pages */
 import { UserInfo } from "../../components/user-info/user-info";
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 /** Components */
 import { SocialAuthButtonContainer } from "../../components/social-auth/social-auth-button";
 
-interface IUserProfilePageProps {
+interface IUserProfilePageProps extends RouteComponentProps {
     auth: IUpdateAuthState;
 }
 

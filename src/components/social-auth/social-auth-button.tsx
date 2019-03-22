@@ -5,8 +5,8 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "../../store/types";
-import { IUpdateAuthAction, IRequestedAuthAction, TAuthActions, IUpdateAuthState } from "../../store/auth/types";
-import { UpdateAuth, RequestedAuth } from "../../store/auth/actions";
+import { IUpdateAuthAction, IRequestedLoginAuthAction, TAuthActions, IUpdateAuthState } from "../../store/auth/types";
+import { UpdateAuth, RequestedLoginAuth, RequestedLogoutAuth } from "../../store/auth/actions";
 
 /** Components */
 import { SocialAuthLoginButton } from "./social-auth-login-button";
@@ -14,8 +14,8 @@ import { SocialAuthLogoutButton } from "./social-auth-logout-button";
 
 interface ISocialAuthButtonProps extends RouteComponentProps {
     auth: IUpdateAuthState;
-    updateAuth: (newAuthState: IUpdateAuthState) => void;
-    requestedAuth: (socialAuthToken: string) => void;
+    requestedLoginAuth: (socialAuthToken: string) => void;
+    requestedLogoutAuth: () => void;
 }
 
 class SocialAuthButton extends Component<
@@ -45,7 +45,8 @@ class SocialAuthButton extends Component<
             },
             () => {
                 // this.apiLogin();
-                this.props.requestedAuth(this.state.code);
+                console.log("social button: request auth...");
+                this.props.requestedLoginAuth(this.state.code);
             }
         );
     };
@@ -55,60 +56,23 @@ class SocialAuthButton extends Component<
     };
 
     onSocialLogoutSuccess = () => {
-        console.log("Logout success");
-        this.setState({
-            code: ``,
-            userEmail: ``,
-            apiLoginToken: ``,
-            userFirstName: ``,
-            userLastName: ``
-        });
+        console.log("Social logout success, now our web app logout");
+        // this.setState({
+        //     code: ``,
+        //     userEmail: ``,
+        //     apiLoginToken: ``,
+        //     userFirstName: ``,
+        //     userLastName: ``
+        // });
 
-        this.props.updateAuth({
-            isLogin: false,
-            userName: "",
-            apiToken: "",
-            expireDateTime: ""
-        });
-        this.props.history.push("/");
-    };
-
-    apiLogin = () => {
-        this.apiPost({
-            data: {
-                code: this.state.code,
-                provider: this.state.socialAuthProvider,
-                redirect_uri: this.state.redirectUri
-            },
-            endpointUrl: this.state.apiLoginUrl
-        })
-            .then(jsonData => {
-                console.log("API login res:", JSON.stringify(jsonData));
-                if (jsonData.email) {
-                    console.log("API login success.");
-                    this.setState({
-                        userEmail: jsonData.email,
-                        userFirstName: jsonData.first_name,
-                        userLastName: jsonData.last_name,
-                        apiLoginToken: jsonData.token
-                    });
-
-                    this.props.updateAuth({
-                        isLogin: true,
-                        userName: `${jsonData.first_name} ${jsonData.last_name}`,
-                        apiToken: jsonData.token,
-                        expireDateTime: ""
-                    });
-
-                    this.props.history.push("/home/");
-
-                } else {
-                    console.warn("API login failure.");
-                }
-            })
-            .catch(error => {
-                console.error("API login error:", error);
-            });
+        // this.props.updateAuth({
+        //     isLogin: false,
+        //     userName: "",
+        //     apiToken: "",
+        //     expireDateTime: ""
+        // });
+        // this.props.history.push("/");
+        this.props.requestedLogoutAuth();
     };
 
     apiPost = ({
@@ -204,6 +168,7 @@ class SocialAuthButton extends Component<
     render() {
         return (
             <div className="SocialAuth">
+                request status: {this.props.auth.requestStatus} <br></br>
                 {!this.props.auth.isLogin ? (
                     <SocialAuthLoginButton
                         clientID={this.state.clientID}
@@ -228,14 +193,14 @@ const mapStateToProps = (store: IRootState) => {
 
 function mapDispatchToProps(dispatch: Dispatch<TAuthActions>) {
     return {
-        updateAuth: (newAuthState: IUpdateAuthState) => {
+        requestedLoginAuth: (socialAuthToken: string) => {
             dispatch(
-                UpdateAuth(newAuthState)
+                RequestedLoginAuth(socialAuthToken)
             );
         },
-        requestedAuth: (socialAuthToken: string) => {
+        requestedLogoutAuth: () => {
             dispatch(
-                RequestedAuth(socialAuthToken)
+                RequestedLogoutAuth()
             );
         }
     };

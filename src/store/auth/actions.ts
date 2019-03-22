@@ -1,10 +1,11 @@
 import {
     /** state types */
     IUpdateAuthState,
-    IRequestedAuthState,
+    IRequestedLoginAuthState,
     /** action types */
     IUpdateAuthAction,
-    IRequestedAuthAction,
+    IRequestedLoginAuthAction,
+    IRequestedLogoutAuthAction,
     ISuccessAuthAction,
     IFailureAuthAction,
     /** action names */
@@ -20,9 +21,9 @@ export const UpdateAuth = (newAuthState: IUpdateAuthState): IUpdateAuthAction =>
     };
 };
 
-export const RequestedAuth = (socialAuthToken: string): IRequestedAuthAction => {
+export const RequestedLoginAuth = (socialAuthToken: string): IRequestedLoginAuthAction => {
     return {
-        type: AuthActionNames.REQUESTED_AUTH,
+        type: AuthActionNames.REQUESTED_LOGIN_AUTH,
         payload: {
             requestStatus: RequestStatus.REQUESTING,
             socialAuthToken
@@ -30,7 +31,16 @@ export const RequestedAuth = (socialAuthToken: string): IRequestedAuthAction => 
     };
 };
 
-export const SuccessAuth = (userName: string, expireDateTime: string): ISuccessAuthAction => {
+export const RequestedLogoutAuth = (): IRequestedLogoutAuthAction => {
+    return {
+        type: AuthActionNames.REQUESTED_LOGOUT_AUTH,
+        payload: {
+            requestStatus: RequestStatus.REQUESTING,
+        }
+    };
+};
+
+export const SuccessLoginAuth = (userName: string, expireDateTime: string): ISuccessAuthAction => {
     return {
         type: AuthActionNames.SUCCESS_AUTH,
         payload: {
@@ -38,6 +48,18 @@ export const SuccessAuth = (userName: string, expireDateTime: string): ISuccessA
             isLogin: true,
             userName,
             expireDateTime
+        }
+    };
+};
+
+export const SuccessLogoutAuth = (): ISuccessAuthAction => {
+    return {
+        type: AuthActionNames.SUCCESS_AUTH,
+        payload: {
+            requestStatus: RequestStatus.SUCCESS,
+            isLogin: false,
+            userName: "",
+            expireDateTime: ""
         }
     };
 };

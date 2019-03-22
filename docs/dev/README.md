@@ -141,7 +141,7 @@ After some preliminary research, seems like we can use `react-thunk` or `react-s
     - [Asynchronous Redux Actions Using Redux Thunk @ Alligator.io](https://alligator.io/redux/redux-thunk/)
 
 - Seems like saga is a popular choice, but is quite complicated. 
-    - [This quick small redux-saga tutorial](https://flaviocopes.com/redux-saga/) sets up a in-depth yet quick saga example.
+    - **[This quick small redux-saga tutorial](https://flaviocopes.com/redux-saga/) sets up a in-depth yet quick saga example**.
     - [This is redux-saga's official tutorial](https://redux-saga.js.org/docs/introduction/BeginnerTutorial.html) 🔥🔥
 - To test out saga, we do need a typescript setup. Including how to install typings.
     - `npm i -S redux-saga`.
@@ -155,8 +155,38 @@ After some preliminary research, seems like we can use `react-thunk` or `react-s
         - But - are we going to write request/success/fail for all api actions in the future? Indeed it's repetitive and tedious. See this [redux action routine package](https://github.com/afitiskin/redux-saga-routines) to automatically create those for you.
 
 - OK, we finish sagas and now the login should work, theoretically. But, we use programatical navigation. How do we do navigation in saga?🔥🔥🔥
+    - [`connect-react-router`](https://github.com/supasate/connected-react-router#usage) to the rescue. It basically connects router and redux, so you can access router history object to navigate from redux store.
+    - **[Can follow this post](https://ruddra.com/posts/control-application-flow-from-redux-middleware/) to setup `connect-react-router` and, eventually, navigate in saga**.
+    - Debug: somehow `push()` is not working in saga. [Based on this github issue](https://github.com/supasate/connected-react-router/issues/260), we are trying to downgrade from `"connected-react-router": "^6.3.2",` to `"connected-react-router": "6.0.0",`. --> doesn't help
+        - `"react-router-dom": "^4.3.1",` upgrade to `"5.0.0"` and see how that goes.
+        - Just use `<Router>` instead of `<ConnectedRouter>`?
+        - Turns out it's the way we call `push` in our saga! [Inspired by this post](https://decembersoft.com/posts/changing-react-route-programmatically-with-redux-saga/).
 
-- [ ] Add logout POST to django server
+Instead of
+```js
+...
+put(push("/home/"));
+yield put(SuccessAuth(authentication.state.userEmail, ""));
+...
+```
+
+We should write
+```js
+...
+yield put(SuccessAuth(authentication.state.userEmail, ""));
+yield put(push("/home/"));
+...
+```
+
+`yield [put(SuccessAuth(authentication.state.userEmail, "")), put(push("/home/"))];` won't work as well. [See this post](https://stackoverflow.com/a/47623129/9814131).
+
+🎉🎉🎉
+
+- [x] Add logout POST to django server
+
+- Since we now need two sagas - one for logout and another for login, we need to have a root saga, and then branch out. There are several ways to include multiple sagas in the root. Common options are `all()`, `fork()`, `spawn()`, and a combination of them. [See this RootSaga section](https://redux-saga.js.org/docs/advanced/RootSaga.html) of the redux-saga official for trade offs. We will use the simpliest case here, but as the app scale, we might want to switch to `spawn()`.
+
+- Login / logout using API w/ saga done!! 🎉 🎉 🎉 !!
 
 ## CRUD-functioning User Interface
 
