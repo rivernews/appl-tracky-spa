@@ -154,7 +154,7 @@ After some preliminary research, seems like we can use `react-thunk` or `react-s
         - [x] Then use these util func to write your update auth saga.
         - But - are we going to write request/success/fail for all api actions in the future? Indeed it's repetitive and tedious. See this [redux action routine package](https://github.com/afitiskin/redux-saga-routines) to automatically create those for you.
 
-- OK, we finish sagas and now the login should work, theoretically. But, we use programatical navigation. How do we do navigation in saga?🔥🔥🔥
+- OK, we finish sagas and now the login should work, theoretically. But, we use programatical navigation. How do we do navigation in saga?
     - [`connect-react-router`](https://github.com/supasate/connected-react-router#usage) to the rescue. It basically connects router and redux, so you can access router history object to navigate from redux store.
     - **[Can follow this post](https://ruddra.com/posts/control-application-flow-from-redux-middleware/) to setup `connect-react-router` and, eventually, navigate in saga**.
     - Debug: somehow `push()` is not working in saga. [Based on this github issue](https://github.com/supasate/connected-react-router/issues/260), we are trying to downgrade from `"connected-react-router": "^6.3.2",` to `"connected-react-router": "6.0.0",`. --> doesn't help
@@ -190,6 +190,7 @@ yield put(push("/home/"));
 
 ## CRUD-functioning User Interface
 
+- 🔥 🔥 🔥 [ ] Extra points - route gaurd for authentication.
 - [ ] Think about next steps - "CRUD" & forms to create com & app & status
 - [ ] Reflection on next steps and roadmaps.
 
