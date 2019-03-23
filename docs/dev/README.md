@@ -199,6 +199,7 @@ yield put(push("/home/"));
     - Stepping into [Formik](https://jaredpalmer.com/formik/docs/overview). Install `npm install formik --save`.
     - Install [input fields from mdc-react](https://github.com/material-components/material-components-web-react/tree/master/packages/text-field): `npm install @material/react-text-field`.
     - Also prepare to [material icon](https://material.io/tools/icons/?search=add&style=baseline)!
+- [ ] Plan how to create UI for firing REST API request.
 - [ ] Reflection on next steps and roadmaps.
 
 # Reference
