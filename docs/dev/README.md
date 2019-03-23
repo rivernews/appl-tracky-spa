@@ -190,11 +190,15 @@ yield put(push("/home/"));
 - Our previous try catch block in saga is not working. We don't handle `fetch`'s then catch in the rest api object; instead, we just return `fetch()`, then the try catch block in saga will work. [See this post.](https://stackoverflow.com/questions/40007935/how-to-handle-errors-in-fetch-responses-with-redux-saga)
 - Where to store api token? Because we want to handle try/catch in saga, we cannot `then()` in authentication object as well. The recommended way is to put that in global store, and access it only in saga. Of course, this means all API calls have to go through saga. --> Actually you can leave the `then()` in authentication, and just don't use `catch()` there. But yes, best practice still, access store in saga, and store is the only "single source of truth". [See this post](https://stackoverflow.com/questions/37772877/how-to-get-something-from-the-state-store-inside-a-redux-saga-function) to get store in saga. (You have to create a `selector` function)
 
-## CRUD-functioning User Interface
-
 - [x] Extra points - route gaurd for authentication.
     - Turns out that by doing this, we actually don't need `push()` in saga anymore - because our redirection in public/private routes automatically does this.
-- [ ] Think about next steps - "CRUD" & forms to create com & app & status 🔥 🔥 🔥 
+
+## CRUD-functioning User Interface
+
+- Think about next steps - "CRUD" & forms to create com & app & status 🔥 🔥 🔥 
+    - Stepping into [Formik](https://jaredpalmer.com/formik/docs/overview). Install `npm install formik --save`.
+    - Install [input fields from mdc-react](https://github.com/material-components/material-components-web-react/tree/master/packages/text-field): `npm install @material/react-text-field`.
+    - Also prepare to [material icon](https://material.io/tools/icons/?search=add&style=baseline)!
 - [ ] Reflection on next steps and roadmaps.
 
 # Reference
