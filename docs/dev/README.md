@@ -187,11 +187,14 @@ yield put(push("/home/"));
 - Since we now need two sagas - one for logout and another for login, we need to have a root saga, and then branch out. There are several ways to include multiple sagas in the root. Common options are `all()`, `fork()`, `spawn()`, and a combination of them. [See this RootSaga section](https://redux-saga.js.org/docs/advanced/RootSaga.html) of the redux-saga official for trade offs. We will use the simpliest case here, but as the app scale, we might want to switch to `spawn()`.
 
 - Login / logout using API w/ saga done!! 🎉 🎉 🎉 !!
+- Our previous try catch block in saga is not working. We don't handle `fetch`'s then catch in the rest api object; instead, we just return `fetch()`, then the try catch block in saga will work. [See this post.](https://stackoverflow.com/questions/40007935/how-to-handle-errors-in-fetch-responses-with-redux-saga)
+- Where to store api token? Because we want to handle try/catch in saga, we cannot `then()` in authentication object as well. The recommended way is to put that in global store, and access it only in saga. Of course, this means all API calls have to go through saga. --> Actually you can leave the `then()` in authentication, and just don't use `catch()` there. But yes, best practice still, access store in saga, and store is the only "single source of truth". [See this post](https://stackoverflow.com/questions/37772877/how-to-get-something-from-the-state-store-inside-a-redux-saga-function) to get store in saga. (You have to create a `selector` function)
 
 ## CRUD-functioning User Interface
 
-- 🔥 🔥 🔥 [ ] Extra points - route gaurd for authentication.
-- [ ] Think about next steps - "CRUD" & forms to create com & app & status
+- [x] Extra points - route gaurd for authentication.
+    - Turns out that by doing this, we actually don't need `push()` in saga anymore - because our redirection in public/private routes automatically does this.
+- [ ] Think about next steps - "CRUD" & forms to create com & app & status 🔥 🔥 🔥 
 - [ ] Reflection on next steps and roadmaps.
 
 # Reference

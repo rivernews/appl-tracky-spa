@@ -8,6 +8,7 @@ import { IUpdateAuthState } from "../../store/auth/types";
 /** Routing & Pages */
 import {
     Route,
+    Redirect,
     Switch,
     Link,
     withRouter,
@@ -38,56 +39,60 @@ class PageRoutes extends Component<IPageRoutesProps> {
     render() {
         return (
             <div className="PageRoutesContainer">
-                    {this.props.location.pathname === "/" ? (
-                        <Route
-                            path="/"
-                            exact
-                            component={LandingPageContainer}
+                {this.props.location.pathname === "/" ? (
+                    <Route path="/" exact component={LandingPageContainer} />
+                ) : (
+                    <div className="PrivateRoutesContainer">
+
+                        {
+                            /** protect private routes */
+                            (!this.props.auth.isLogin) && (
+                                <Redirect to="/" />
+                            )
+                        }
+
+                        <TopAppBar
+                            title="Appl Tracky"
+                            actionItems={[
+                                <Link to="/home/">
+                                    <MaterialIcon
+                                        hasRipple
+                                        key="itemHome"
+                                        icon="home"
+                                    />
+                                </Link>,
+                                <Link to="/profile/">
+                                    <MaterialIcon
+                                        hasRipple
+                                        key="itemProfile"
+                                        icon="account_circle"
+                                    />
+                                </Link>
+                            ]}
                         />
-                    ) : (
-                        <div className="PrivateRoutesContainer">
-                            <TopAppBar
-                                title="Appl Tracky"
-                                actionItems={[
-                                    <Link to="/home/">
-                                        <MaterialIcon
-                                            hasRipple
-                                            key="itemHome"
-                                            icon="home"
-                                        />
-                                    </Link>,
-                                    <Link to="/profile/">
-                                        <MaterialIcon
-                                            hasRipple
-                                            key="itemProfile"
-                                            icon="account_circle"
-                                        />
-                                    </Link>
-                                ]}
-                            />
-                            <TopAppBarFixedAdjust>
-                                <Switch>
-                                    <Route
-                                        path="/home/"
-                                        component={UserAppPageContainer}
-                                    />
-                                    <Route
-                                        path="/add-com/"
-                                        component={AddComPageContainer}
-                                    />
-                                    <Route
-                                        path="/com-app/:id/"
-                                        component={UserComAppPageContainer}
-                                    />
-                                    <Route
-                                        path="/profile/"
-                                        component={UserProfilePageContainer}
-                                    />
-                                    {/** add more page routes here */}
-                                </Switch>
-                            </TopAppBarFixedAdjust>
-                        </div>
-                    )}
+                        <TopAppBarFixedAdjust>
+                            <Switch>
+                                <Route
+                                    path="/home/"
+                                    component={UserAppPageContainer}
+                                />
+                                <Route
+                                    path="/add-com/"
+                                    component={AddComPageContainer}
+                                />
+                                <Route
+                                    path="/com-app/:id/"
+                                    component={UserComAppPageContainer}
+                                />
+                                <Route
+                                    path="/profile/"
+                                    component={UserProfilePageContainer}
+                                />
+                                {/** add more page routes here */}
+                            </Switch>
+                        </TopAppBarFixedAdjust>
+                    </div>
+                )}
             </div>
         );
     }

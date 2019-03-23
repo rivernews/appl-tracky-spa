@@ -6,12 +6,12 @@ import { RequestStatus } from "../../utils/rest-api";
 
 // complete store type
 export interface IUpdateAuthState {
-    requestStatus?: RequestStatus
-    isLogin?: boolean
-    userName?: string
-    socialAuthToken?: string
-    apiToken?: string
-    expireDateTime?: string,
+    requestStatus: RequestStatus
+    isLogin: boolean
+    userName: string
+    socialAuthToken: string
+    apiToken: string
+    expireDateTime: string,
 }
 
 // async partial store types
@@ -29,6 +29,7 @@ export interface ISuccessAuthState {
     isLogin: boolean
     userName: string
     expireDateTime: string
+    apiToken: string
 }
 
 export interface IFailureAuthState {

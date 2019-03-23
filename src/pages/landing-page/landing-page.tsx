@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import { withRouter, RouteComponentProps, Redirect } from "react-router-dom";
 
 /** Redux */
 import { connect } from "react-redux";
@@ -23,6 +23,12 @@ class LandingPage extends Component<ILandingPageProps> {
     render() {
         return (
             <div className="LandingPage" style={styles}>
+                {
+                    /** redirect logged in user to private routes */
+                    (this.props.auth.isLogin) && (
+                        <Redirect to="/home/" />
+                    )
+                }
                 <h1>LandingPage Works!</h1>
                 <SocialAuthButtonContainer />
             </div>
@@ -31,7 +37,6 @@ class LandingPage extends Component<ILandingPageProps> {
 }
 
 const mapStateToProps = (state: IRootState) => ({
-    // prop: state.prop
     auth: state.auth
 });
 

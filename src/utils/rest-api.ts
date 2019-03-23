@@ -39,7 +39,8 @@ export class RestApi {
             method: "POST",
             ...this.setApiAuthHeaders(),
             body: JSON.stringify(data)
-        }).then(res => res.json());
+        })
+        .then(res => res.json());
         // let caller handle error in their own .catch()
     };
 
