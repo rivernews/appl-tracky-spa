@@ -195,11 +195,17 @@ yield put(push("/home/"));
 
 ## CRUD-functioning User Interface
 
-- Think about next steps - "CRUD" & forms to create com & app & status 🔥 🔥 🔥 
+- Think about next steps - "CRUD" & forms to create com & app & status
     - Stepping into [Formik](https://jaredpalmer.com/formik/docs/overview). Install `npm install formik --save`.
     - Install [input fields from mdc-react](https://github.com/material-components/material-components-web-react/tree/master/packages/text-field): `npm install @material/react-text-field`.
     - Also prepare to [material icon](https://material.io/tools/icons/?search=add&style=baseline)!
 - [ ] Plan how to create UI for firing REST API request.
+    - Rest request for company - POST/DELETE/PATCH/GET, how to create async action & saga efficiently? Copy paste requested/success/failure?
+    - [`redux-arc, star=149`](https://github.com/viniciusdacal/redux-arc) can be a choice for RESTful api async actions w/ redux.
+    - [`redux-rest, star=179`](https://github.com/Kvoti/redux-rest)
+    - [`redux-rest-resources, star=179`](https://github.com/Kvoti/redux-rest)
+    - **[`redux-api, star=489`](https://github.com/lexich/redux-api)**
+    - [Design a state action creator for RESTful API](restful-saga/)🔥 🔥 🔥 
 - [ ] Reflection on next steps and roadmaps.
 
 # Reference
