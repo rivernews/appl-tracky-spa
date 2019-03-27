@@ -143,3 +143,7 @@ Always use singular form of object name. No plural.
 - **`POST /object/`**: create an object. (batch creation not supported)
 - **`PATCH /object/:id/`**: update an object. (batch update not supported)
 - **`DELETE /object/:id/`**: delete an object. (batch deletion not supported)
+
+# Generalizing Async Actions
+
+The key is these two types: `IApiCallInstruction` and `INewStateUpdateInstruction`. What should they be?

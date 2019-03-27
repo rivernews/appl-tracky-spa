@@ -5,12 +5,14 @@ export enum RequestStatus {
     FAILURE = "failre"
 }
 
-export const CrudMapToRest = {
-    CREATE: "POST",
-    READ: "GET",
-    LIST: "GET",
-    UPDATE: "PATCH",
-    DELETE: "DELETE",
+export const CrudMapToRest: {
+    [crudKeyword: string]: "post" | "get" | "patch" | "delete"
+} = {
+    CREATE: "post",
+    READ: "get",
+    LIST: "get",
+    UPDATE: "patch",
+    DELETE: "delete",
 }
 
 interface IRequestParams {
