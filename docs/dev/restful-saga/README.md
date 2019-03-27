@@ -254,3 +254,25 @@ import omit from "lodash/omit"; // see https://lodash.com/docs/4.17.11#omit
     }
 }
 ```
+
+## Where should these data go?
+
+We have 1) data needed by api call 2) how to update store, where should we put them in?
+
+Let's recall the flow...
+
+1. Class component dispatch the trigger action. **API call data should be passed in from here.**
+1. Saga intecepts it (trigger action). **The api call data should be in the action payload,** so saga can access it.
+1. Saga makes api call using the data.
+1. Saga dispatch success action. **This is where the args of the update store function above should be supplied**. A quick recap of the args needed for store update is given below. **These should be obtained from api response, and passed into success action creator**:
+    - create: `form data`.
+    - read: n/a.
+    - udpate: `form data`.
+    - delete: `id`.
+1. Reducer updates store based on the action object.
+    - The way to update store depends on what CRUD action it is, so we'll use if-else block to process them.
+    - Args to update store should be obtained from success action payload.
+    - The if-else will have to cover other kinds of async action, such as requested/error
+    - Eventually we will have only one reducer for the object, with if-else blocks handling all async & crud actions.
+
+Actually, the above format holds true for other object type as well, because this is the RESTful / CRUD pattern. The only exception is when handling foreign key, but our REST API can also help us handle this as well, by doing a depth filling.
