@@ -139,7 +139,7 @@ See the file `stoer/rest-api-redux-factory.ts`.
 Always use singular form of object name. No plural.
 
 - **`GET /object/`**: get a list of object. (filter can also be implemented, query in GET params, customize on server view controller)
-- **`GET /object/:id/`**: get an object of specified.
+- ~~**`GET /object/:id/`**: get an object of specified.~~ Actually, we may not need this, because for redux global store, we always want to grab all the object down, then we access them in the frontend logic.
 - **`POST /object/`**: create an object. (batch creation not supported)
 - **`PATCH /object/:id/`**: update an object. (batch update not supported)
 - **`DELETE /object/:id/`**: delete an object. (batch deletion not supported)
@@ -147,3 +147,110 @@ Always use singular form of object name. No plural.
 # Generalizing Async Actions
 
 The key is these two types: `IApiCallInstruction` and `INewStateUpdateInstruction`. What should they be?
+
+What data is needed for API call, and how the store will be updated? Assume that api base url and object name are supplied automatically.
+
+## Store's Shape
+
+Before we begin - the basic store data structure:
+
+```ts
+interface IObjectSchema {
+    id: string
+    name: string
+    ...
+}
+
+interface IObjectStore {
+    objectList: {
+        [id:string]: IObjectSchema
+    }
+}
+```
+
+This simulates a NoSQL collection structure, where an object can be quickly located by its id, instead of doing linear filtering.
+
+## Create
+
+- API call needs: 
+    - `form data` w/ spec aligning to data model
+- How to update store:
+
+```ts
+(store, newObject = resData OR form data w/ id, whichever represents the complete new object) => {
+    return {
+        objectList: {
+            ...store.objectList,
+            [newObject.id]: newObject,
+        }
+    }
+}
+```
+
+As you can see the reducer needs the `newObject` information provided. This can be done by putting `newObject` in the success aync action's payload.
+
+## Read (List)
+
+- API call needs: 
+    - None. (but if reading one object, we'll need the id. But - where does this id come from? We must already know the id, and the only way to get the id is to request a list of all objects at the first place. But if we have all objects in redux, why do we need to request a single object then? This makes it clear that we might not need the single-object read.)
+- How to update store:
+
+```ts
+(store, newObjectList) => {
+    let objectList = {};
+    newObjectList.forEach((object) => {
+        objectList[object.id] = object
+    })
+    return {
+        objectList
+    }
+}
+```
+
+There are some assumptions here. We always use the new list as our entire object list store. So everything in previous list will be discarded. Instead, we can choose to preserve anything as many as we can, and only update the overlapping objects:
+
+```ts
+(store, newObjectList) => {
+    let newObjectList = {};
+    newObjectList.forEach((object) => {
+        newObjectList[object.id] = object
+    })
+    return {
+        objectList: {
+            ...store.objectList,
+            ...newObjectList
+        }
+    }
+}
+```
+
+## Update
+
+- API call needs (same as create): 
+    - `form data` w/ spec aligning to data model
+- How to update store (if using resData, then all same as create):
+
+```ts
+(store, newObject = resData OR form data, both will work) => {
+    return objectList: {
+        ...store.objectList,
+        [newObject.id]: newObject,
+    }
+}
+```
+
+## Delete
+
+- API call needs: 
+    - At least `id`. `form data` will do the work as well, but have some overhead.
+- How to update store:
+
+```ts
+import omit from "lodash/omit"; // see https://lodash.com/docs/4.17.11#omit
+
+(store, newObject = resData OR form data w/ id, whichever represents the complete new object) => {
+    return {
+        objectList: omit(store.objectList, [newObject.id])
+    }
+}
+```

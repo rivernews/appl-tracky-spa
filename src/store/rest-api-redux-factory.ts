@@ -15,12 +15,6 @@ interface IApiCallInstruction {
 
 interface INewStateUpdateInstruction {}
 
-interface IObjectActionNames {
-    [restfulKeyword: string]: {
-        [asyncKeyword: string]: string;
-    };
-}
-
 interface IObjectRestApiRedux {
     [restfulKeyword: string]: {
         [asyncKeyword: string]: {
@@ -56,7 +50,7 @@ const RESTAPIReduxFactory = (
         // async actions ( & state...)
         ObjectRestApiRedux[crudKeyword][
             RequestStatus.TRIGGERED
-        ].action = () => {
+        ].action = (/** data needed for api call */) => {
             return {
                 type:
                     ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
@@ -88,7 +82,7 @@ const RESTAPIReduxFactory = (
                         .actionTypeName,
                 payload: {
                     requestStatus: RequestStatus.SUCCESS
-                    // TODO:
+                    // TODO: things got from api response, and needs to update to redux
                 }
             };
         };
@@ -150,57 +144,6 @@ const RESTAPIReduxFactory = (
                 );
             }
         };
-    }
-
-    /** create */
-
-    // request
-    type IRequestedCreateObjectState = {
-        requestStatus: RequestStatus;
-    };
-    // TODO: success
-
-    // TODO: failure
-
-    type IRequestedCreateObjectAction = {
-        type: IObjectActionNames;
-        payload: IRequestedCreateObjectState;
-    };
-
-    // TODO: generate generator programmatically
-    // http://2ality.com/2015/03/es6-generators.html
-    let thing = {
-        *[objectName]() {
-            yield "";
-        }
-    };
-
-    function* createObjectSagaHandler(
-        requestedCreateObjectAction: IRequestedCreateObjectAction
-    ) {
-        // RequestAuth action triggered & injecting side effects here...
-        const actionPayload = requestedCreateObjectAction.payload;
-        try {
-            // api call
-            const jsonResponse = yield call(RestApiService.post, {
-                data: actionPayload,
-                objectName
-            });
-
-            // success state
-            yield put(SuccessCreateObjectAction(SuccessCreateObjectState));
-        } catch (error) {
-            // error state
-            yield put(FailureCreateObjectAction(error));
-            return;
-        }
-    }
-
-    function* createObjectSaga() {
-        yield takeEvery(
-            ObjectActionNames.create.triggered,
-            createObjectSagaHandler
-        );
     }
 
     /** rest of the CRUD - create/read/list/update/delete */
