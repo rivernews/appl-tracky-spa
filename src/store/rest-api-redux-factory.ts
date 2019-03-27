@@ -1,20 +1,29 @@
 import { takeEvery, call, put, all } from "redux-saga/effects";
+import { RequestStatus, CrudMapToRest, RestApiService, } from "../utils/rest-api";
 
 interface IApiCallInstruction {
     objectName: string;
 }
 
-interface InewStateUpdateInstruction {}
+interface INewStateUpdateInstruction {
+
+}
 
 const RESTAPIReduxFactory = (
     apiCallInstruction: IApiCallInstruction,
-    newStateUpdateInstruction: any
+    newStateUpdateInstruction: INewStateUpdateInstruction
 ): any => {
     const { objectName } = apiCallInstruction;
-    const asyncKeywords = ['trigger','requested', 'success', 'failure'];
-    const restfulKeywords = ['create','read', 'list', 'update', 'delete'];
+    const asyncKeywords = Object.values(RequestStatus);
+    const restfulKeywords = Object.keys(CrudMapToRest);
 
-    let ObjectActionNames: any = {}
+    /** action type names */
+    type IObjectActionNames = {
+        [restfulKeyword: string]: {
+            [asyncKeyword: string]: string
+        }
+    }
+    let ObjectActionNames: IObjectActionNames = {}
     for (let restfulKeyword of restfulKeywords) {
         ObjectActionNames[restfulKeyword] = {}
         for (let asyncKeyword of asyncKeywords) {
@@ -24,21 +33,35 @@ const RESTAPIReduxFactory = (
 
     /** create */
 
+    // request
+    type IRequestedCreateObjectState = {
+        requestStatus: RequestStatus
+    }
+    // TODO: success
+
+    // TODO: failure
+
+    type IRequestedCreateObjectAction = {
+        type: IObjectActionNames
+        payload: IRequestedCreateObjectState
+    }
+
     function* createObjectSagaHandler(
-        requestedLoginAuthAction: IRequestedLoginAuthAction
+        requestedCreateObjectAction: IRequestedCreateObjectAction
     ) {
         // RequestAuth action triggered & injecting side effects here...
-        console.log("auth saga: initialize");
-        const { socialAuthToken } = requestedLoginAuthAction.payload;
-        console.log("auth saga: request fired");
+        const actionPayload = requestedCreateObjectAction.payload;
         try {
-            // TODO: define interface typing for api response
-            const jsonResponse = yield call(authentication.serverLogin, socialAuthToken);
-            console.log("auth saga: navigating. jsonRes:", jsonResponse);
+            // api call
+            const jsonResponse = yield call(RestApiService.post, {
+                data: actionPayload,
+                objectName
+            });
+
+            // success state
             yield put(SuccessLoginAuth(jsonResponse.email, "", jsonResponse.token));
-            // yield put(push("/home/"));
         } catch (error) {
-            console.warn("auth saga: error")
+            // error state
             yield put(FailureAuth(error));
             return;
         }

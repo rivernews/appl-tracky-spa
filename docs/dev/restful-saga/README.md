@@ -132,4 +132,14 @@ const apiCallInstruction = {
         - Sagas: `companyRestRedux.sagas.create|read|list|update|delete(...)`
 - In theory, we still need `newStateUpdateInstruction` in order to make reducer work properly for each rest actions. So, to wrap up: `const RESTAPIReduxFactory = (apiCallInstruction, newStateUpdateInstruction) => an object that contains actions, reducers, types and sagas, including all async states & CRUD operations`. How do we do that? Well, we already have our spec, so let's try to build one for `company`!
 
-See the file `stoer/rest-api-redux-factory.ts`
+See the file `stoer/rest-api-redux-factory.ts`.
+
+# Designing Endpoints
+
+Always use singular form of object name. No plural.
+
+- **`GET /object/`**: get a list of object. (filter can also be implemented, query in GET params, customize on server view controller)
+- **`GET /object/:id/`**: get an object of specified.
+- **`POST /object/`**: create an object. (batch creation not supported)
+- **`PATCH /object/:id/`**: update an object. (batch update not supported)
+- **`DELETE /object/:id/`**: delete an object. (batch deletion not supported)

@@ -1,4 +1,4 @@
-import { restApi } from "./rest-api";
+import { RestApiService } from "./rest-api";
 
 class Authentication {
     state = {
@@ -17,8 +17,8 @@ class Authentication {
     };
 
     serverLogin = (socialLoginCode: string) => {
-        return restApi
-            .apiPost({
+        return RestApiService
+            .post({
                 data: {
                     code: socialLoginCode,
                     provider: this.state.socialAuthProvider,
@@ -55,7 +55,7 @@ class Authentication {
         this.state.userEmail = "";
         this.state.userFirstName = ""
         this.state.userLastName = ""
-        this.state.apiLoginToken = restApi.state.apiLoginToken = "";
+        this.state.apiLoginToken = RestApiService.state.apiLoginToken = "";
         return;
     }
 }

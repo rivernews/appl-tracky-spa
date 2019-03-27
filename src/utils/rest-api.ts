@@ -1,7 +1,22 @@
 export enum RequestStatus {
+    TRIGGERED = "triggered",
     REQUESTING = "requesting",
     SUCCESS = "success",
     FAILURE = "failre"
+}
+
+export const CrudMapToRest = {
+    CREATE: "POST",
+    READ: "GET",
+    LIST: "GET",
+    UPDATE: "PATCH",
+    DELETE: "DELETE",
+}
+
+interface IRequestParams {
+    endpointUrl?: string
+    objectName?: string
+    data?: any
 }
 
 export class RestApi {
@@ -21,21 +36,23 @@ export class RestApi {
         objectID: ``
     }
 
-    apiGet = ({ endpointUrl }: { endpointUrl: string }) => {
-        return fetch(`${this.state.apiBaseUrl}${endpointUrl}`, {
+    get = ({ endpointUrl, objectName, data }: IRequestParams) => {
+        return fetch(this.getRelativeUrl({
+            endpointUrl, objectName, data
+        }), {
             method: "GET",
             ...this.setApiAuthHeaders()
         }).then(res => res.json());
     }
 
-    apiPost = ({
+    post = ({
         data,
+        objectName,
         endpointUrl
-    }: {
-        data: object;
-        endpointUrl: string;
-    }) => {
-        return fetch(`${this.state.apiBaseUrl}${endpointUrl}`, {
+    }: IRequestParams) => {
+        return fetch(this.getRelativeUrl({
+            endpointUrl, objectName, data
+        }), {
             method: "POST",
             ...this.setApiAuthHeaders(),
             body: JSON.stringify(data)
@@ -44,7 +61,49 @@ export class RestApi {
         // let caller handle error in their own .catch()
     };
 
-    setApiAuthHeaders = (): RequestInit => {
+    patch = ({
+        data,
+        objectName,
+        endpointUrl
+    }: IRequestParams) => {
+        return fetch(this.getRelativeUrl({
+            endpointUrl, objectName, data
+        }), {
+            method: "PATCH",
+            ...this.setApiAuthHeaders(),
+            body: JSON.stringify(data)
+        });
+    }
+
+    delete = ({
+        data,
+        objectName,
+        endpointUrl
+    }: IRequestParams) => {
+        return fetch(this.getRelativeUrl({
+            endpointUrl, objectName, data
+        }), {
+            method: "DELETE",
+            ...this.setApiAuthHeaders(),
+            body: JSON.stringify(data)
+        });
+    }
+
+    /** helper */
+    private getRelativeUrl = ({
+        objectName,
+        data,
+        endpointUrl,
+    }: IRequestParams) => {
+        if (endpointUrl) {
+            return `${this.state.apiBaseUrl}${endpointUrl}`;
+        } 
+        else {
+            return `${this.state.apiBaseUrl}${objectName}/${(data.id) ? data.id + "/" : ""}`;
+        }
+    }
+
+    private setApiAuthHeaders = (): RequestInit => {
         return {
             mode: "cors",
             credentials: this.state.apiLoginToken ? "include" : "omit",
@@ -59,4 +118,4 @@ export class RestApi {
 }
 
 /** create restapi singleton */
-export const restApi = new RestApi();
+export const RestApiService = new RestApi();
