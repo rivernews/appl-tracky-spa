@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+
+/** route */
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 /** Redux */
@@ -7,7 +9,10 @@ import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
 // REST API
 import { CrudType, RequestStatus } from "../../utils/rest-api";
-import { IObjectAction } from "../../store/rest-api-redux-factory";
+import {
+    IObjectAction,
+    IObjectStore
+} from "../../store/rest-api-redux-factory";
 import { companyActions, Company } from "../../store/company/company";
 import { addressActions, Address } from "../../store/address/address";
 
@@ -24,8 +29,10 @@ import TextField, { HelperText, Input } from "@material/react-text-field";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 interface IAddComPageProps extends RouteComponentProps {
+    company: IObjectStore<Company>;
+    address: IObjectStore<Address>;
     createCompany: (companyFormData: Company) => void;
-    createAddress: (addressFormData: Address) => void;
+    createAddress: (addressFormData: Address, callback?: Function) => void;
 }
 
 class AddComPage extends Component<IAddComPageProps> {
@@ -47,25 +54,37 @@ class AddComPage extends Component<IAddComPageProps> {
                         return errors;
                     }}
                     onSubmit={(values, { setSubmitting }) => {
-                        setTimeout(() => {
-                            alert(JSON.stringify(values, null, 2));
-                            setSubmitting(false);
+                        // alert(JSON.stringify(values, null, 2));
+                        setSubmitting(false);
 
-                            // this.props.createCompany(
-                            //     new Company(
-                            //         values.companyName,
-                            //         values.companyHomePageURL
-                            //     )
-                            // );
-                            this.props.createAddress(
-                                new Address(
-                                    "", values.companyFullAddress
-                                )
-                            )
-                            // this.props.history.push(
-                            //     "/com-app/erwrwr-123421-adfdf/"
-                            // );
-                        }, 1000);
+                        // this.props.createCompany(
+                        //     new Company(
+                        //         values.companyName,
+                        //         values.companyHomePageURL
+                        //     )
+                        // );
+                        this.props.createAddress(
+                            new Address("", values.companyFullAddress),
+                            () => {
+                                if (this.props.address.lastChangedObjectID) {
+                                    let newAddress = this.props.address.objectList[
+                                        this.props.address.lastChangedObjectID
+                                    ]
+                                    console.log(
+                                        "new address:",
+                                        newAddress
+                                    );
+                                    this.props.history.push(
+                                        `/com-app/${newAddress.uuid}/`
+                                    );
+                                } else {
+                                    console.error("store has no lastChangedObjectID");
+                                }
+                            }
+                        );
+                        // this.props.history.push(
+                        //     "/com-app/erwrwr-123421-adfdf/"
+                        // );
                     }}
                 >
                     {({
@@ -78,7 +97,7 @@ class AddComPage extends Component<IAddComPageProps> {
                         isSubmitting
                     }) => (
                         <form onSubmit={handleSubmit}>
-                        {/* Company Name */}
+                            {/* Company Name */}
                             <TextField
                                 label="Company Name"
                                 onTrailingIconSelect={() => {
@@ -103,7 +122,7 @@ class AddComPage extends Component<IAddComPageProps> {
 
                             <br />
 
-                                {/* Company Website URL */}
+                            {/* Company Website URL */}
                             <TextField
                                 label="Company HomePage URL"
                                 onTrailingIconSelect={() => {
@@ -128,7 +147,7 @@ class AddComPage extends Component<IAddComPageProps> {
 
                             <br />
 
-                                {/* Company Address */}
+                            {/* Company Address */}
                             <TextField
                                 label="Company Full Address"
                                 onTrailingIconSelect={() => {
@@ -167,6 +186,8 @@ class AddComPage extends Component<IAddComPageProps> {
 
 const mapStateToProps = (state: IRootState) => ({
     // prop: state.prop
+    company: state.company,
+    address: state.address
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
@@ -178,10 +199,11 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
                     companyFormData
                 )
             ),
-        createAddress: (addressFormData: Address) =>
+        createAddress: (addressFormData: Address, callback?: Function) =>
             dispatch(
                 addressActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
-                    addressFormData
+                    addressFormData,
+                    callback
                 )
             )
     };

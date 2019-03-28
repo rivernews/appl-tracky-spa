@@ -2,12 +2,15 @@ import { RestApiReduxFactory } from "../rest-api-redux-factory";
 
 export class Address {
     uuid: string = ""
+    place_name: string = "";
+    full_address: string = "";
 
     constructor(
-        private place_name: string,
-        private full_address: string
+        place_name: string,
+        full_address: string
     ) {
-
+        this.place_name = place_name;
+        this.full_address = full_address;
     }
 }
 

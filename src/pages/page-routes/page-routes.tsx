@@ -81,7 +81,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                     component={AddComPageContainer}
                                 />
                                 <Route
-                                    path="/com-app/:id/"
+                                    path="/com-app/:uuid/"
                                     component={UserComAppPageContainer}
                                 />
                                 <Route

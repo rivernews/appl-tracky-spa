@@ -55,6 +55,12 @@ export interface IListRestApiResponse<Schema> {
 
 export type ISingleRestApiResponse<Schema> = TObject<Schema>;
 
+export function IsSingleRestApiResponseTypeGuard<Schema>(
+    response: ISingleRestApiResponse<Schema> | IListRestApiResponse<Schema>
+): response is ISingleRestApiResponse<Schema> {
+    return (<ISingleRestApiResponse<Schema>>response).uuid !== undefined;
+}
+
 export class RestApi {
     state = {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,

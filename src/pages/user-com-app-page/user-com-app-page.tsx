@@ -6,21 +6,33 @@ import { RouteComponentProps } from 'react-router';
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
+// rest api
+import { IObjectStore } from "../../store/rest-api-redux-factory";
+import { Address } from "../../store/address/address";
 
 /** Components */
 
 interface IUserComAppPageParams {
-    id: string
+    uuid: string
 }
 
-class UserComAppPage extends Component<RouteComponentProps<IUserComAppPageParams>> {
+interface IUserComAppPageProps extends RouteComponentProps<IUserComAppPageParams> {
+    address: IObjectStore<Address>
+}
+
+class UserComAppPage extends Component<IUserComAppPageProps> {
     render() {
+        let uuid = this.props.match.params.uuid;
+        let address = this.props.address.objectList[uuid];
         return (
             <div className="UserComAppPage">
                 <h1>UserComAppPage Works!</h1>
                 <p>
-                    Company id is {this.props.match.params.id}
+                    Address uuid is {uuid}
                 </p>
+                <ul>
+                    <li>Full address: {address.full_address}</li>
+                </ul>
             </div>
         )
     }
@@ -28,6 +40,7 @@ class UserComAppPage extends Component<RouteComponentProps<IUserComAppPageParams
 
 const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
+    address: store.address
 });
 
 const mapDispatchToProps = {

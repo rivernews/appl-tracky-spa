@@ -6,7 +6,8 @@ import {
     CrudMapToRest,
     RestApiService,
     ISingleRestApiResponse,
-    IListRestApiResponse
+    IListRestApiResponse,
+    IsSingleRestApiResponseTypeGuard
 } from "../utils/rest-api";
 import omit from "lodash/omit";
 
@@ -16,8 +17,7 @@ export interface IObjectBase {
     uuid: string;
 }
 
-export type TObject<Schema> = IObjectBase &
-    { [Property in keyof Schema]: Schema[Property] };
+export type TObject<Schema> = IObjectBase & { [Property in keyof Schema]: Schema[Property] };
 
 interface IObjectList<Schema> {
     [uuid: string]: TObject<Schema>;
@@ -25,6 +25,7 @@ interface IObjectList<Schema> {
 
 export interface IObjectStore<Schema> {
     objectList: IObjectList<Schema>;
+    lastChangedObjectID?: string;
     requestStatus: RequestStatus;
     error?: any;
 }
@@ -44,9 +45,11 @@ type IObjectRestApiAction = {
 export interface IObjectAction<Schema> {
     type: string;
     crudType: CrudType;
+    callback?: Function;
     payload: {
-        requestStatus: RequestStatus;
         formData?: TObject<Schema> | Array<TObject<Schema>>;
+        lastChangedObjectID?: string;
+        requestStatus: RequestStatus;
         error?: any;
     };
 }
@@ -89,7 +92,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
         // async actions ( & state...)
         ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED].action = (
-            /** data needed for api call */ objectClassInstance: TObjectSchema
+            objectClassInstance: TObjectSchema,
+            callback?: Function
         ): IObjectAction<TObjectSchema> => {
             console.log(`action:fired, trigger, ${crudKeyword}`);
             return {
@@ -97,6 +101,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
                         .actionTypeName,
                 crudType: crudKeyword,
+                callback: callback,
                 payload: {
                     requestStatus: RequestStatus.TRIGGERED,
                     formData: objectClassInstance
@@ -127,14 +132,24 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         .actionTypeName,
                 crudType: crudKeyword
             };
-            if ((<ISingleRestApiResponse<TObjectSchema>>jsonResponse).uuid) {
+            // if is delete success, we don't need formData (& the server responds nothing for DELETE as well)
+            if (crudKeyword === CrudType.DELETE) {
+                return {
+                    ...newState,
+                    payload: {
+                        requestStatus: RequestStatus.SUCCESS,
+                    }
+                }
+            }
+            else if (IsSingleRestApiResponseTypeGuard(jsonResponse)) {
                 return {
                     ...newState,
                     payload: {
                         requestStatus: RequestStatus.SUCCESS,
                         formData: <ISingleRestApiResponse<TObjectSchema>>(
                             jsonResponse
-                        )
+                        ),
+                        lastChangedObjectID: jsonResponse.uuid
                     }
                 };
             } else {
@@ -193,6 +208,10 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         RequestStatus.SUCCESS
                     ].action(jsonResponse)
                 );
+
+                if (triggerAction.callback) {
+                    triggerAction.callback();
+                }
             } catch (error) {
                 // error state
                 yield put(
@@ -241,7 +260,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         ...objectStore.objectList,
                         [newObject.uuid]: newObject
                     },
-                    requestStatus: action.payload.requestStatus
+                    requestStatus: action.payload.requestStatus,
+                    lastChangedObjectID: action.payload.lastChangedObjectID
                 };
             }
 
@@ -271,7 +291,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         ...objectStore.objectList,
                         [newObject.uuid]: newObject
                     },
-                    requestStatus: action.payload.requestStatus
+                    requestStatus: action.payload.requestStatus,
+                    lastChangedObjectID: action.payload.lastChangedObjectID
                 };
             }
 
