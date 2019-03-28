@@ -286,8 +286,8 @@ Some takeaways during implementation:
 
 ## Factory Complete!
 
-Next: clean up code
+- [ ] Next: clean up code
 
-Next: creating company/address: so how do we navigate after submit form?
+- [x] Next: creating company/address: so how do we navigate after submit form?
 
-Next: how to get foreign key / one-to-one entries?
+- [ ] Next: how to get foreign key / one-to-one entries?
