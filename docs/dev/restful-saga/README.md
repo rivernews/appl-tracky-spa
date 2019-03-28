@@ -283,3 +283,9 @@ Actually, the above format holds true for other object type as well, because thi
 Some takeaways during implementation:
 
 - What data is passed in - is not cared by the factory. The data to be passed in is decided by the caller. The factory function generates saga that passes whatever the caller gives to the api functions.
+
+## Factory Complete!
+
+Next: clean up code
+Next: creating company/address: so how do we navigate after submit form?
+Next: how to get foreign key / one-to-one entries?

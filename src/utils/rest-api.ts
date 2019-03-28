@@ -1,4 +1,4 @@
-import { IObject } from "../store/rest-api-redux-factory";
+import { TObject, IObjectBase } from "../store/rest-api-redux-factory";
 
 export enum RequestStatus {
     TRIGGERED = "triggered",
@@ -46,15 +46,14 @@ interface IRequestParams {
     data?: any;
 }
 
-export interface IListRestApiResponse {
+export interface IListRestApiResponse<Schema> {
     count: number;
     next: any;
     previous: any;
-    results: Array<IObject>;
+    results: Array<TObject<Schema>>;
 }
 
-export interface ISingleRestApiResponse extends IObject {
-}
+export type ISingleRestApiResponse<Schema> = TObject<Schema>;
 
 export class RestApi {
     state = {
@@ -88,6 +87,7 @@ export class RestApi {
     };
 
     post = ({ data, objectName, endpointUrl }: IRequestParams) => {
+        console.log(`restapi:post fired`);
         return fetch(
             this.getRelativeUrl({
                 endpointUrl,
@@ -139,16 +139,21 @@ export class RestApi {
         data,
         endpointUrl
     }: IRequestParams) => {
+        let url = "";
         if (endpointUrl) {
-            return `${this.state.apiBaseUrl}${endpointUrl}`;
+            url = `${this.state.apiBaseUrl}${endpointUrl}`;
         } else {
-            return `${this.state.apiBaseUrl}${objectName}/${
+            url = `${this.state.apiBaseUrl}${objectName}/${
                 data.id ? data.id + "/" : ""
             }`;
         }
+        console.log(`restapi: url: ${url}, objname=${objectName}`);
+        return url;
     };
 
     private setApiAuthHeaders = (): RequestInit => {
+
+        console.log("api: set header: got credentials?", this.state.apiLoginToken);
         return {
             mode: "cors",
             credentials: this.state.apiLoginToken ? "include" : "omit",

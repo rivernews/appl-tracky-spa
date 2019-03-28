@@ -15,7 +15,9 @@ import { sagaMiddleware, runSagaMiddleaware } from "../sagas/saga-config";
 
 const history = createBrowserHistory();
 
-const preloadedState = {};
+const preloadedState = {
+
+};
 
 // generate the singleton store from redux
 export const store = createStore<IRootState, any, any, any>(

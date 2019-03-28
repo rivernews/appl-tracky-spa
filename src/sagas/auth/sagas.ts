@@ -10,13 +10,14 @@ import {
     FailureAuth
 } from "../../store/auth/actions";
 // redux-saga
-import { takeEvery, call, put, all } from "redux-saga/effects";
+import { takeEvery, call, put } from "redux-saga/effects";
 
 /** router */
 import { push } from "connected-react-router";
 
 /** api */
 import { authentication } from "../../utils/auth";
+import { RestApiService } from "../../utils/rest-api";
 
 function* authLoginSagaHandler(
     requestedLoginAuthAction: IRequestedLoginAuthAction
@@ -29,6 +30,7 @@ function* authLoginSagaHandler(
         // TODO: define interface typing for api response
         const jsonResponse = yield call(authentication.serverLogin, socialAuthToken);
         console.log("auth saga: navigating. jsonRes:", jsonResponse);
+        authentication.state.apiLoginToken = RestApiService.state.apiLoginToken = jsonResponse.token;
         yield put(SuccessLoginAuth(jsonResponse.email, "", jsonResponse.token));
         // yield put(push("/home/"));
     } catch (error) {
@@ -38,7 +40,7 @@ function* authLoginSagaHandler(
     }
 }
 
-function* authLoginSaga() {
+export function* authLoginSaga() {
     yield takeEvery(AuthActionNames.REQUESTED_LOGIN_AUTH, authLoginSagaHandler);
 }
 
@@ -59,7 +61,7 @@ function* authLogoutSagaHandler(
     // yield put(push("/"));
 }
 
-function* authLogoutSaga() {
+export function* authLogoutSaga() {
     yield takeEvery(
         AuthActionNames.REQUESTED_LOGOUT_AUTH,
         authLogoutSagaHandler
@@ -68,12 +70,3 @@ function* authLogoutSaga() {
 
 // add new saga handler here && a `takeEvery` saga.
 // ...
-
-export const rootSaga = function*() {
-    yield all([
-        authLoginSaga(),
-        authLogoutSaga()
-        // add new saga here
-        // ...
-    ]);
-};

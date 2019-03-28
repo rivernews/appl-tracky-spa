@@ -9,7 +9,7 @@ import { RequestStatus } from "../../utils/rest-api";
 
 const initialAuthState: IUpdateAuthState = {
     requestStatus: RequestStatus.SUCCESS,
-    isLogin: true,
+    isLogin: false,
     socialAuthToken: "",
     apiToken: "",
     userName: "",

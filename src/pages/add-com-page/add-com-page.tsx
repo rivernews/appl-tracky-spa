@@ -5,6 +5,11 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
+// REST API
+import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { IObjectAction } from "../../store/rest-api-redux-factory";
+import { companyActions, Company } from "../../store/company/company";
+import { addressActions, Address } from "../../store/address/address";
 
 /** Components */
 //mdc-react icon
@@ -18,7 +23,10 @@ import TextField, { HelperText, Input } from "@material/react-text-field";
 // formik
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-interface IAddComPageProps extends RouteComponentProps {}
+interface IAddComPageProps extends RouteComponentProps {
+    createCompany: (companyFormData: Company) => void;
+    createAddress: (addressFormData: Address) => void;
+}
 
 class AddComPage extends Component<IAddComPageProps> {
     render() {
@@ -26,7 +34,11 @@ class AddComPage extends Component<IAddComPageProps> {
             <div className="AddComPage">
                 <h1>AddComPage Works!</h1>
                 <Formik
-                    initialValues={{ companyName: "", companyHomePageURL: "" }}
+                    initialValues={{
+                        companyName: "",
+                        companyHomePageURL: "",
+                        companyFullAddress: ""
+                    }}
                     validate={values => {
                         let errors: any = {};
                         if (!values.companyName) {
@@ -38,9 +50,21 @@ class AddComPage extends Component<IAddComPageProps> {
                         setTimeout(() => {
                             alert(JSON.stringify(values, null, 2));
                             setSubmitting(false);
-                            this.props.history.push(
-                                "/com-app/erwrwr-123421-adfdf/"
-                            );
+
+                            // this.props.createCompany(
+                            //     new Company(
+                            //         values.companyName,
+                            //         values.companyHomePageURL
+                            //     )
+                            // );
+                            this.props.createAddress(
+                                new Address(
+                                    "", values.companyFullAddress
+                                )
+                            )
+                            // this.props.history.push(
+                            //     "/com-app/erwrwr-123421-adfdf/"
+                            // );
                         }, 1000);
                     }}
                 >
@@ -54,12 +78,12 @@ class AddComPage extends Component<IAddComPageProps> {
                         isSubmitting
                     }) => (
                         <form onSubmit={handleSubmit}>
+                        {/* Company Name */}
                             <TextField
                                 label="Company Name"
                                 onTrailingIconSelect={() => {
                                     values.companyName = "";
                                     touched.companyName = false;
-                                    // TODO: focus the field
                                 }}
                                 trailingIcon={
                                     <MaterialIcon role="button" icon="clear" />
@@ -73,16 +97,18 @@ class AddComPage extends Component<IAddComPageProps> {
                                     value={values.companyName}
                                 />
                             </TextField>
-                            {errors.companyName && touched.companyName && errors.companyName}
+                            {errors.companyName &&
+                                touched.companyName &&
+                                errors.companyName}
 
-                            <br></br>
+                            <br />
 
+                                {/* Company Website URL */}
                             <TextField
                                 label="Company HomePage URL"
                                 onTrailingIconSelect={() => {
                                     values.companyHomePageURL = "";
                                     touched.companyHomePageURL = false;
-                                    // TODO: focus the field
                                 }}
                                 trailingIcon={
                                     <MaterialIcon role="button" icon="clear" />
@@ -96,10 +122,35 @@ class AddComPage extends Component<IAddComPageProps> {
                                     value={values.companyHomePageURL}
                                 />
                             </TextField>
-
                             {errors.companyHomePageURL &&
                                 touched.companyHomePageURL &&
                                 errors.companyHomePageURL}
+
+                            <br />
+
+                                {/* Company Address */}
+                            <TextField
+                                label="Company Full Address"
+                                onTrailingIconSelect={() => {
+                                    values.companyFullAddress = "";
+                                    touched.companyFullAddress = false;
+                                }}
+                                trailingIcon={
+                                    <MaterialIcon role="button" icon="clear" />
+                                }
+                            >
+                                <Input
+                                    id="companyFullAddress"
+                                    inputType="input"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.companyFullAddress}
+                                />
+                            </TextField>
+                            {errors.companyFullAddress &&
+                                touched.companyFullAddress &&
+                                errors.companyFullAddress}
+
                             <Button
                                 type="submit"
                                 disabled={isSubmitting}
@@ -118,8 +169,22 @@ const mapStateToProps = (state: IRootState) => ({
     // prop: state.prop
 });
 
-const mapDispatchToProps = {
+const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
+    return {
+        createCompany: (companyFormData: Company) =>
+            dispatch(
+                companyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
+                    companyFormData
+                )
+            ),
+        createAddress: (addressFormData: Address) =>
+            dispatch(
+                addressActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
+                    addressFormData
+                )
+            )
+    };
 };
 
 export const AddComPageContainer = withRouter(

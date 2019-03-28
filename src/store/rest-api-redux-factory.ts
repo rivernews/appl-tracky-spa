@@ -1,8 +1,8 @@
-import { takeEvery, call, put, all } from "redux-saga/effects";
+import { takeEvery, call, put } from "redux-saga/effects";
+import { SagaIterator } from "redux-saga";
 import {
     RequestStatus,
     CrudType,
-    RestMethod,
     CrudMapToRest,
     RestApiService,
     ISingleRestApiResponse,
@@ -10,44 +10,63 @@ import {
 } from "../utils/rest-api";
 import omit from "lodash/omit";
 
-export interface IObject {
-    uuid: string
-    [fieldName: string]: any
+/** state & store */
+
+export interface IObjectBase {
+    uuid: string;
 }
 
-interface IObjectRestApiAction {
+export type TObject<Schema> = IObjectBase &
+    { [Property in keyof Schema]: Schema[Property] };
+
+interface IObjectList<Schema> {
+    [uuid: string]: TObject<Schema>;
+}
+
+export interface IObjectStore<Schema> {
+    objectList: IObjectList<Schema>;
+    requestStatus: RequestStatus;
+    error?: any;
+}
+
+/** action */
+
+type IObjectRestApiAction = {
     [restfulKeyword: string]: {
         [asyncKeyword: string]: {
             actionTypeName: string;
             action: Function;
+            saga?: () => SagaIterator;
         };
+    };
+};
+
+export interface IObjectAction<Schema> {
+    type: string;
+    crudType: CrudType;
+    payload: {
+        requestStatus: RequestStatus;
+        formData?: TObject<Schema> | Array<TObject<Schema>>;
+        error?: any;
     };
 }
 
-interface IObjectAction {
-    type: string
-    crudType: CrudType
-    payload: {
-        requestStatus: RequestStatus
-        formData?: IObject | Array<IObject>
-        error?: any
-    }
-}
+/** factory API */
 
-interface IObjectStore {
-    objectList: {
-        [uuid: string]: IObject
-    }
-    requestStatus: RequestStatus
-    error?: any
-}
-
-const RestApiReduxFactory: (
-    objectName: string
-) => {
+interface IRestApiReduxFactory<Schema> {
     actions: IObjectRestApiAction;
-    reducer: (objectStore: IObjectStore, action: IObjectAction) => IObjectStore;
-} = function(objectName) {
+    storeReducer: (
+        objectStore: IObjectStore<Schema>,
+        action: IObjectAction<Schema>
+    ) => IObjectStore<Schema>;
+    sagas: Array<() => SagaIterator>;
+}
+
+export const RestApiReduxFactory = <Schema extends IObjectBase>(
+    /** should have uuid */ objectName: string,
+    initialObjectInstance: TObject<Schema>
+): IRestApiReduxFactory<Schema> => {
+    type TObjectSchema = typeof initialObjectInstance;
     const crudKeywords = Object.values(CrudType);
 
     let ObjectRestApiRedux: IObjectRestApiAction = {};
@@ -59,6 +78,10 @@ const RestApiReduxFactory: (
         /** action */
         // action type names
         for (let requestStatus of Object.values(RequestStatus)) {
+            ObjectRestApiRedux[crudKeyword][requestStatus] = {
+                actionTypeName: "",
+                action: () => {}
+            };
             ObjectRestApiRedux[crudKeyword][
                 requestStatus
             ].actionTypeName = `${requestStatus.toUpperCase()}_${crudKeyword.toUpperCase()}_${objectName.toUpperCase()}`;
@@ -66,9 +89,9 @@ const RestApiReduxFactory: (
 
         // async actions ( & state...)
         ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED].action = (
-            /** data needed for api call */ objectClassInstance: any
-        ): IObjectAction => {
-            // TODO: typing check
+            /** data needed for api call */ objectClassInstance: TObjectSchema
+        ): IObjectAction<TObjectSchema> => {
+            console.log(`action:fired, trigger, ${crudKeyword}`);
             return {
                 type:
                     ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
@@ -82,7 +105,7 @@ const RestApiReduxFactory: (
         };
         ObjectRestApiRedux[crudKeyword][
             RequestStatus.REQUESTING
-        ].action = (): IObjectAction => {
+        ].action = (): IObjectAction<TObjectSchema> => {
             return {
                 type:
                     ObjectRestApiRedux[crudKeyword][RequestStatus.REQUESTING]
@@ -95,45 +118,40 @@ const RestApiReduxFactory: (
         };
         ObjectRestApiRedux[crudKeyword][RequestStatus.SUCCESS].action = (
             /** api response */ jsonResponse:
-                | IListRestApiResponse
-                | ISingleRestApiResponse
-        ): IObjectAction => {
-            
+                | IListRestApiResponse<TObjectSchema>
+                | ISingleRestApiResponse<TObjectSchema>
+        ): IObjectAction<TObjectSchema> => {
             let newState = {
                 type:
                     ObjectRestApiRedux[crudKeyword][RequestStatus.SUCCESS]
                         .actionTypeName,
-                crudType: crudKeyword,
-            }
-            if ((<ISingleRestApiResponse>jsonResponse).uuid) {
+                crudType: crudKeyword
+            };
+            if ((<ISingleRestApiResponse<TObjectSchema>>jsonResponse).uuid) {
                 return {
                     ...newState,
                     payload: {
                         requestStatus: RequestStatus.SUCCESS,
-                        formData: (<ISingleRestApiResponse>jsonResponse)
+                        formData: <ISingleRestApiResponse<TObjectSchema>>(
+                            jsonResponse
+                        )
                     }
-                }
-            } else if ((<IListRestApiResponse>jsonResponse).results) {
+                };
+            } else {
                 return {
                     ...newState,
                     payload: {
                         requestStatus: RequestStatus.SUCCESS,
-                        formData: (<IListRestApiResponse>jsonResponse).results
+                        formData: (<IListRestApiResponse<TObjectSchema>>(
+                            jsonResponse
+                        )).results
                     }
-                } 
-            }
-
-            return {
-                ...newState,
-                payload: {
-                    requestStatus: RequestStatus.SUCCESS,
-                    formData: undefined // TODO: what't this?
-                }
+                };
             }
         };
         ObjectRestApiRedux[crudKeyword][RequestStatus.FAILURE].action = (
             error: any
-        ): IObjectAction => {
+        ): IObjectAction<TObjectSchema> => {
             return {
                 type:
                     ObjectRestApiRedux[crudKeyword][RequestStatus.FAILURE]
@@ -146,74 +164,78 @@ const RestApiReduxFactory: (
             };
         };
 
-        // TODO: action typing
-
         /** saga */
-        const sagaHandlerKey = `${crudKeyword}${objectName}SagaHandler`;
-        const sagaHandler = {
-            // TODO: action typing
-            *[sagaHandlerKey](triggerAction: IObjectAction) {
-                const formData = triggerAction.payload.formData;
+        const sagaHandler = function*(
+            triggerAction: IObjectAction<TObjectSchema>
+        ) {
+            console.log(`Saga: action intercepted; aync=trigger, crud=${crudKeyword}, obj=${objectName}; ready to call api`);
+            const formData = triggerAction.payload.formData;
+            yield put(
+                ObjectRestApiRedux[crudKeyword][
+                    RequestStatus.REQUESTING
+                ].action()
+            );
+            try {
+                // api call
+                const jsonResponse:
+                    | IListRestApiResponse<TObjectSchema>
+                    | ISingleRestApiResponse<TObjectSchema> = yield call(
+                    RestApiService[CrudMapToRest(crudKeyword)],
+                    {
+                        data: formData,
+                        objectName
+                    }
+                );
+
+                // success state
                 yield put(
                     ObjectRestApiRedux[crudKeyword][
-                        RequestStatus.REQUESTING
-                    ].action()
+                        RequestStatus.SUCCESS
+                    ].action(jsonResponse)
                 );
-                try {
-                    // api call
-                    const jsonResponse:
-                        | IListRestApiResponse
-                        | ISingleRestApiResponse = yield call(
-                        RestApiService[CrudMapToRest(crudKeyword)],
-                        {
-                            data: formData,
-                            objectName
-                        }
-                    );
-
-                    // success state
-                    yield put(
-                        ObjectRestApiRedux[crudKeyword][
-                            RequestStatus.SUCCESS
-                        ].action(jsonResponse)
-                    );
-                } catch (error) {
-                    // error state
-                    yield put(
-                        ObjectRestApiRedux[crudKeyword][
-                            RequestStatus.FAILURE
-                        ].action(error)
-                    );
-                    return;
-                }
+            } catch (error) {
+                // error state
+                yield put(
+                    ObjectRestApiRedux[crudKeyword][
+                        RequestStatus.FAILURE
+                    ].action(error)
+                );
+                return;
             }
         };
 
-        const saga = {
-            *[`${crudKeyword}${objectName}Saga`]() {
-                yield takeEvery(
-                    ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
-                        .actionTypeName,
-                    sagaHandler[sagaHandlerKey]
-                );
-            }
+        ObjectRestApiRedux[crudKeyword][
+            RequestStatus.TRIGGERED
+        ].saga = function*() {
+            console.log(`Saga: action intercepted; async=trigger, crud=${crudKeyword}, obj=${objectName}`);
+            yield takeEvery(
+                ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
+                    .actionTypeName,
+                sagaHandler
+            );
         };
     }
 
-    // TODO: store type
-    const initialState: IObjectStore = {
+    const initialState: IObjectStore<TObjectSchema> = {
         objectList: {},
-        requestStatus: RequestStatus.SUCCESS,
+        requestStatus: RequestStatus.SUCCESS
     };
 
-    // TODO: store type
-    // TODO: action type
-    function reducer(objectStore = initialState, action: IObjectAction): IObjectStore {
+    const storeReducer = (
+        objectStore: IObjectStore<TObjectSchema> | undefined = initialState,
+        action: IObjectAction<TObjectSchema>
+    ): IObjectStore<TObjectSchema> => {
+        if (!(action && action.payload && action.payload.requestStatus)) {
+            return {
+                ...objectStore
+            };
+        }
+
         // async success
         if (action.payload.requestStatus === RequestStatus.SUCCESS) {
             // CREATE
             if (action.crudType === CrudType.CREATE) {
-                let newObject = (<IObject>action.payload.formData);
+                let newObject = <TObject<TObjectSchema>>action.payload.formData;
                 return {
                     objectList: {
                         ...objectStore.objectList,
@@ -225,8 +247,10 @@ const RestApiReduxFactory: (
 
             // LIST
             else if (action.crudType === CrudType.LIST) {
-                const resObjectList = (<Array<IObject>>action.payload.formData);
-                let newObjectList: { [uuid: string]: IObject } = {};
+                const resObjectList = <Array<TObject<TObjectSchema>>>(
+                    action.payload.formData
+                );
+                let newObjectList: IObjectList<TObjectSchema> = {};
                 for (let object of resObjectList) {
                     newObjectList[object.uuid] = object;
                 }
@@ -241,7 +265,7 @@ const RestApiReduxFactory: (
 
             // UPDATE
             else if (action.crudType === CrudType.UPDATE) {
-                let newObject = (<IObject>action.payload.formData);
+                let newObject = <TObject<TObjectSchema>>action.payload.formData;
                 return {
                     objectList: {
                         ...objectStore.objectList,
@@ -253,11 +277,11 @@ const RestApiReduxFactory: (
 
             // DELETE
             else if (action.crudType === CrudType.DELETE) {
-                let newObject = (<IObject>action.payload.formData);
+                let newObject = <TObject<TObjectSchema>>action.payload.formData;
                 return {
                     objectList: omit(objectStore.objectList, [newObject.uuid]),
                     requestStatus: action.payload.requestStatus
-                }
+                };
             }
         }
 
@@ -266,7 +290,7 @@ const RestApiReduxFactory: (
             return {
                 ...objectStore,
                 requestStatus: action.payload.requestStatus
-            }
+            };
         }
 
         // async requesting & failure
@@ -274,17 +298,22 @@ const RestApiReduxFactory: (
             return {
                 ...objectStore,
                 ...action.payload
-            }
+            };
         }
 
         // no effect
         return {
             ...objectStore
-        }
-    }
+        };
+    };
+
+    const sagas = crudKeywords.map((crudKeyword) => 
+        (<() => SagaIterator>ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED].saga)
+    );
 
     return {
         actions: ObjectRestApiRedux,
-        reducer
+        storeReducer: storeReducer,
+        sagas
     };
 };
