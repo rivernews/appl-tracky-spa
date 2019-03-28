@@ -261,18 +261,25 @@ We have 1) data needed by api call 2) how to update store, where should we put t
 
 Let's recall the flow...
 
-1. Class component dispatch the trigger action. **API call data should be passed in from here.**
-1. Saga intecepts it (trigger action). **The api call data should be in the action payload,** so saga can access it.
-1. Saga makes api call using the data.
-1. Saga dispatch success action. **This is where the args of the update store function above should be supplied**. A quick recap of the args needed for store update is given below. **These should be obtained from api response, and passed into success action creator**:
+1. [x] Class component dispatch the trigger action. **API call data should be passed in from here.**
+    - How about we create an class instance for say, `Company`, then pass in that instance. That will give a good spec convention, and supply the necessary data at the same time.
+1. [x] Saga intecepts it (trigger action). *The api call data should be in the action payload*, so saga can access it.
+1. [x] Saga makes api call using the data.
+1. [x] Saga dispatch success action. ~~**This is where the args of the update store function above should be supplied**.~~ The way to update store is fixed across different objects. A quick recap of the args needed for store update is given below. *These should be obtained from api response, and passed into success action creator*:
     - create: `form data`.
     - read: n/a.
     - udpate: `form data`.
     - delete: `id`.
-1. Reducer updates store based on the action object.
+1. [ ] Reducer updates store based on the action object. ~~**We need an "example object" for initial state**, hopefully this will provide schema to the factory function as well.~~ That is the store.
     - The way to update store depends on what CRUD action it is, so we'll use if-else block to process them.
     - Args to update store should be obtained from success action payload.
-    - The if-else will have to cover other kinds of async action, such as requested/error
-    - Eventually we will have only one reducer for the object, with if-else blocks handling all async & crud actions.
+    - [ ] The if-else will have to cover other kinds of async action, such as requested/error
+    - Eventually we will have *only one reducer for the object, with if-else blocks handling all async & crud actions*.
 
 Actually, the above format holds true for other object type as well, because this is the RESTful / CRUD pattern. The only exception is when handling foreign key, but our REST API can also help us handle this as well, by doing a depth filling.
+
+~~So, from start to end, an object only needs a `objectName`, then we can generate all the actions, reducers and sagas at once!~~
+
+Some takeaways during implementation:
+
+- What data is passed in - is not cared by the factory. The data to be passed in is decided by the caller. The factory function generates saga that passes whatever the caller gives to the api functions.

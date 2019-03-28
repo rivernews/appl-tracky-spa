@@ -1,3 +1,5 @@
+import { IObject } from "../store/rest-api-redux-factory";
+
 export enum RequestStatus {
     TRIGGERED = "triggered",
     REQUESTING = "requesting",
@@ -5,20 +7,53 @@ export enum RequestStatus {
     FAILURE = "failre"
 }
 
-export const CrudMapToRest: {
-    [crudKeyword: string]: "post" | "get" | "patch" | "delete"
-} = {
-    CREATE: "post",
-    READ: "get",
-    LIST: "get",
-    UPDATE: "patch",
-    DELETE: "delete",
+export enum CrudType {
+    CREATE = "create",
+    READ = "read",
+    LIST = "list",
+    UPDATE = "update",
+    DELETE = "delete"
 }
 
+export enum RestMethod {
+    POST = "post",
+    GET = "get",
+    PATCH = "patch",
+    DELETE = "delete"
+}
+
+export const CrudMapToRest = (crudType: CrudType): RestMethod => {
+    switch (crudType) {
+        case CrudType.CREATE:
+            return RestMethod.POST;
+        case CrudType.READ:
+            return RestMethod.GET;
+        case CrudType.LIST:
+            return RestMethod.GET;
+        case CrudType.UPDATE:
+            return RestMethod.PATCH;
+        case CrudType.DELETE:
+            return RestMethod.DELETE;
+
+        default:
+            return RestMethod.GET;
+    }
+};
+
 interface IRequestParams {
-    endpointUrl?: string
-    objectName?: string
-    data?: any
+    endpointUrl?: string;
+    objectName?: string;
+    data?: any;
+}
+
+export interface IListRestApiResponse {
+    count: number;
+    next: any;
+    previous: any;
+    results: Array<IObject>;
+}
+
+export interface ISingleRestApiResponse extends IObject {
 }
 
 export class RestApi {
@@ -36,74 +71,82 @@ export class RestApi {
         userLastName: ``,
 
         objectID: ``
-    }
+    };
 
     get = ({ endpointUrl, objectName, data }: IRequestParams) => {
-        return fetch(this.getRelativeUrl({
-            endpointUrl, objectName, data
-        }), {
-            method: "GET",
-            ...this.setApiAuthHeaders()
-        }).then(res => res.json());
-    }
+        return fetch(
+            this.getRelativeUrl({
+                endpointUrl,
+                objectName,
+                data
+            }),
+            {
+                method: "GET",
+                ...this.setApiAuthHeaders()
+            }
+        ).then(res => res.json());
+    };
 
-    post = ({
-        data,
-        objectName,
-        endpointUrl
-    }: IRequestParams) => {
-        return fetch(this.getRelativeUrl({
-            endpointUrl, objectName, data
-        }), {
-            method: "POST",
-            ...this.setApiAuthHeaders(),
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json());
+    post = ({ data, objectName, endpointUrl }: IRequestParams) => {
+        return fetch(
+            this.getRelativeUrl({
+                endpointUrl,
+                objectName,
+                data
+            }),
+            {
+                method: "POST",
+                ...this.setApiAuthHeaders(),
+                body: JSON.stringify(data)
+            }
+        ).then(res => res.json());
         // let caller handle error in their own .catch()
     };
 
-    patch = ({
-        data,
-        objectName,
-        endpointUrl
-    }: IRequestParams) => {
-        return fetch(this.getRelativeUrl({
-            endpointUrl, objectName, data
-        }), {
-            method: "PATCH",
-            ...this.setApiAuthHeaders(),
-            body: JSON.stringify(data)
-        });
-    }
+    patch = ({ data, objectName, endpointUrl }: IRequestParams) => {
+        return fetch(
+            this.getRelativeUrl({
+                endpointUrl,
+                objectName,
+                data
+            }),
+            {
+                method: "PATCH",
+                ...this.setApiAuthHeaders(),
+                body: JSON.stringify(data)
+            }
+        );
+    };
 
-    delete = ({
-        data,
-        objectName,
-        endpointUrl
-    }: IRequestParams) => {
-        return fetch(this.getRelativeUrl({
-            endpointUrl, objectName, data
-        }), {
-            method: "DELETE",
-            ...this.setApiAuthHeaders(),
-            body: JSON.stringify(data)
-        });
-    }
+    delete = ({ data, objectName, endpointUrl }: IRequestParams) => {
+        return fetch(
+            this.getRelativeUrl({
+                endpointUrl,
+                objectName,
+                data
+            }),
+            {
+                method: "DELETE",
+                ...this.setApiAuthHeaders(),
+                body: JSON.stringify(data)
+            }
+        );
+    };
 
     /** helper */
     private getRelativeUrl = ({
         objectName,
         data,
-        endpointUrl,
+        endpointUrl
     }: IRequestParams) => {
         if (endpointUrl) {
             return `${this.state.apiBaseUrl}${endpointUrl}`;
-        } 
-        else {
-            return `${this.state.apiBaseUrl}${objectName}/${(data.id) ? data.id + "/" : ""}`;
+        } else {
+            return `${this.state.apiBaseUrl}${objectName}/${
+                data.id ? data.id + "/" : ""
+            }`;
         }
-    }
+    };
 
     private setApiAuthHeaders = (): RequestInit => {
         return {
@@ -116,7 +159,7 @@ export class RestApi {
                 "Content-Type": "application/json"
             }
         };
-    }
+    };
 }
 
 /** create restapi singleton */
