@@ -211,9 +211,21 @@ yield put(push("/home/"));
 
 Continue to setup CRUD interface for each area of the app. Notice the relationship needs special care, and require back and forth between frontend form and backend serializer and viewset.
 
-- [ ] 🔥 🔥 🔥 Make a plan for the crud UI.
+- [ ] Make a plan for the crud UI.
+    - User Application Page:
+        - [x] company list
+            - (first few application, or application w/o status)
+    - Add Company Page:
+        - [x] a form to create company
+    - User Company Application Page:
+        - [x] A company
+        - [ ] All applications associate with it
+        - [ ] 🔥 🔥 🔥 a form to create application
+            - [ ] a form to create application status
+    - Profile Page
+        - (logged in user's information)
 
-- [ ] Reflection on next steps and roadmaps.
+- [ ] And stop ... reflection on next steps and roadmaps.
 
 # Reference
 
