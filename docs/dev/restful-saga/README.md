@@ -326,6 +326,7 @@ Takeaways:
     - [x] Perhaps check this in frontend as well.
 - [x] TODO - Link's `text` field - consider make it `blank=True`
 
-🔥🔥🔥OK! Let's try rendering the results - object list in frontend!
-- [ ] Create a component for rendering a company, say `company-component`.
-- [ ] Render company list in `user-com-app-page`.
+OK! Let's try rendering the results - object list in frontend!
+- [x] Create a component for rendering a company, say `company-component`.
+- [x] Render company in `user-com-app-page`.
+- [x] Render company list in `user-app-page`.

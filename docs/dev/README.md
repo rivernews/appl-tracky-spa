@@ -205,7 +205,14 @@ yield put(push("/home/"));
     - [`redux-rest, star=179`](https://github.com/Kvoti/redux-rest)
     - [`redux-rest-resources, star=179`](https://github.com/Kvoti/redux-rest)
     - **[`redux-api, star=489`](https://github.com/lexich/redux-api)**
-    - [Design a state action creator for RESTful API](restful-saga/)🔥 🔥 🔥 
+    - [Design a state action creator for RESTful API](restful-saga/)
+
+## Request & Pour Object Data from API
+
+Continue to setup CRUD interface for each area of the app. Notice the relationship needs special care, and require back and forth between frontend form and backend serializer and viewset.
+
+- [ ] 🔥 🔥 🔥 Make a plan for the crud UI.
+
 - [ ] Reflection on next steps and roadmaps.
 
 # Reference

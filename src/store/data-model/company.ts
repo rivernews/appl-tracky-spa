@@ -1,43 +1,49 @@
 import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps } from "./base-model";
+import { Address } from "./address";
+import { Link } from "./link";
 
 interface ICompanyProps {
-    userID?: string;
+    user?: string;
     labels?: any;
     name?: string;
-    hq_location?: any;
-    home_page?: any;
+    hq_location?: Address;
+    home_page?: Link;
     ratings?: any;
     applications?: any;
 }
 
 export class Company extends BaseModel {
-    public userID: string;
+    public user: string;
     public labels: any;
     public name: string;
-    public hq_location: any;
-    public home_page: any;
+    public hq_location: Address;
+    public home_page: Link;
     public ratings: any;
     public applications: any;
 
     constructor({
-        userID = "",
+        user = "",
         labels = [],
         name = "",
-        hq_location = {},
-        home_page = {},
+        hq_location = new Address({}),
+        home_page = new Link({}),
         ratings = {},
         applications = {},
         ...args
     }: ICompanyProps & IBaseModelProps) {
         super(args);
-        this.userID = userID;
+        this.user = user;
         this.labels = labels;
         this.name = name;
         this.hq_location = hq_location;
         this.home_page = home_page;
         this.ratings = ratings;
         this.applications = applications;
+    }
+
+    serialize = () => {
+
     }
 }
 
