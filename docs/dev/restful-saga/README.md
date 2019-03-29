@@ -313,9 +313,19 @@ ipdb> request.data
 ddress': 'CA', 'zipcode': ''}, 'home_page': {'uuid': '', 'created_at': '', 'modified_at': '', 'text': '', 'user': {}, 'url': 'facebook.com', 'order': 0}, 'ratings': {}, 'applications': {}}
 ```
 
-Takeaways🔥🔥🔥:
+Takeaways:
 
-- [ ] TODO - set company's user in request
-- [ ] TODO - you'll then have to set user on all related fields as well, i.e. `home_page`. Consider removing Link's `user` field, but indeed, filter user on Link can get bit more hard.
-- [ ] TODO - Link is complaining `facebook.com` is not valid URL. Consider use `https://...` instead.
-- [ ] TODO - Link's `text` field - consider make it `blank=True`
+- [x] TODO - set company's user in request
+    - This is done in Django REST framework. Bascially you will: 
+    1. Add a `user=PrimaryRelatedField(read_only=True)` in serializer, so the serializer won't try to set/validate `user` by using frontend's POST data.
+    1. Add a `perform_create()` in viewset and supply `self.request.user` to serializer.
+    1. Add a `cerate(self, validated_data)` in serializer. The `self.request.user` passed in previous step will now be available in `validated_data`. Use `validated_data.pop(...)` to get the user data.
+    1. Create the model object in serializer's `create()`.
+- [x] TODO - you'll then have to set user on all related fields as well, i.e. `home_page`. Consider removing Link's `user` field, but indeed, filter user on Link can get bit more hard. RESULT: we will leave the user field. We are able to set that upon company creation so.
+- [x] TODO - Link is complaining `facebook.com` is not valid URL. Consider use `https://...` instead.
+    - [x] Perhaps check this in frontend as well.
+- [x] TODO - Link's `text` field - consider make it `blank=True`
+
+🔥🔥🔥OK! Let's try rendering the results - object list in frontend!
+- [ ] Create a component for rendering a company, say `company-component`.
+- [ ] Render company list in `user-com-app-page`.

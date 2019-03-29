@@ -50,6 +50,9 @@ class AddComPage extends Component<IAddComPageProps> {
                         if (!values.companyName) {
                             errors.companyName = "Required";
                         }
+                        if (!/^https*\:\/\/$/i.test(values.companyHomePageURL)) {
+                            errors.companyHomePageURL = "Please start by http:// or https://"
+                        }
                         return errors;
                     }}
                     onSubmit={(values, { setSubmitting }) => {
