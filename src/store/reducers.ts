@@ -3,8 +3,8 @@ import { combineReducers } from "redux";
 import { connectRouter } from 'connected-react-router';
 import { authReducer } from "./auth/reducers";
 // rest api
-import { companyReducer } from "./company/company";
-import { addressReducer } from "./address/address";
+import { companyReducer } from "./data-model/company";
+import { addressReducer } from "./data-model/address";
 
 /** router */
 import { History } from "history";

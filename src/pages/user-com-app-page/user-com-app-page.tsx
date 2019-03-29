@@ -8,7 +8,7 @@ import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
 // rest api
 import { IObjectStore } from "../../store/rest-api-redux-factory";
-import { Address } from "../../store/address/address";
+import { Address } from "../../store/data-model/address";
 
 /** Components */
 

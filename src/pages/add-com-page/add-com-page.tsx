@@ -13,8 +13,9 @@ import {
     IObjectAction,
     IObjectStore
 } from "../../store/rest-api-redux-factory";
-import { companyActions, Company } from "../../store/company/company";
-import { addressActions, Address } from "../../store/address/address";
+import { companyActions, Company } from "../../store/data-model/company";
+import { Address } from "../../store/data-model/address";
+import { Link } from "../../store/data-model/link";
 
 /** Components */
 //mdc-react icon
@@ -30,9 +31,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 
 interface IAddComPageProps extends RouteComponentProps {
     company: IObjectStore<Company>;
-    address: IObjectStore<Address>;
-    createCompany: (companyFormData: Company) => void;
-    createAddress: (addressFormData: Address, callback?: Function) => void;
+    createCompany: (companyFormData: Company, callback?: Function) => void;
 }
 
 class AddComPage extends Component<IAddComPageProps> {
@@ -54,37 +53,38 @@ class AddComPage extends Component<IAddComPageProps> {
                         return errors;
                     }}
                     onSubmit={(values, { setSubmitting }) => {
-                        // alert(JSON.stringify(values, null, 2));
                         setSubmitting(false);
 
-                        // this.props.createCompany(
-                        //     new Company(
-                        //         values.companyName,
-                        //         values.companyHomePageURL
-                        //     )
-                        // );
-                        this.props.createAddress(
-                            new Address("", values.companyFullAddress),
-                            () => {
-                                if (this.props.address.lastChangedObjectID) {
-                                    let newAddress = this.props.address.objectList[
-                                        this.props.address.lastChangedObjectID
-                                    ]
-                                    console.log(
-                                        "new address:",
-                                        newAddress
-                                    );
-                                    this.props.history.push(
-                                        `/com-app/${newAddress.uuid}/`
-                                    );
-                                } else {
-                                    console.error("store has no lastChangedObjectID");
-                                }
+                        // prep relationship object by data model
+                        const address = new Address({
+                            full_address: values.companyFullAddress
+                        });
+                        const link = new Link({
+                            url: values.companyHomePageURL,
+                        });
+                        // create main object
+                        const company = new Company({
+                            name: values.companyName,
+                            hq_location: address,
+                            home_page: link,
+                        });
+
+                        // dispatch
+                        this.props.createCompany(company, () => {
+                            if (this.props.company.lastChangedObjectID) {
+                                let newCompany = this.props.company.objectList[
+                                    this.props.company.lastChangedObjectID
+                                ];
+                                console.log("new company:", newCompany);
+                                this.props.history.push(
+                                    `/com-app/${newCompany.uuid}/`
+                                );
+                            } else {
+                                console.error(
+                                    "store has no lastChangedObjectID"
+                                );
                             }
-                        );
-                        // this.props.history.push(
-                        //     "/com-app/erwrwr-123421-adfdf/"
-                        // );
+                        });
                     }}
                 >
                     {({
@@ -193,16 +193,10 @@ const mapStateToProps = (state: IRootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
-        createCompany: (companyFormData: Company) =>
+        createCompany: (companyFormData: Company, callback?: Function) =>
             dispatch(
                 companyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
-                    companyFormData
-                )
-            ),
-        createAddress: (addressFormData: Address, callback?: Function) =>
-            dispatch(
-                addressActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
-                    addressFormData,
+                    companyFormData,
                     callback
                 )
             )

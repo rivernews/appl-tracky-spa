@@ -1,8 +1,8 @@
 import { IUpdateAuthState } from "./auth/types";
 
 import { IObjectStore } from "./rest-api-redux-factory";
-import { Company } from "./company/company";
-import { Address } from "./address/address";
+import { Company } from "./data-model/company";
+import { Address } from "./data-model/address";
 
 
 import { RouterState } from 'connected-react-router' // this will add attribute "router: RouterState"

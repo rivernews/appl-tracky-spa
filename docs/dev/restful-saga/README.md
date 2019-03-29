@@ -290,4 +290,32 @@ Some takeaways during implementation:
 
 - [x] Next: creating company/address: so how do we navigate after submit form?
 
-- [ ] Next: how to get foreign key / one-to-one entries?
+- Next: how to get foreign key / one-to-one entries?
+    - [x] React: prepare the data! Get ready to send them by one click - start from Company
+        - [x] We need all one to one field supplied.
+    - Backend: Django test if that method works: did it successfully create all fields all entries?
+        - [ ] 🔥Test one-to-one field - can we assign it in serializer level? - start from Company
+        - [ ] 🔥Test user field - assign it in view.
+        - [ ] Test foreign key
+        - [ ] Test many to many
+
+Things are getting crazy. Serializer has some issue consuming front end data:
+
+```python
+ipdb> serializer.errors
+{'user': [ErrorDetail(string='This field is required.', code='required')], 'home_page': {'url': [ErrorDetail(string='Ente
+r a valid URL.', code='invalid')], 'text': [ErrorDetail(string='This field may not be blank.', code='blank')], 'user': [E
+rrorDetail(string='Incorrect type. Expected URL string, received dict.', code='incorrect_type')]}}
+
+ipdb> request.data
+{'uuid': '', 'created_at': '', 'modified_at': '', 'userID': '', 'labels': [], 'name': 'Facebook', 'hq_location': {'uuid':
+ '', 'created_at': '', 'modified_at': '', 'place_name': '', 'country': '', 'state': '', 'city': '', 'street': '', 'full_a
+ddress': 'CA', 'zipcode': ''}, 'home_page': {'uuid': '', 'created_at': '', 'modified_at': '', 'text': '', 'user': {}, 'url': 'facebook.com', 'order': 0}, 'ratings': {}, 'applications': {}}
+```
+
+Takeaways🔥🔥🔥:
+
+- [ ] TODO - set company's user in request
+- [ ] TODO - you'll then have to set user on all related fields as well, i.e. `home_page`. Consider removing Link's `user` field, but indeed, filter user on Link can get bit more hard.
+- [ ] TODO - Link is complaining `facebook.com` is not valid URL. Consider use `https://...` instead.
+- [ ] TODO - Link's `text` field - consider make it `blank=True`
