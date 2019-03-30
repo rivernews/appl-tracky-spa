@@ -76,6 +76,8 @@ function* createCompanySagaHandler(
 
 # The key is reduce boilerplate, not reinventing the wheel
 
+### Challenge -2A: Approaching complex, high-level generalization: backward inference. Assume the factory generates an object containing everything. How should the factory-generated object be used? 
+
 Inspired by [this post](https://notes.devlabs.bg/long-term-react-redux-spa-lessons-learned-14daca3a26ba), we can actually have these utilities to generate actions and reducers. We can start from the high-level.
 
 The operation flow:
@@ -148,7 +150,9 @@ Always use singular form of object name. No plural.
 
 The key is these two types: `IApiCallInstruction` and `INewStateUpdateInstruction`. What should they be?
 
-What data is needed for API call, and how the store will be updated? Assume that api base url and object name are supplied automatically.
+### Challenge -2B: Approaching complex, high-level generalization: input & output of a blackbox. Input: What data is needed for API call. Output/Outcome: How the store will be updated? 
+
+Assume that api base url and object name are supplied automatically/somewhere and don't have to worry about them.
 
 ## Store's Shape
 
@@ -280,6 +284,8 @@ Actually, the above format holds true for other object type as well, because thi
 
 ~~So, from start to end, an object only needs a `objectName`, then we can generate all the actions, reducers and sagas at once!~~
 
+### Challenge -2C: How can we achieve dynamic typing, so that our factory can accept typing of a data model, and use that to create all redux resources?
+
 Some takeaways during implementation:
 
 - What data is passed in - is not cared by the factory. The data to be passed in is decided by the caller. The factory function generates saga that passes whatever the caller gives to the api functions.
@@ -288,7 +294,11 @@ Some takeaways during implementation:
 
 - [ ] Next: clean up code
 
+### Challenge -2D: Navigation side effect after form submit. Since we cannot know current request progress via `fetch()` promise anymore, how can we use redux store to navigate upon form submit && request succeeded?
+
 - [x] Next: creating company/address: so how do we navigate after submit form?
+
+### Challenge -2E: How can we write to database's relational fields, such as one-to-one, Many-to-one or Many-to-Many, via RESTful API?
 
 - Next: how to get foreign key / one-to-one entries?
     - [x] React: prepare the data! Get ready to send them by one click - start from Company

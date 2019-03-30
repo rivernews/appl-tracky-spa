@@ -43,6 +43,8 @@
 
 **We'll skip details of UI, just the functionality first!**
 
+### Challenge -11: How to setup redux for global state management, and how to read/write to/from it?
+
 - [x] Select a library, build routing, build Navigation
     - [x] We're using [MDC-React](https://github.com/material-components/material-components-web-react/tree/master) cuz closer to MDC design and so to our mockup.
     - [x] Use the top app bar ([API doc](https://github.com/material-components/material-components-web-react/tree/master/packages/top-app-bar), [demo page](https://material-components.github.io/material-components-web-catalog/#/component/top-app-bar)). Build routing. 
@@ -90,6 +92,8 @@ React component planning - navigation and routed pages:
 
 ![Navigation](../img/dev-plan/internal-page-nav.png)
 
+### Challenge -10: How to setup routings, navigating programmaticlly and receiving parameters from route in React? So we can build master-detail views.
+
 - [x] Initialize page components for user app/add com/user com app page
 - [x] Add minimal necessary UI for navigation
 - [ ] Add navigation transition between pages
@@ -115,6 +119,8 @@ React component planning - navigation and routed pages:
 
 Keywords: async action, api, request, data fetch + redux + typescript
 
+### Challenge -9: How to do async action in redux, such that redux works with `fetch()`'s promise and reflects http/api request's states, i.e., `requesting`, `success` and `failure`? So that our app can use those states to show like loading spinners during wait.
+
 - If action failed, how can we know and how to change the view to reflect the error state? If action takes a long time, how can we have an intermediate state and have the view change correspondedly?
 
 First of all, there must be a place to 1) handle API request, e.g. a Promise that has `.then()` and `.catch()` block. Then there should be someone to 2) trigger updates on views, or, 2) trigger updates on state plus a 3) conditional rendering logic in view or side effects updating the view.
@@ -128,6 +134,8 @@ First of all, there must be a place to 1) handle API request, e.g. a Promise tha
 When considering redux in this setting, redux can handle state updating, and provide its state for conditional rendering. However, it does not do API request, so all the `fetch()`, `.then()`, `.catch()` cannot be in redux. Also, it cannot do any side effects to udpate the view, say, navigate to another page, in any of `reducer` and `action`.
 
 Putting this all together, first, as a transition from synchronous to asynchronous, one action now has to be extended to 3 or even more actions, to distinguish states like start request, request success, request fail (or timeout). In terms of store structure, it will at least add a new property e.g. status, that can store the async state = requesting, succeed, failed, ....
+
+### Challenge -8: What is middleware, and how can it achieve async action?
 
 After some preliminary research, seems like we can use `react-thunk` or `react-saga`. But what the heck are they doing? Time for having a cup of coffee and read!
 
@@ -153,6 +161,8 @@ After some preliminary research, seems like we can use `react-thunk` or `react-s
         - [x] We have a REST API class now. Then, give another util for login/logout. (handle both social auth & backend auth)
         - [x] Then use these util func to write your update auth saga.
         - But - are we going to write request/success/fail for all api actions in the future? Indeed it's repetitive and tedious. See this [redux action routine package](https://github.com/afitiskin/redux-saga-routines) to automatically create those for you.
+
+### Challenge -7: How do we do route navigation programmatically in saga? We don't have access to `history` in saga as react component does.
 
 - OK, we finish sagas and now the login should work, theoretically. But, we use programatical navigation. How do we do navigation in saga?
     - [`connect-react-router`](https://github.com/supasate/connected-react-router#usage) to the rescue. It basically connects router and redux, so you can access router history object to navigate from redux store.
@@ -184,16 +194,31 @@ yield put(push("/home/"));
 
 - [x] Add logout POST to django server
 
+### Challenge -6: We are only allowed to add one saga to redux's store. How can we add multiple sagas?
+
 - Since we now need two sagas - one for logout and another for login, we need to have a root saga, and then branch out. There are several ways to include multiple sagas in the root. Common options are `all()`, `fork()`, `spawn()`, and a combination of them. [See this RootSaga section](https://redux-saga.js.org/docs/advanced/RootSaga.html) of the redux-saga official for trade offs. We will use the simpliest case here, but as the app scale, we might want to switch to `spawn()`.
 
 - Login / logout using API w/ saga done!! 🎉 🎉 🎉 !!
+
+### Challenge -5: How to use `try...catch...` block and `fetch()` correctly, such that if error, we can handle side effects differently?
+
 - Our previous try catch block in saga is not working. We don't handle `fetch`'s then catch in the rest api object; instead, we just return `fetch()`, then the try catch block in saga will work. [See this post.](https://stackoverflow.com/questions/40007935/how-to-handle-errors-in-fetch-responses-with-redux-saga)
 - Where to store api token? Because we want to handle try/catch in saga, we cannot `then()` in authentication object as well. The recommended way is to put that in global store, and access it only in saga. Of course, this means all API calls have to go through saga. --> Actually you can leave the `then()` in authentication, and just don't use `catch()` there. But yes, best practice still, access store in saga, and store is the only "single source of truth". [See this post](https://stackoverflow.com/questions/37772877/how-to-get-something-from-the-state-store-inside-a-redux-saga-function) to get store in saga. (You have to create a `selector` function)
+
+### Challenge -4: How to guard (protect) a route, such that if not authenticated (logged in), page will redirect to some page?
 
 - [x] Extra points - route gaurd for authentication.
     - Turns out that by doing this, we actually don't need `push()` in saga anymore - because our redirection in public/private routes automatically does this.
 
 ## CRUD-functioning User Interface
+
+### Challenge -3: How can we reduce boilerplate for registering objects in redux's store, such that all related redux resources will be created in once, for 4 CRUD operations AND 3 async states each?
+
+We learned how to create the whole redux stuff for an object, that is actions, reducer, saga and typings. Now we want to create these again, for all 12 situations - Create/Read/Update/Delete AND Requesting/Success/Failure for each CRUD. If you observe, you'll notice many things are repetitive. E.g., `Requesting`'s action only cares about updating `async state`, but not doing anything related to our object. `Failure`'s action only cares about `error` message and `async state`. If we hard code for all 12 situations, it will be a bulky huge pile of code with tons of copy pasting. Plus, we need to do all this over again whenever we want to add new data model. If we need two models in redux, that'd be 24. If four models, you have 48 situations to write their actions, plus reducer and saga. If you want to introduce one more async state, say, `Triggered`, you have 64 situations. You get it. You'll easily end up writing 100+ functions. The boilerplate problem is serious.
+
+### Challenge -2: Given a data model, how can we build a factory to generate actions, typings, reducers and sagas all in once?
+
+### Challenge -1: What is the recommended tool or approach to create form in React?
 
 - Think about next steps - "CRUD" & forms to create com & app & status
     - Stepping into [Formik](https://jaredpalmer.com/formik/docs/overview). Install `npm install formik --save`.
@@ -235,12 +260,23 @@ Continue to setup CRUD interface for each area of the app. Notice the relationsh
 
 ## Refoctor: modularize field components for forms
 
+### Challenge 1: How can we build a form factory that generates form for different data models? Validation and serialization also relationships should be handled as well!
+
+As we start building forms for different models, and also adding in more fields, we found ourselves copy pasting so badly, and the Formik form is getting very long with hard-coded HTML fields and inputs (over 200 LOC).
+
+### Challenge 2: How can we refactor for Django serializer such that we don't have to keep writing similar-logic `def create()`? We want writable relationship fields handled as well.
+
+One frequent need is to supply current authenticated user to the object's user field. Another is one-to-one relationship. These two have to be manually assigned upon object creation.
+
+In contrast, foreign key field, or Many-to-One field, can be automatically validated and supplied by adding a `the_exact_fieldname_as_model = PrimaryKeyRelatedField(read_only=False, ...)`. This assumes the frontend supplies the foreign key field by the object id. 
+
 **Goals**
 - Refactor React form code: it's better to write components that modularize:
     - [ ] 🔥 🔥 🔥 form fields. modularize integer/text/onetoone... field
     - [ ] form submit. once you have that modular field, it's easier to write the submit & error validation logic.
 - Refactor Django form code: 
     - [ ] Modularize the process to set one to one relationship on CRUD operation
+        - Perhaps a mixin might be a good choice.
 
 **Getting Started**
 
@@ -274,12 +310,15 @@ So, what's the input needed? Anything else can be hard coded:
 - ⚠️ `field_name`, and its initial value
     - maybe we can use data model class to help us?
 - ⚠️ instruction/info about which field is relational, and how relational objects should be created.
+    - This might map to DRF's seriailizer? Or Django's model form.
 -  Optional `callback` after submit & store state changed.
 - `label` text for field, for human read.
 - Optional `trailingIcon`, can just pass in `icon="material-icon-alias"`, assumed we are using material icons.
 - `inputType`, but this can be supplied by `input` as default value first since most of the time we will only use `input`.
 - We do need a `input` for `<Input>`, so we can do email, password, ...
-- ️️️️⚠️ Instructions on how to validate.
+- ️️️️⚠️ Instructions on how to validate. We need:
+    - A function returns boolean
+    - Error message
 
 
 - [ ] And stop ... reflection on next steps and roadmaps.
