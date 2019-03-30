@@ -1,8 +1,11 @@
+export type IRelationship = string;
+
 export interface IBaseModelProps {
-    uuid?: string
+    uuid?: IRelationship
     created_at?: string
     modified_at?: string
 }
+
 export class BaseModel {
     uuid: string
     created_at: string

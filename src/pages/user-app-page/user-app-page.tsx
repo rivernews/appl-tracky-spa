@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
 import { IObjectAction, IObjectStore } from "../../store/rest-api-redux-factory";
-import { companyActions, Company } from "../../store/data-model/company";
+import { CompanyActions, Company } from "../../store/data-model/company";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 
 /** Components */
@@ -60,7 +60,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     return {
         listCompany: (callback?: Function) =>
             dispatch(
-                companyActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
+                CompanyActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
                     new Company({}),
                     callback
                 )

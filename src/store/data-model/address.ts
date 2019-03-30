@@ -47,6 +47,6 @@ const AddressRestApiRedux = RestApiReduxFactory<Address>(
     "addresses",
     initialAddressInstance
 );
-export const addressActions = AddressRestApiRedux.actions;
-export const addressReducer = AddressRestApiRedux.storeReducer;
-export const addressSagas = AddressRestApiRedux.sagas;
+export const AddressActions = AddressRestApiRedux.actions;
+export const AddressReducer = AddressRestApiRedux.storeReducer;
+export const AddressSagas = AddressRestApiRedux.sagas;

@@ -215,15 +215,30 @@ Continue to setup CRUD interface for each area of the app. Notice the relationsh
     - User Application Page:
         - [x] company list
             - (first few application, or application w/o status)
+            
     - Add Company Page:
         - [x] a form to create company
+
     - User Company Application Page:
         - [x] A company
-        - [ ] All applications associate with it
-        - [ ] 🔥 🔥 🔥 a form to create application
-            - [ ] a form to create application status
+        - [x] All applications associate with it
+        - [x] a form to create application
+            - [x] create data model in react first
+                - [x] create application
+                - [x] create all related field's data model as well
+            - [x] add 1-2 required form field
+            - [x] try to send it & create the object on server. check in database.
+        - [ ] a form to create application status
+
     - Profile Page
         - (logged in user's information)
+
+- Refactor React form code: it's better to write components that modularize:
+    - [ ] 🔥 🔥 🔥 form fields. modularize integer/text/onetoone... field
+    - [ ] form submit. once you have that modular field, it's easier to write the submit & error validation logic.
+- Refactor Django form code: 
+    - [ ] Modularize the process to set one to one relationship on CRUD operation
+
 
 - [ ] And stop ... reflection on next steps and roadmaps.
 

@@ -41,10 +41,6 @@ export class Company extends BaseModel {
         this.ratings = ratings;
         this.applications = applications;
     }
-
-    serialize = () => {
-
-    }
 }
 
 const initialCompanyInstance = new Company({});
@@ -52,6 +48,6 @@ const CompanyRestApiRedux = RestApiReduxFactory<Company>(
     "companies",
     initialCompanyInstance
 );
-export const companyActions = CompanyRestApiRedux.actions;
-export const companyReducer = CompanyRestApiRedux.storeReducer;
-export const companySagas = CompanyRestApiRedux.sagas;
+export const CompanyActions = CompanyRestApiRedux.actions;
+export const CompanyReducer = CompanyRestApiRedux.storeReducer;
+export const CompanySagas = CompanyRestApiRedux.sagas;

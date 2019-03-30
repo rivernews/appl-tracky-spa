@@ -2,8 +2,9 @@ import createSagaMiddleware from 'redux-saga';
 import { all } from "redux-saga/effects";
 import { authLoginSaga, authLogoutSaga } from "./auth/sagas";
 // rest api
-import { companySagas } from "../store/data-model/company";
-import { addressSagas } from "../store/data-model/address";
+import { CompanySagas } from "../store/data-model/company";
+import { AddressSagas } from "../store/data-model/address";
+import { ApplicationSagas } from "../store/data-model/application";
 
 /** setup saga */
 const sagaMiddleware = createSagaMiddleware();
@@ -16,8 +17,9 @@ const rootSaga = function*() {
     yield all([
         authLoginSaga(),
         authLogoutSaga(),
-        ...companySagas.map((saga) => saga()),
-        ...addressSagas.map((saga) => saga()),
+        ...CompanySagas.map((saga) => saga()),
+        ...AddressSagas.map((saga) => saga()),
+        ...ApplicationSagas.map((saga) => saga()),
         // add new saga here
         // ...
     ]);

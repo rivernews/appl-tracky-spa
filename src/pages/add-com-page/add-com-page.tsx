@@ -13,7 +13,7 @@ import {
     IObjectAction,
     IObjectStore
 } from "../../store/rest-api-redux-factory";
-import { companyActions, Company } from "../../store/data-model/company";
+import { CompanyActions, Company } from "../../store/data-model/company";
 import { Address } from "../../store/data-model/address";
 import { Link } from "../../store/data-model/link";
 
@@ -49,9 +49,11 @@ class AddComPage extends Component<IAddComPageProps> {
                         let errors: any = {};
                         if (!values.companyName) {
                             errors.companyName = "Required";
-                        }
-                        else if (!/^https*\:\/\/.+$/i.test(values.companyHomePageURL)) {
-                            errors.companyHomePageURL = "Please start by http:// or https://"
+                        } else if (
+                            !/^https*\:\/\/.+$/i.test(values.companyHomePageURL)
+                        ) {
+                            errors.companyHomePageURL =
+                                "Please start by http:// or https://";
                         }
                         return errors;
                     }}
@@ -63,13 +65,13 @@ class AddComPage extends Component<IAddComPageProps> {
                             full_address: values.companyFullAddress
                         });
                         const link = new Link({
-                            url: values.companyHomePageURL,
+                            url: values.companyHomePageURL
                         });
                         // create main object
                         const company = new Company({
                             name: values.companyName,
                             hq_location: address,
-                            home_page: link,
+                            home_page: link
                         });
 
                         // dispatch
@@ -179,6 +181,14 @@ class AddComPage extends Component<IAddComPageProps> {
                                 unelevated
                                 children="Create"
                             />
+
+                            <Button
+                                onClick={clickEvent => {
+                                    this.props.history.push("/");
+                                }}
+                                unelevated
+                                children="Cancel"
+                            />
                         </form>
                     )}
                 </Formik>
@@ -198,7 +208,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     return {
         createCompany: (companyFormData: Company, callback?: Function) =>
             dispatch(
-                companyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
+                CompanyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
                     companyFormData,
                     callback
                 )

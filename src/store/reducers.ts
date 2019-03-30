@@ -3,8 +3,9 @@ import { combineReducers } from "redux";
 import { connectRouter } from 'connected-react-router';
 import { authReducer } from "./auth/reducers";
 // rest api
-import { companyReducer } from "./data-model/company";
-import { addressReducer } from "./data-model/address";
+import { CompanyReducer } from "./data-model/company";
+import { AddressReducer } from "./data-model/address";
+import { ApplicationReducer } from "./data-model/application";
 
 /** router */
 import { History } from "history";
@@ -20,7 +21,8 @@ export const createRootReducer = (history: History<any>) => combineReducers({
 
     // add more reducers here
     auth: authReducer,
-    company: undefinedWrapper(companyReducer),
-    address: undefinedWrapper(addressReducer),
+    company: undefinedWrapper(CompanyReducer),
+    address: undefinedWrapper(AddressReducer),
+    application: undefinedWrapper(ApplicationReducer),
     // ...
 })

@@ -85,6 +85,10 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                     component={UserComAppPageContainer}
                                 />
                                 <Route
+                                    path="/com-app/"
+                                    component={UserComAppPageContainer}
+                                />
+                                <Route
                                     path="/profile/"
                                     component={UserProfilePageContainer}
                                 />
