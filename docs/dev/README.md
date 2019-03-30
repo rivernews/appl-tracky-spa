@@ -233,11 +233,53 @@ Continue to setup CRUD interface for each area of the app. Notice the relationsh
     - Profile Page
         - (logged in user's information)
 
+## Refoctor: modularize field components for forms
+
+**Goals**
 - Refactor React form code: it's better to write components that modularize:
     - [ ] 🔥 🔥 🔥 form fields. modularize integer/text/onetoone... field
     - [ ] form submit. once you have that modular field, it's easier to write the submit & error validation logic.
 - Refactor Django form code: 
     - [ ] Modularize the process to set one to one relationship on CRUD operation
+
+**Getting Started**
+
+So, what are the key parts of a form? (In React frontend):
+
+```tsx
+// <Formik> props:
+const initialValues = { field_name: ...}
+const validate = (values: typeof initialValues) => {error checks...} => errors
+const onSubmit = (values, ...) => {
+    // create relational objects
+    // create main objects
+    // dispatch
+    // if needed, set a callback function for more side effects e.g. redirect
+}
+
+// things inside <Formik>:
+//
+// <Textfield> from mdc-react; props:
+const label = "..."
+const trailingIcon? = "..."
+// <Input> from mdc-react; props:
+const name = "field_name; <input>'s name for form"
+const inputType = "input|textarea"
+// error message
+{errors.field_name && touched.field_name && errors.field_name}
+
+```
+
+So, what's the input needed? Anything else can be hard coded:
+- ⚠️ `field_name`, and its initial value
+    - maybe we can use data model class to help us?
+- ⚠️ instruction/info about which field is relational, and how relational objects should be created.
+-  Optional `callback` after submit & store state changed.
+- `label` text for field, for human read.
+- Optional `trailingIcon`, can just pass in `icon="material-icon-alias"`, assumed we are using material icons.
+- `inputType`, but this can be supplied by `input` as default value first since most of the time we will only use `input`.
+- We do need a `input` for `<Input>`, so we can do email, password, ...
+- ️️️️⚠️ Instructions on how to validate.
 
 
 - [ ] And stop ... reflection on next steps and roadmaps.
