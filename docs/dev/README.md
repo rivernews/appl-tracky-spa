@@ -320,6 +320,67 @@ So, what's the input needed? Anything else can be hard coded:
     - A function returns boolean
     - Error message
 
+```tsx
+<Formik
+    initialValues="{...}"
+    validate="Func"
+    onSubmit="Func"
+>
+    {(
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        isSubmitting
+    ) => {
+        <Form>
+
+            <TextField
+                label="string"
+                onTrailingIconSelect="Func"
+                trailingIcon="Func"
+            >
+                <Input
+                    name="field_name"
+                    inputType="input | textarea"
+                    onChange="formik func"
+                    onBlur="formik func"
+                    value="formik value: values.field_name"
+                />
+            </TextField>
+            {
+                errors.field_name && /* formik errors */
+                touched.field_name && /* formik touched */
+                errors.field_name
+            }
+            ...
+
+            <Button
+                type="submit"
+                disabled={isSubmitting}
+                unelevated
+                children="submit button text"
+            />
+            <Button
+                onClick="Func"
+                unelevated
+                children="button text"
+            />
+            ...
+        </Form>
+    }}
+</Formik>
+
+```
+
+**FormFactory Component**
+
+
+**FormFieldFactory Component**
+
+
 
 - [ ] And stop ... reflection on next steps and roadmaps.
 
