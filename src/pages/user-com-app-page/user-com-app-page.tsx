@@ -21,6 +21,7 @@ import {
 
 /** Components */
 import { CompanyComponent } from "../../components/company/company-component";
+import { ApplicationComponent } from "../../components/application/application-component";
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
 // mdc react button
@@ -44,32 +45,53 @@ interface IUserComAppPageProps
         applicationFormData: Application,
         callback?: Function
     ) => void;
+    listApplication: (application?: Application, callback?: Function) => void;
 }
 
 interface IUserComAppPageState {
     isApplicationFormOpened: boolean;
+    companyUuid: string
+    company: Company
 }
 
 class UserComAppPage extends Component<
     IUserComAppPageProps,
     IUserComAppPageState
 > {
-    company: Company = new Company({});
+    readonly state: IUserComAppPageState = {
+        isApplicationFormOpened: false,
+        companyUuid: "",
+        company: new Company({})
+    };
 
-    constructor(props: IUserComAppPageProps) {
-        super(props);
-        this.state = {
-            isApplicationFormOpened: false
-        };
+    componentDidMount() {
+        let companyUuid = this.props.match.params.uuid;
+        console.log("mount, got uuid from route?", companyUuid);
+        this.setState({
+            companyUuid,
+            company: new Company(this.props.company.collection[companyUuid])
+        }, () => {
+            this.props.listApplication(new Application({
+                user_company: companyUuid
+            }))
+            console.log("company list", this.props.company.collection);
+            console.log("application list", this.props.application.collection);
+        })
     }
 
-    renderAll(companyUuid: string) {
-        this.company = new Company(this.props.company.objectList[companyUuid]);
+    renderAll() {
+        if (!this.state.company.uuid) {
+            return 
+        }
+
         return (
             <div className="user-com-app-page-content">
-                <CompanyComponent company={this.company} />
+                <h1>{this.state.company.name}</h1>
+                <CompanyComponent company={this.state.company} />
 
                 <hr />
+                
+                <h2>Applications</h2>
 
                 <Button
                     onClick={clickEvent => {
@@ -83,15 +105,31 @@ class UserComAppPage extends Component<
 
                 {this.state.isApplicationFormOpened &&
                     this.renderApplicationForm()}
+
+                {/* list of applications */}
+                <br></br>
+                {
+                    (this.props.application.collection !== {}) ? Object.values(
+                        this.props.application.collection
+                    ).filter(
+                        (application: Application) => application.user_company === this.state.company.uuid
+                    ).map((application: any) => {
+                        return (
+                            <ApplicationComponent key={application.uuid} application={application} />
+                        )
+                    }) : (
+                        <span>No application yet.</span>
+                    )
+                }
             </div>
         );
     }
 
     renderApplicationForm() {
-        if (this.company.uuid) {
+        if (this.state.company.uuid) {
             return (
                 <div className="application-form">
-                    Application is associated with company {this.company.name}
+                    Application is associated with company {this.state.company.name}
                     <br />
                     <Formik
                         initialValues={{
@@ -132,7 +170,7 @@ class UserComAppPage extends Component<
                             const job_source = new Link({
                                 url: values.job_source__url
                             });
-                            const user_company__id = this.company.uuid
+                            const user_company__id = this.state.company.uuid
 
                             // create main object
                             const application = new Application({
@@ -148,7 +186,7 @@ class UserComAppPage extends Component<
                                     this.props.application.lastChangedObjectID
                                 ) {
                                     let newApplication = this.props.application
-                                        .objectList[
+                                        .collection[
                                         this.props.application
                                             .lastChangedObjectID
                                     ];
@@ -287,14 +325,12 @@ class UserComAppPage extends Component<
     }
 
     render() {
-        let companyUuid = this.props.match.params.uuid;
-        console.log("rendered! company uuid =", companyUuid);
         return (
             <div className="UserComAppPage">
-                {companyUuid && companyUuid in this.props.company.objectList ? (
-                    this.renderAll(companyUuid)
-                ) : companyUuid ? (
-                    <h1>No company found. Uuid={companyUuid}</h1>
+                {this.state.companyUuid && this.state.companyUuid in this.props.company.collection ? (
+                    this.renderAll()
+                ) : this.state.companyUuid ? (
+                    <h1>No company found. Uuid={this.state.companyUuid}</h1>
                 ) : (
                     <h1>Company uuid not specified</h1>
                 )}
@@ -303,11 +339,14 @@ class UserComAppPage extends Component<
     }
 }
 
-const mapStateToProps = (store: IRootState) => ({
-    // prop: store.prop
-    company: store.company,
-    application: store.application
-});
+const mapStateToProps = (store: IRootState) => {
+    console.log("mapStateToProps: root store", store);
+    return {
+        // prop: store.prop
+        company: store.company,
+        application: store.application,
+    }
+};
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
@@ -320,6 +359,13 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
                 ApplicationActions[CrudType.CREATE][
                     RequestStatus.TRIGGERED
                 ].action(applicationFormData, callback)
+            ),
+        listApplication: (application?: Application, callback?: Function) =>
+            dispatch(
+                ApplicationActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
+                    application || new Application({}),
+                    callback
+                )
             )
     };
 };

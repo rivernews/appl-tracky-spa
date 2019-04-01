@@ -1,4 +1,5 @@
-import { IUpdateAuthState } from "./auth/types";
+import { AnyAction } from "redux";
+import { IUpdateAuthState, TAuthActions } from "./auth/types";
 
 import { IObjectStore } from "./rest-api-redux-factory";
 import { Company } from "./data-model/company";
@@ -9,7 +10,7 @@ import { Application } from "./data-model/application";
 import { RouterState } from 'connected-react-router' // this will add attribute "router: RouterState"
 
 export interface IRootState {
-    router: RouterState
+    router?: RouterState
 
     // add more state types here here (for each reducer)
     auth: IUpdateAuthState
@@ -17,4 +18,10 @@ export interface IRootState {
     address: IObjectStore<Address>
     application: IObjectStore<Application>
     // ...
+
+
 }
+
+// export type IRootState = {
+//     [k in keyof (typeof rootReducer)]: ReturnType<(typeof rootReducer)[k]>
+// }

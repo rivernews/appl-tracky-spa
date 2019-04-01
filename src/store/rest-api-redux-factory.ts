@@ -1,3 +1,4 @@
+import { Action, Reducer } from "redux";
 import { takeEvery, call, put } from "redux-saga/effects";
 import { SagaIterator } from "redux-saga";
 import {
@@ -24,15 +25,15 @@ interface IObjectList<Schema> {
 }
 
 export interface IObjectStore<Schema> {
-    objectList: IObjectList<Schema>;
     lastChangedObjectID?: string;
     requestStatus: RequestStatus;
     error?: any;
+    collection: IObjectList<Schema>;
 }
 
 /** action */
 
-type IObjectRestApiAction = {
+type IObjectRestApiReduxFactoryActions = {
     [restfulKeyword: string]: {
         [asyncKeyword: string]: {
             actionTypeName: string;
@@ -42,7 +43,7 @@ type IObjectRestApiAction = {
     };
 };
 
-export interface IObjectAction<Schema> {
+export interface IObjectAction<Schema> extends Action {
     type: string;
     crudType: CrudType;
     callback?: Function;
@@ -57,11 +58,8 @@ export interface IObjectAction<Schema> {
 /** factory API */
 
 interface IRestApiReduxFactory<Schema> {
-    actions: IObjectRestApiAction;
-    storeReducer: (
-        objectStore: IObjectStore<Schema>,
-        action: IObjectAction<Schema>
-    ) => IObjectStore<Schema>;
+    actions: IObjectRestApiReduxFactoryActions;
+    storeReducer: Reducer<IObjectStore<Schema>>
     sagas: Array<() => SagaIterator>;
 }
 
@@ -72,7 +70,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
     type TObjectSchema = typeof initialObjectInstance;
     const crudKeywords = Object.values(CrudType);
 
-    let ObjectRestApiRedux: IObjectRestApiAction = {};
+    let ObjectRestApiRedux: IObjectRestApiReduxFactoryActions = {};
     for (let crudKeyword of crudKeywords) {
         ObjectRestApiRedux[crudKeyword] = {};
         /** store */
@@ -202,6 +200,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     }
                 );
 
+                console.log("Saga: res from server", jsonResponse);
+
                 // success state
                 yield put(
                     ObjectRestApiRedux[crudKeyword][
@@ -236,81 +236,95 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
     }
 
     const initialState: IObjectStore<TObjectSchema> = {
-        objectList: {},
+        collection: {},
         requestStatus: RequestStatus.SUCCESS
     };
 
-    const storeReducer = (
-        objectStore: IObjectStore<TObjectSchema> | undefined = initialState,
-        action: IObjectAction<TObjectSchema>
+    const storeReducer: Reducer<IObjectStore<Schema>> = (
+        objectStore: IObjectStore<TObjectSchema> = initialState,
+        action: Action
     ): IObjectStore<TObjectSchema> => {
-        if (!(action && action.payload && action.payload.requestStatus)) {
+        
+        const objectAction = action as IObjectAction<TObjectSchema>;
+
+        if (
+            !(objectAction && objectAction.payload && objectAction.payload.requestStatus) ||
+            !(action.type.split("_")[2] === objectName.toUpperCase())
+        ) {
             return {
                 ...objectStore
             };
         }
 
         // async success
-        if (action.payload.requestStatus === RequestStatus.SUCCESS) {
+        if (objectAction.payload.requestStatus === RequestStatus.SUCCESS) {
             // CREATE
-            if (action.crudType === CrudType.CREATE) {
-                let newObject = <TObject<TObjectSchema>>action.payload.formData;
+            if (objectAction.crudType === CrudType.CREATE) {
+                let newObject = <TObject<TObjectSchema>>objectAction.payload.formData;
                 return {
-                    objectList: {
-                        ...objectStore.objectList,
+                    collection: {
+                        ...objectStore.collection,
                         [newObject.uuid]: newObject
                     },
-                    requestStatus: action.payload.requestStatus,
-                    lastChangedObjectID: action.payload.lastChangedObjectID
+                    requestStatus: objectAction.payload.requestStatus,
+                    lastChangedObjectID: objectAction.payload.lastChangedObjectID
                 };
             }
 
             // LIST
-            else if (action.crudType === CrudType.LIST) {
+            else if (objectAction.crudType === CrudType.LIST) {
                 const resObjectList = <Array<TObject<TObjectSchema>>>(
-                    action.payload.formData
+                    objectAction.payload.formData
                 );
-                let newObjectList: IObjectList<TObjectSchema> = {};
+                let newObjects: IObjectList<TObjectSchema> = {};
                 for (let object of resObjectList) {
-                    newObjectList[object.uuid] = object;
+                    newObjects[object.uuid] = object;
                 }
-                return {
-                    objectList: {
-                        ...objectStore.objectList,
-                        ...newObjectList
+                console.log("Reducer: crud=list, action=", objectAction)
+                console.log("initialState=", initialState)
+                console.log("beforestore=", objectStore)
+                console.log("newlistobjects=", newObjects)
+
+                const afterStore: IObjectStore<TObjectSchema> = {
+                    collection: {
+                        ...objectStore.collection,
+                        ...newObjects
                     },
-                    requestStatus: action.payload.requestStatus
+                    requestStatus: objectAction.payload.requestStatus
                 };
+                console.log("afterstore=", afterStore)
+
+                return afterStore;
             }
 
             // UPDATE
-            else if (action.crudType === CrudType.UPDATE) {
-                let newObject = <TObject<TObjectSchema>>action.payload.formData;
+            else if (objectAction.crudType === CrudType.UPDATE) {
+                let newObject = <TObject<TObjectSchema>>objectAction.payload.formData;
                 return {
-                    objectList: {
-                        ...objectStore.objectList,
+                    collection: {
+                        ...objectStore.collection,
                         [newObject.uuid]: newObject
                     },
-                    requestStatus: action.payload.requestStatus,
-                    lastChangedObjectID: action.payload.lastChangedObjectID
+                    requestStatus: objectAction.payload.requestStatus,
+                    lastChangedObjectID: objectAction.payload.lastChangedObjectID
                 };
             }
 
             // DELETE
-            else if (action.crudType === CrudType.DELETE) {
-                let newObject = <TObject<TObjectSchema>>action.payload.formData;
+            else if (objectAction.crudType === CrudType.DELETE) {
+                let newObject = <TObject<TObjectSchema>>objectAction.payload.formData;
                 return {
-                    objectList: omit(objectStore.objectList, [newObject.uuid]),
-                    requestStatus: action.payload.requestStatus
+                    collection: omit(objectStore.collection, [newObject.uuid]),
+                    requestStatus: objectAction.payload.requestStatus
                 };
             }
         }
 
         // async trigger
-        else if (action.payload.requestStatus === RequestStatus.TRIGGERED) {
+        else if (objectAction.payload.requestStatus === RequestStatus.TRIGGERED) {
             return {
                 ...objectStore,
-                requestStatus: action.payload.requestStatus
+                requestStatus: objectAction.payload.requestStatus
             };
         }
 
@@ -318,7 +332,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
         else {
             return {
                 ...objectStore,
-                ...action.payload
+                ...objectAction.payload
             };
         }
 
@@ -334,7 +348,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
     return {
         actions: ObjectRestApiRedux,
-        storeReducer: storeReducer,
+        storeReducer,
         sagas
     };
 };

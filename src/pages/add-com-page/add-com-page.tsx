@@ -77,7 +77,7 @@ class AddComPage extends Component<IAddComPageProps> {
                         // dispatch
                         this.props.createCompany(company, () => {
                             if (this.props.company.lastChangedObjectID) {
-                                let newCompany = this.props.company.objectList[
+                                let newCompany = this.props.company.collection[
                                     this.props.company.lastChangedObjectID
                                 ];
                                 console.log("new company:", newCompany);

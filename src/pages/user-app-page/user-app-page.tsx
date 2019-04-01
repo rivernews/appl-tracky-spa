@@ -41,7 +41,7 @@ class UserAppPage extends Component<IUserAppPageProps> {
                 />
                 <br></br>
                 {
-                    (this.props.company.objectList !== {}) && Object.values(this.props.company.objectList).map((company) => {
+                    (this.props.company.collection !== {}) && Object.values(this.props.company.collection).map((company) => {
                         return <CompanyComponent key={company.uuid} company={company} />
                     })
                 }

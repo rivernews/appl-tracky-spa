@@ -1,3 +1,5 @@
+import { ActionCreator } from "redux";
+
 import {
     /** state types */
     IUpdateAuthState,

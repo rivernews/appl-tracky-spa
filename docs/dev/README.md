@@ -326,7 +326,7 @@ So, what's the input needed? Anything else can be hard coded:
     validate="Func"
     onSubmit="Func"
 >
-    {(
+    {({
         values,
         errors,
         touched,
@@ -334,7 +334,7 @@ So, what's the input needed? Anything else can be hard coded:
         handleBlur,
         handleSubmit,
         isSubmitting
-    ) => {
+    }) => {
         <Form>
 
             <TextField
@@ -376,11 +376,81 @@ So, what's the input needed? Anything else can be hard coded:
 ```
 
 **FormFactory Component**
+```tsx
+interface IFormFactoryProps {
+    initialValues: DataModel
+    validate: (values: FormikValues) => FormikErrors<FormikValues>
+    onSubmit: (values: FormikValues, { setSubmitting } : { setSubmitting: Function }) => void
+}
 
+<FormFactory {...props} />
+```
 
 **FormFieldFactory Component**
+```tsx
 
+enum TrailingIconEffect {
+    CLEAR_FIELD
+}
 
+interface IFormFieldFactoryProps {
+    field_name: string
+    label: string
+    trailingIconEffect: TrailingIconEffect
+    icon: string
+
+    /* formik */
+    formikOnChange
+    formikOnBlur
+    formikValues
+    formilErrors
+    formilTouched
+}
+
+<FormFieldFactory {...props} />
+
+<TextField
+    label="string"
+    onTrailingIconSelect="Func" <-- trailingIconEffect
+    trailingIcon="Func" <-- trailingIconEffect
+>
+    <Input
+        name="field_name"
+        inputType="input | textarea"
+        onChange="formik func"
+        onBlur="formik func"
+        value="formik value: values.field_name"
+    />
+</TextField>
+{
+    errors.field_name && /* formik errors */
+    touched.field_name && /* formik touched */
+    errors.field_name
+}
+```
+
+## Testing out our form factory component!
+
+✅ fixed bug - in factory function reducer: didn't actually distinguish different object names. So every action will apply to all reducers, and thereby cause object creation in every object stores.
+
+Also got stuck very long time on `combineReducer`, `router`, reducer and action type. [This post](https://stackoverflow.com/questions/47910462/types-of-parameters-action-and-action-are-incompatible) effectively solves it and gives a lesson: **not specifying specific action type on reducer's arg seems like a pattern that one should follow.** Can we verify this, however?
+
+We will not break any existing forms, but will use "application status" as an example to create form by our factory.
+But first of all, we need to list all the applications.
+
+- List all applications
+    - [x] create a application component accepting props
+    - [x] in `user-com-app-page.tsx`: use the application component to list all applications.
+    - [x] How to limit the application to only that company's applications? Need to do a filter query on REST API.
+        - Ans: do it in React. Just filter the application list where `user_company === company.uuid`.
+- [ ] 🔥 🔥 🔥Prepare a space to ready to put application status form
+- [ ] test out the form factory and create the applciation status form.
+
+If everything goes right, then...
+
+- [ ] Consider refactor backend serializer mixin
+- [ ] test out the mixin to enable relational field write operation in serializer and view.
+- [ ] Put everything together: test out the application status form and check in database.
 
 - [ ] And stop ... reflection on next steps and roadmaps.
 

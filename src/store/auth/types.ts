@@ -1,3 +1,5 @@
+import { Action } from "redux";
+
 import { RequestStatus } from "../../utils/rest-api";
 
 /**
@@ -60,27 +62,27 @@ export enum AuthActionNames {
     // ...
 }
 
-export interface IUpdateAuthAction {
+export interface IUpdateAuthAction extends Action<AuthActionNames.UPDATE_AUTH> {
     type: typeof AuthActionNames.UPDATE_AUTH;
     payload: IUpdateAuthState;
 }
 
-export interface IRequestedLoginAuthAction {
+export interface IRequestedLoginAuthAction extends Action<AuthActionNames.REQUESTED_LOGIN_AUTH> {
     type: typeof AuthActionNames.REQUESTED_LOGIN_AUTH;
     payload: IRequestedLoginAuthState;
 }
 
-export interface IRequestedLogoutAuthAction {
+export interface IRequestedLogoutAuthAction extends Action<AuthActionNames.REQUESTED_LOGOUT_AUTH> {
     type: typeof AuthActionNames.REQUESTED_LOGOUT_AUTH;
     payload: IRequestedLogoutAuthState;
 }
 
-export interface ISuccessAuthAction {
+export interface ISuccessAuthAction extends Action<AuthActionNames.SUCCESS_AUTH> {
     type: typeof AuthActionNames.SUCCESS_AUTH;
     payload: ISuccessAuthState;
 }
 
-export interface IFailureAuthAction {
+export interface IFailureAuthAction extends Action<AuthActionNames.FAILURE_AUTH> {
     type: typeof AuthActionNames.FAILURE_AUTH;
     payload: IFailureAuthState;
 }

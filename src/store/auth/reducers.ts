@@ -1,3 +1,5 @@
+import { Reducer, Action } from 'redux';
+
 import { 
     /** store */
     IUpdateAuthState, 
@@ -17,12 +19,14 @@ const initialAuthState: IUpdateAuthState = {
 }
 
 // authStore will be stored as a sub-entry in global store; this is defined in ./store/types.ts
-export const authReducer = (authStore = initialAuthState, action: TAuthActions): IUpdateAuthState => {
+export const authReducer: Reducer<IUpdateAuthState> = (authStore = initialAuthState, action: Action)  => {
     // add reducer for new actions here
     // ...
 
+    const authAction = action as TAuthActions;
+
     return {
         ...authStore,
-        ...action.payload
+        ...authAction.payload
     }
 }

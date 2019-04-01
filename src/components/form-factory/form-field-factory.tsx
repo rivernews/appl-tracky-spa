@@ -15,50 +15,54 @@ import Button from "@material/react-button";
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
 import TextField, { HelperText, Input } from "@material/react-text-field";
+// formik
+import {
+    Formik,
+    Form,
+    Field,
+    ErrorMessage,
+    FormikValues,
+    FormikTouched,
+    FormikErrors,
+} from "formik";
 
-interface IFormFieldFactoryProps extends RouteComponentProps {}
+export interface IFormField {
+    fieldName: string
+    label: string
+}
 
-class FormFieldFactory extends Component<IFormFieldFactoryProps> {
+interface IFormFieldFactoryProps extends IFormField {
+    /* formik */
+    onChange: (event: any) => void
+    onBlur: (event: any) => void
+    values: FormikValues
+    errors: FormikErrors<FormikValues>
+    touched: FormikTouched<FormikValues>
+}
+
+export class FormFieldFactory extends Component<IFormFieldFactoryProps> {
     render() {
         return (
             <div className="FormFieldFactory">
                 <h1>FormFieldFactory Works!</h1>
                 <TextField
-                    label="Position Title"
+                    label={this.props.label}
                     onTrailingIconSelect={() => {
-                        values.position_title = "";
-                        touched.position_title = false;
+                        this.props.values[this.props.fieldName] = "";
+                        this.props.touched[this.props.fieldName] = false;
                     }}
                     trailingIcon={<MaterialIcon role="button" icon="clear" />}
                 >
                     <Input
-                        name="position_title"
+                        name={this.props.fieldName}
                         inputType="input"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.position_title}
+                        onChange={this.props.onChange}
+                        onBlur={this.props.onBlur}
+                        value={this.props.values[this.props.fieldName]}
                     />
                 </TextField>
-                {errors.position_title &&
-                    touched.position_title &&
-                    errors.position_title}
+                <ErrorMessage name={this.props.fieldName} />
             </div>
         );
     }
 }
-
-const mapStateToProps = (store: IRootState) => ({
-    // prop: store.prop
-});
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => {
-    // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
-    return {};
-};
-
-export const FormFieldFactoryContainer = withRouter(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )(FormFieldFactory)
-);
