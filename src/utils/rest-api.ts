@@ -1,4 +1,5 @@
 import { TObject, IObjectBase } from "../store/rest-api-redux-factory";
+import { BaseModel } from "../store/data-model/base-model";
 
 export enum RequestStatus {
     TRIGGERED = "triggered",
@@ -40,10 +41,10 @@ export const CrudMapToRest = (crudType: CrudType): RestMethod => {
     }
 };
 
-interface IRequestParams {
+export interface IRequestParams<Schema> {
     endpointUrl?: string;
     objectName?: string;
-    data?: any;
+    data?: TObject<Schema> | Array<TObject<Schema>>;
 }
 
 export interface IListRestApiResponse<Schema> {
@@ -59,6 +60,12 @@ export function IsSingleRestApiResponseTypeGuard<Schema>(
     response: ISingleRestApiResponse<Schema> | IListRestApiResponse<Schema>
 ): response is ISingleRestApiResponse<Schema> {
     return (<ISingleRestApiResponse<Schema>>response).uuid !== undefined;
+}
+
+function IsSingleFormDataTypeGuard<Schema>(
+    formData: TObject<Schema> | Array<TObject<Schema>>
+): formData is TObject<Schema> {
+    return (<TObject<Schema>>formData).uuid !== undefined;
 }
 
 export class RestApi {
@@ -78,7 +85,7 @@ export class RestApi {
         objectID: ``
     };
 
-    get = ({ endpointUrl, objectName, data }: IRequestParams) => {
+    get = <Schema>({ endpointUrl, objectName, data }: IRequestParams<Schema>) => {
         return fetch(
             this.getRelativeUrl({
                 endpointUrl,
@@ -92,7 +99,7 @@ export class RestApi {
         ).then(res => res.json());
     };
 
-    post = ({ data, objectName, endpointUrl }: IRequestParams) => {
+    post = <Schema>({ data, objectName, endpointUrl }: IRequestParams<Schema>) => {
         console.log(`restapi:post fired`);
         return fetch(
             this.getRelativeUrl({
@@ -109,7 +116,7 @@ export class RestApi {
         // let caller handle error in their own .catch()
     };
 
-    patch = ({ data, objectName, endpointUrl }: IRequestParams) => {
+    patch = <Schema>({ data, objectName, endpointUrl }: IRequestParams<Schema>) => {
         return fetch(
             this.getRelativeUrl({
                 endpointUrl,
@@ -124,7 +131,7 @@ export class RestApi {
         );
     };
 
-    delete = ({ data, objectName, endpointUrl }: IRequestParams) => {
+    delete = <Schema>({ data, objectName, endpointUrl }: IRequestParams<Schema>) => {
         return fetch(
             this.getRelativeUrl({
                 endpointUrl,
@@ -140,18 +147,20 @@ export class RestApi {
     };
 
     /** helper */
-    private getRelativeUrl = ({
+    private getRelativeUrl = <Schema>({
         objectName,
         data,
         endpointUrl
-    }: IRequestParams) => {
+    }: IRequestParams<Schema>) => {
         let url = "";
         if (endpointUrl) {
             url = `${this.state.apiBaseUrl}${endpointUrl}`;
         } else {
-            url = `${this.state.apiBaseUrl}${objectName}/${
-                data.id ? data.id + "/" : ""
-            }`;
+            if (data && IsSingleFormDataTypeGuard(data) && data.uuid) {
+                url = `${this.state.apiBaseUrl}${objectName}/${data.uuid}/`;
+            } else {
+                url = `${this.state.apiBaseUrl}${objectName}/`;
+            }
         }
         console.log(`restapi: url: ${url}, objname=${objectName}`);
         return url;

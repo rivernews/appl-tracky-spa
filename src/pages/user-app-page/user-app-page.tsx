@@ -6,8 +6,9 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
 import { IObjectAction, IObjectStore } from "../../store/rest-api-redux-factory";
-import { CompanyActions, Company } from "../../store/data-model/company";
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+// data models
+import { Company } from "../../store/data-model/company";
+import { Application } from "../../store/data-model/application";
 
 /** Components */
 // mdc react icon
@@ -16,17 +17,16 @@ import MaterialIcon from "@material/react-material-icon";
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 // objects
-import { CompanyComponent } from "../../components/company/company-component";
+import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application";
 
 interface IUserAppPageProps extends RouteComponentProps {
-    listCompany: (callback?: Function) => void
     company: IObjectStore<Company>
+    application: IObjectStore<Application>
 }
 
 class UserAppPage extends Component<IUserAppPageProps> {
 
     componentDidMount() {
-        this.props.listCompany();
     }
 
     render() {
@@ -42,7 +42,9 @@ class UserAppPage extends Component<IUserAppPageProps> {
                 <br></br>
                 {
                     (this.props.company.collection !== {}) && Object.values(this.props.company.collection).map((company) => {
-                        return <CompanyComponent key={company.uuid} company={company} />
+                        return (
+                            <CompanyApplicationComponentContainer key={company.uuid} company={company} />
+                        )
                     })
                 }
             </div>
@@ -53,18 +55,20 @@ class UserAppPage extends Component<IUserAppPageProps> {
 const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
     company: store.company,
+    application: store.application,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
+const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<{}>>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
+
     return {
-        listCompany: (callback?: Function) =>
-            dispatch(
-                CompanyActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
-                    new Company({}),
-                    callback
-                )
-            )
+        // listObject: (callback?: Function) =>
+        //     dispatch(
+        //         ObjectActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
+        //             new Object({}),
+        //             callback
+        //         )
+        //     ),
     }
 };
 

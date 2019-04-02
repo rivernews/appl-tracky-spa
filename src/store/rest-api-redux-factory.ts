@@ -6,6 +6,7 @@ import {
     CrudType,
     CrudMapToRest,
     RestApiService,
+    IRequestParams,
     ISingleRestApiResponse,
     IListRestApiResponse,
     IsSingleRestApiResponseTypeGuard
@@ -46,7 +47,13 @@ type IObjectRestApiReduxFactoryActions = {
 export interface IObjectAction<Schema> extends Action {
     type: string;
     crudType: CrudType;
+
+    // for deleteAction or other actions to obtain the original instance obj passed into trigger action
+    triggerFormData?: TObject<Schema> | Array<TObject<Schema>>;
+
+    // for saga to perform additional side effect e.g. navigation
     callback?: Function;
+    
     payload: {
         formData?: TObject<Schema> | Array<TObject<Schema>>;
         lastChangedObjectID?: string;
@@ -120,9 +127,11 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
             };
         };
         ObjectRestApiRedux[crudKeyword][RequestStatus.SUCCESS].action = (
-            /** api response */ jsonResponse:
-                | IListRestApiResponse<TObjectSchema>
-                | ISingleRestApiResponse<TObjectSchema>
+            /** api response */
+            jsonResponse:
+            | IListRestApiResponse<TObjectSchema>
+            | ISingleRestApiResponse<TObjectSchema>,
+            triggerFormData?: TObject<Schema> | Array<TObject<Schema>>
         ): IObjectAction<TObjectSchema> => {
             let newState = {
                 type:
@@ -134,6 +143,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
             if (crudKeyword === CrudType.DELETE) {
                 return {
                     ...newState,
+                    triggerFormData,
                     payload: {
                         requestStatus: RequestStatus.SUCCESS,
                     }
@@ -193,7 +203,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                 const jsonResponse:
                     | IListRestApiResponse<TObjectSchema>
                     | ISingleRestApiResponse<TObjectSchema> = yield call(
-                    RestApiService[CrudMapToRest(crudKeyword)],
+                    (<(params: IRequestParams<TObjectSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)]),
                     {
                         data: formData,
                         objectName
@@ -203,11 +213,19 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                 console.log("Saga: res from server", jsonResponse);
 
                 // success state
-                yield put(
-                    ObjectRestApiRedux[crudKeyword][
-                        RequestStatus.SUCCESS
-                    ].action(jsonResponse)
-                );
+                if (crudKeyword === CrudType.DELETE) {
+                    yield put(
+                        ObjectRestApiRedux[CrudType.DELETE][
+                            RequestStatus.SUCCESS
+                        ].action(jsonResponse, formData)
+                    );
+                } else {
+                    yield put(
+                        ObjectRestApiRedux[crudKeyword][
+                            RequestStatus.SUCCESS
+                        ].action(jsonResponse)
+                    );
+                }
 
                 if (triggerAction.callback) {
                     triggerAction.callback();
@@ -312,11 +330,18 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
             // DELETE
             else if (objectAction.crudType === CrudType.DELETE) {
-                let newObject = <TObject<TObjectSchema>>objectAction.payload.formData;
-                return {
-                    collection: omit(objectStore.collection, [newObject.uuid]),
+                let targetDeleteObject = <TObject<TObjectSchema>>objectAction.triggerFormData;
+                console.log("Reducer: delete, targetobj=", targetDeleteObject)
+
+                console.log("Reducer: delete, beforestore=", objectStore)
+                
+                const afterStore = {
+                    collection: omit(objectStore.collection, [targetDeleteObject.uuid]),
                     requestStatus: objectAction.payload.requestStatus
-                };
+                }
+                console.log("Reducer: delete, afterstore", afterStore)
+
+                return afterStore;
             }
         }
 

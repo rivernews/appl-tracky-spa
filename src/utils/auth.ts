@@ -1,4 +1,29 @@
 import { RestApiService } from "./rest-api";
+import { BaseModel, IBaseModelProps } from "../store/data-model/base-model";
+
+export interface IAuthObjectProps {
+    code?: string
+    provider?: string
+    redirect_uri?: string
+}
+
+export class AuthObject extends BaseModel {
+    code: string
+    provider: string
+    redirect_uri: string
+
+    constructor({
+        code = "",
+        provider = "",
+        redirect_uri = "",
+        ...args
+    }: IAuthObjectProps & IBaseModelProps) {
+        super(args);
+        this.code = code;
+        this.provider = provider;
+        this.redirect_uri = redirect_uri;
+    }
+}
 
 class Authentication {
     state = {
@@ -17,13 +42,14 @@ class Authentication {
     };
 
     serverLogin = (socialLoginCode: string) => {
+        let authFormData = new AuthObject({
+            code: socialLoginCode,
+            provider: this.state.socialAuthProvider,
+            redirect_uri: this.state.redirectUri
+        })
         return RestApiService
-            .post({
-                data: {
-                    code: socialLoginCode,
-                    provider: this.state.socialAuthProvider,
-                    redirect_uri: this.state.redirectUri
-                },
+            .post<AuthObject>({
+                data: authFormData,
                 endpointUrl: this.state.apiLoginUrl
             })
 

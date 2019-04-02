@@ -20,8 +20,7 @@ import {
 } from "../../store/data-model/application";
 
 /** Components */
-import { CompanyComponent } from "../../components/company/company-component";
-import { ApplicationComponent } from "../../components/application/application-component";
+import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application";
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
 // mdc react button
@@ -45,7 +44,6 @@ interface IUserComAppPageProps
         applicationFormData: Application,
         callback?: Function
     ) => void;
-    listApplication: (application?: Application, callback?: Function) => void;
 }
 
 interface IUserComAppPageState {
@@ -67,16 +65,15 @@ class UserComAppPage extends Component<
     componentDidMount() {
         let companyUuid = this.props.match.params.uuid;
         console.log("mount, got uuid from route?", companyUuid);
-        this.setState({
-            companyUuid,
-            company: new Company(this.props.company.collection[companyUuid])
-        }, () => {
-            this.props.listApplication(new Application({
-                user_company: companyUuid
-            }))
-            console.log("company list", this.props.company.collection);
-            console.log("application list", this.props.application.collection);
-        })
+        if (
+            this.props.company.collection &&
+            companyUuid in this.props.company.collection
+        ) {
+            this.setState({
+                companyUuid,
+                company: new Company(this.props.company.collection[companyUuid])
+            })
+        }
     }
 
     renderAll() {
@@ -87,11 +84,6 @@ class UserComAppPage extends Component<
         return (
             <div className="user-com-app-page-content">
                 <h1>{this.state.company.name}</h1>
-                <CompanyComponent company={this.state.company} />
-
-                <hr />
-                
-                <h2>Applications</h2>
 
                 <Button
                     onClick={clickEvent => {
@@ -106,21 +98,10 @@ class UserComAppPage extends Component<
                 {this.state.isApplicationFormOpened &&
                     this.renderApplicationForm()}
 
-                {/* list of applications */}
                 <br></br>
-                {
-                    (this.props.application.collection !== {}) ? Object.values(
-                        this.props.application.collection
-                    ).filter(
-                        (application: Application) => application.user_company === this.state.company.uuid
-                    ).map((application: any) => {
-                        return (
-                            <ApplicationComponent key={application.uuid} application={application} />
-                        )
-                    }) : (
-                        <span>No application yet.</span>
-                    )
-                }
+                { this.state.company.uuid && <CompanyApplicationComponentContainer company={
+                    this.state.company
+                } /> }
             </div>
         );
     }
@@ -327,7 +308,9 @@ class UserComAppPage extends Component<
     render() {
         return (
             <div className="UserComAppPage">
-                {this.state.companyUuid && this.state.companyUuid in this.props.company.collection ? (
+                {this.state.companyUuid && 
+                this.props.company.collection && 
+                this.state.companyUuid in this.props.company.collection ? (
                     this.renderAll()
                 ) : this.state.companyUuid ? (
                     <h1>No company found. Uuid={this.state.companyUuid}</h1>
@@ -340,7 +323,6 @@ class UserComAppPage extends Component<
 }
 
 const mapStateToProps = (store: IRootState) => {
-    console.log("mapStateToProps: root store", store);
     return {
         // prop: store.prop
         company: store.company,
@@ -360,13 +342,6 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
                     RequestStatus.TRIGGERED
                 ].action(applicationFormData, callback)
             ),
-        listApplication: (application?: Application, callback?: Function) =>
-            dispatch(
-                ApplicationActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
-                    application || new Application({}),
-                    callback
-                )
-            )
     };
 };
 

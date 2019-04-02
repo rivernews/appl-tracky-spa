@@ -443,6 +443,24 @@ But first of all, we need to list all the applications.
     - [x] in `user-com-app-page.tsx`: use the application component to list all applications.
     - [x] How to limit the application to only that company's applications? Need to do a filter query on REST API.
         - Ans: do it in React. Just filter the application list where `user_company === company.uuid`.
+    - [x] optimize: move `listApplication` to user app page so we only have to fire it once.
+        - Perhpas better to put list application & company in auth saga, so upon login the app will only fetch once. if put in user app page lifecycle, it will fetch upon every navigation
+
+### Interruption - some must-have before moving forward
+
+- [x] Before moving forward, let's do a delete feature as well!
+    - Need to use [Django Signal](https://stackoverflow.com/questions/12754024/onetoonefield-and-deleting) to delete all the related one to one field when model is deleted. The `on_delete` is not enough.
+
+- [x] Upon logout, we need to clear out the store.
+
+- [x] Permission control IN DRF
+    - We kind of achieved it, but we need to refactor and clean up uncecessary code.
+    - Notice: the `get_queryset()` on viewset only take effect on listing methods, i.e., when the endpoint is ["returning a list of objects"](https://www.django-rest-framework.org/api-guide/permissions/). For single-object endpoint request like `GET/DELETE/...`, we have to find other ways, like writing a custom permission class as the occifial document suggests.
+    - [x] The list objects permission is working, and we can write that into a viewset mixin.
+    - [x] But we still need to work on single object permission. After implementing it, test by doing a DELETE in frontend.
+
+### Continue back to form factory
+
 - [ ] 🔥 🔥 🔥Prepare a space to ready to put application status form
 - [ ] test out the form factory and create the applciation status form.
 
@@ -453,6 +471,9 @@ If everything goes right, then...
 - [ ] Put everything together: test out the application status form and check in database.
 
 - [ ] And stop ... reflection on next steps and roadmaps.
+    - [ ] Update feature?
+    - [ ] user permission feature. Now user will get all companies from the database.
+        - Have to enable google console "allow all user even outside of orgs"
 
 # Reference
 
@@ -468,6 +489,7 @@ Production sites
 Tools
 
 - [Material Icons](https://material.io/tools/icons/)
+- [Official MDC for React](https://github.com/material-components/material-components-web-react/tree/master)
 - [How to write VScode snippet](https://code.visualstudio.com/docs/editor/userdefinedsnippets)
 - [React Router quick reference to match, location and history](https://medium.freecodecamp.org/hitchhikers-guide-to-react-router-v4-4b12e369d10)
 

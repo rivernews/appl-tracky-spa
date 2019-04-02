@@ -4,6 +4,7 @@ import { connectRouter, LocationChangeAction } from 'connected-react-router';
 import { authReducer } from "./auth/reducers";
 import { TAuthActions } from "./auth/types";
 import { IRootState } from "./types";
+import { RootActionNames } from "./actions";
 // rest api
 import { CompanyReducer } from "./data-model/company";
 import { AddressReducer } from "./data-model/address";
@@ -25,8 +26,7 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
     //     // ...
     // })
 
-    const rootReducer: Reducer<IRootState> = (rootState: IRootState | undefined, incomingAction: Action): IRootState  => {
-        const action = incomingAction as LocationChangeAction
+    const rootReducer: Reducer<IRootState> = (rootState: IRootState | undefined, action: Action): IRootState  => {
 
         let rootStateChecked: any = {}
         if (!rootState) {
@@ -35,18 +35,27 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             rootStateChecked.company = undefined;
             rootStateChecked.address = undefined;
             rootStateChecked.application = undefined;
+        } else if (action.type === RootActionNames.ResetAllStore) {
+            rootStateChecked = {
+                router: rootState.router
+            }
         } else {
             rootStateChecked = rootState;
         }
 
-        return {
+        console.log("beforeRootStore", rootState);
+
+        const afterStore  = { 
             ...rootState,
-            router: connectRouter(history)(rootStateChecked.router, action),
+            router: connectRouter(history)(rootStateChecked.router, action as LocationChangeAction),
             auth: authReducer(rootStateChecked.auth, action),
             company: CompanyReducer(rootStateChecked.company, action),
             address: AddressReducer(rootStateChecked.address, action),
             application: ApplicationReducer(rootStateChecked.application, action),
         }
+        console.log("afterRootStore", afterStore);
+
+        return afterStore;
     }
 
     return rootReducer;

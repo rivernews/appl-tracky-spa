@@ -20,13 +20,24 @@ export class ApplicationComponent extends Component<IApplicationComponentProps> 
                         <strong>Position:</strong> {application.position_title}
                     </span>
                     <br />
-                    <a target="_blank" href={application.job_description_page.url}>
-                        <strong>JD Page</strong>
-                    </a>
+                    {
+                        (application.job_description_page.url) ?
+                        <a target="_blank" href={application.job_description_page.url}>
+                            <strong>JD Page</strong>
+                        </a>
+                        :
+                        <span>JD Page</span>
+                    }
+                    
                     <br />
-                    <a target="_blank" href={application.job_source.url}>
-                        <strong>Job Source</strong>
-                    </a>
+                    {
+                        (application.job_source.url) ?
+                        <a target="_blank" href={application.job_source.url}>
+                            <strong>Job Source</strong>
+                        </a>
+                        :
+                        <span>Job Source</span>
+                    }
                 </p>
             </div>
         );

@@ -9,6 +9,9 @@ import {
     SuccessLogoutAuth,
     FailureAuth
 } from "../../store/auth/actions";
+import { resetAllStoreAction } from "../../store/actions";
+import { CompanyActions, Company } from "../../store/data-model/company";
+import { ApplicationActions, Application } from "../../store/data-model/application";
 // redux-saga
 import { takeEvery, call, put } from "redux-saga/effects";
 
@@ -17,7 +20,7 @@ import { push } from "connected-react-router";
 
 /** api */
 import { authentication } from "../../utils/auth";
-import { RestApiService } from "../../utils/rest-api";
+import { RestApiService, CrudType, RequestStatus } from "../../utils/rest-api";
 
 function* authLoginSagaHandler(
     requestedLoginAuthAction: IRequestedLoginAuthAction
@@ -33,6 +36,10 @@ function* authLoginSagaHandler(
         authentication.state.apiLoginToken = RestApiService.state.apiLoginToken = jsonResponse.token;
         yield put(SuccessLoginAuth(jsonResponse.email, "", jsonResponse.token));
         // yield put(push("/home/"));
+
+        // initial fetch user data
+        yield put(ApplicationActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Application({})))
+        yield put(CompanyActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({})))
     } catch (error) {
         console.warn("auth saga: error")
         yield put(FailureAuth(error));
@@ -51,6 +58,8 @@ function* authLogoutSagaHandler(
     console.log("auth logout saga: fired");
     try {
         yield call(authentication.serverLogout);
+
+        // clear all store
     } catch (error) {
         yield put(FailureAuth(error));
         return;
@@ -59,6 +68,9 @@ function* authLogoutSagaHandler(
     console.log("auth logout saga: navigating");
     yield put(SuccessLogoutAuth());
     // yield put(push("/"));
+
+    // clear all redux store
+    yield put(resetAllStoreAction());
 }
 
 export function* authLogoutSaga() {

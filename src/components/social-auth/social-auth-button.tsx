@@ -168,7 +168,7 @@ class SocialAuthButton extends Component<
     render() {
         return (
             <div className="SocialAuth">
-                request status: {this.props.auth.requestStatus} <br></br>
+                auth requestStatus: {this.props.auth.requestStatus} <br></br>
                 {!this.props.auth.isLogin ? (
                     <SocialAuthLoginButton
                         clientID={this.state.clientID}

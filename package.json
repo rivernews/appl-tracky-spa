@@ -5,6 +5,7 @@
   "homepage": "https://rivernews.github.io/appl-tracky-spa",
   "dependencies": {
     "@material/react-button": "^0.10.0",
+    "@material/react-icon-button": "^0.11.0",
     "@material/react-material-icon": "^0.10.0",
     "@material/react-ripple": "^0.10.0",
     "@material/react-text-field": "^0.11.0",
