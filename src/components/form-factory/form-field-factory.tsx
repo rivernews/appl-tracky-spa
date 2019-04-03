@@ -26,12 +26,24 @@ import {
     FormikErrors,
 } from "formik";
 
-export interface IFormField {
-    fieldName: string
-    label: string
+export enum InputFieldType {
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+    TEXT = "text",
+    PASSWORD = "password",
+    EMAIL = "email",
+    URL = "url",
 }
 
-interface IFormFieldFactoryProps extends IFormField {
+export class FormInputFieldProps {
+    constructor(
+        public fieldName: string = "",
+        public label: string = "",
+        public type?: InputFieldType,
+        public onTrailingIconSelect?: () => void
+    ) {}
+}
+
+interface IFormInputFieldFactoryProps extends FormInputFieldProps {
     /* formik */
     onChange: (event: any) => void
     onBlur: (event: any) => void
@@ -40,20 +52,17 @@ interface IFormFieldFactoryProps extends IFormField {
     touched: FormikTouched<FormikValues>
 }
 
-export class FormFieldFactory extends Component<IFormFieldFactoryProps> {
+export class FormInputFieldFactory extends Component<IFormInputFieldFactoryProps> {
     render() {
         return (
             <div className="FormFieldFactory">
-                <h1>FormFieldFactory Works!</h1>
                 <TextField
                     label={this.props.label}
-                    onTrailingIconSelect={() => {
-                        this.props.values[this.props.fieldName] = "";
-                        this.props.touched[this.props.fieldName] = false;
-                    }}
-                    trailingIcon={<MaterialIcon role="button" icon="clear" />}
+                    onTrailingIconSelect={this.props.onTrailingIconSelect}
+                    // trailingIcon={<MaterialIcon role="button" icon="clear" />}
                 >
                     <Input
+                        type={this.props.type || "text"}
                         name={this.props.fieldName}
                         inputType="input"
                         onChange={this.props.onChange}

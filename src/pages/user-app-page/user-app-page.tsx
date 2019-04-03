@@ -17,7 +17,7 @@ import MaterialIcon from "@material/react-material-icon";
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 // objects
-import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application";
+import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 
 interface IUserAppPageProps extends RouteComponentProps {
     company: IObjectStore<Company>

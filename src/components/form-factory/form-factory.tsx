@@ -22,11 +22,20 @@ import {
     Field,
     ErrorMessage,
     FormikValues,
-    FormikErrors
+    FormikErrors,
+    FormikTouched
 } from "formik";
-import { IFormField, FormFieldFactory } from "./form-field-factory";
+import { FormInputFieldFactory, FormInputFieldProps } from "./form-field-factory";
 
-interface IFormFactoryProps<DataModel> {
+export class FormActionButtonProps {
+    constructor(
+        public text: string = "", 
+        public onClick?: (event: any) => void, 
+        public type?: string
+    ) {}
+}
+
+export interface IFormFactoryProps<DataModel> {
     initialValues: DataModel;
 
     validate: (values: FormikValues) => FormikErrors<FormikValues>;
@@ -35,14 +44,8 @@ interface IFormFactoryProps<DataModel> {
         { setSubmitting }: { setSubmitting: Function }
     ) => void;
 
-    actionButtons: Array<IFormActionButton>;
-    formFields: Array<IFormField>
-}
-
-interface IFormActionButton {
-    type?: string;
-    onClick?: () => void;
-    text: string;
+    actionButtonPropsList: Array<FormActionButtonProps>;
+    formInputFieldPropsList: Array<FormInputFieldProps>
 }
 
 export class FormFactory<DataModel> extends Component<
@@ -51,7 +54,6 @@ export class FormFactory<DataModel> extends Component<
     render() {
         return (
             <div className="FormFactory">
-                <h1>FormFactory Works!</h1>
                 <Formik
                     initialValues={this.props.initialValues}
                     validate={this.props.validate}
@@ -65,11 +67,16 @@ export class FormFactory<DataModel> extends Component<
                         handleBlur,
                         handleSubmit,
                         isSubmitting
-                    }) => {
+                    }: {
+                        values: FormikValues,
+                        touched: FormikTouched<FormikValues>,
+                        [props: string]: any
+                    }) => (
                         <Form>
-                            {this.props.formFields.map((formField) => (
-                                <FormFieldFactory 
-                                    {...formField} 
+                            {this.props.formInputFieldPropsList.map((formInputFieldProps: FormInputFieldProps, index) => (
+                                <FormInputFieldFactory 
+                                    key={index}
+                                    {...formInputFieldProps} 
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     values={values}
@@ -77,19 +84,20 @@ export class FormFactory<DataModel> extends Component<
                                     touched={touched}
                                 />
                             ))}
-                            {this.props.actionButtons.map(
-                                (actionButton: IFormActionButton) => (
+                            {this.props.actionButtonPropsList.map(
+                                (actionButtonProps: FormActionButtonProps, index) => (
                                     <Button
-                                        type={actionButton.type}
+                                        key={index}
+                                        type={actionButtonProps.type}
                                         disabled={isSubmitting}
                                         unelevated
-                                        onClick={actionButton.onClick}
-                                        children={actionButton.text}
+                                        onClick={actionButtonProps.onClick}
+                                        children={actionButtonProps.text}
                                     />
                                 )
                             )}
-                        </Form>;
-                    }}
+                        </Form>
+                    )}
                 </Formik>
             </div>
         );

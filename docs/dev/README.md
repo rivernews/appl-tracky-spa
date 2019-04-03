@@ -461,12 +461,12 @@ But first of all, we need to list all the applications.
 
 ### Continue back to form factory
 
-- [ ] 🔥 🔥 🔥Prepare a space to ready to put application status form
-- [ ] test out the form factory and create the applciation status form.
+- [x] Prepare a space to ready to put application status form
+- [x] test out the form factory and create the applciation status form.
 
 If everything goes right, then...
 
-- [ ] Consider refactor backend serializer mixin
+- [ ] 🔥 🔥 🔥Consider refactor backend serializer mixin
 - [ ] test out the mixin to enable relational field write operation in serializer and view.
 - [ ] Put everything together: test out the application status form and check in database.
 

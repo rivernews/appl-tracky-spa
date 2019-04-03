@@ -20,7 +20,7 @@ import {
 } from "../../store/data-model/application";
 
 /** Components */
-import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application";
+import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
 // mdc react button
