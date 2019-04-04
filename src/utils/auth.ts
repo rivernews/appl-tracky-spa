@@ -86,4 +86,4 @@ class Authentication {
     }
 }
 
-export const authentication = new Authentication();
+export const AuthenticationService = new Authentication();

@@ -467,6 +467,10 @@ But first of all, we need to list all the applications.
 If everything goes right, then...
 
 - [ ] 🔥 🔥 🔥Consider refactor backend serializer mixin
+- [ ] You want to double check application status model's field - esp the `text` field.
+    - What do u want to achieve? Reusable status type.
+- [ ] (You might want to refactor frontend form validator and modularize them)
+- [ ] (In order to let trailingIconSelect to work and clear the field, we might need to get the `ref` of `<Input>` in `form-field-factory.tsx`, i.e., manually change the input element value. This should also trigger the `onChange` event so Formik's value is also updated)
 - [ ] test out the mixin to enable relational field write operation in serializer and view.
 - [ ] Put everything together: test out the application status form and check in database.
 

@@ -19,7 +19,7 @@ import { takeEvery, call, put } from "redux-saga/effects";
 import { push } from "connected-react-router";
 
 /** api */
-import { authentication } from "../../utils/auth";
+import { AuthenticationService } from "../../utils/auth";
 import { RestApiService, CrudType, RequestStatus } from "../../utils/rest-api";
 
 function* authLoginSagaHandler(
@@ -31,9 +31,9 @@ function* authLoginSagaHandler(
     console.log("auth saga: request fired");
     try {
         // TODO: define interface typing for api response
-        const jsonResponse = yield call(authentication.serverLogin, socialAuthToken);
+        const jsonResponse = yield call(AuthenticationService.serverLogin, socialAuthToken);
         console.log("auth saga: navigating. jsonRes:", jsonResponse);
-        authentication.state.apiLoginToken = RestApiService.state.apiLoginToken = jsonResponse.token;
+        AuthenticationService.state.apiLoginToken = jsonResponse.token;
         yield put(SuccessLoginAuth(jsonResponse.email, "", jsonResponse.token));
         // yield put(push("/home/"));
 
@@ -57,7 +57,7 @@ function* authLogoutSagaHandler(
     // RequestAuth action triggered & injecting side effects here...
     console.log("auth logout saga: fired");
     try {
-        yield call(authentication.serverLogout);
+        yield call(AuthenticationService.serverLogout);
 
         // clear all store
     } catch (error) {

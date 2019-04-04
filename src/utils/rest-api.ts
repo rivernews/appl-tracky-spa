@@ -1,5 +1,6 @@
 import { TObject, IObjectBase } from "../store/rest-api-redux-factory";
 import { BaseModel } from "../store/data-model/base-model";
+import { AuthenticationService } from "./auth";
 
 export enum RequestStatus {
     TRIGGERED = "triggered",
@@ -167,6 +168,10 @@ export class RestApi {
     };
 
     private setApiAuthHeaders = (): RequestInit => {
+
+        this.state.apiLoginToken = (
+            AuthenticationService.state.apiLoginToken
+        ) ? AuthenticationService.state.apiLoginToken : this.state.apiLoginToken;
 
         console.log("api: set header: got credentials?", this.state.apiLoginToken);
         return {
