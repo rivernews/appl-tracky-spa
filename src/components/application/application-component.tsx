@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 /** Redux */
 import { Application } from "../../store/data-model/application";
 
+/** data model */
+import { ApplicationStatus } from "../../store/data-model/application-status";
+
 /** Components */
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
@@ -11,10 +14,13 @@ import MaterialIcon from "@material/react-material-icon";
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 import { ApplicationStatusFormComponentContainer } from "../../components/application-status/application-status-form-component";
+import { ApplicationStatusComponentContainer } from "../application-status/application-status-component";
 
 /** Types */
 interface IApplicationComponentProps {
     application: Application;
+    applicationStatusList: Array<ApplicationStatus>;
+    isShowApplicationStatuses?: boolean
 }
 
 interface IApplicationComponentState {
@@ -34,10 +40,13 @@ export class ApplicationComponent extends Component<
         const application = this.props.application;
         return application.uuid ? (
             <div className="ApplicationComponent">
+                {/* application info */}
                 <p>
                     <span>
                         <strong>Position:</strong> {application.position_title}
                     </span>
+                    <br />
+                    <span>Application UUID: {application.uuid}</span>
                     <br />
                     {application.job_description_page.url ? (
                         <a
@@ -60,7 +69,18 @@ export class ApplicationComponent extends Component<
                     )}
                 </p>
 
-                {!this.state.isApplicationStatusFormOpened ? (
+                {/* application statuses list */}
+                {this.props.isShowApplicationStatuses && this.props.applicationStatusList.map(status => {
+                    return (
+                        <ApplicationStatusComponentContainer
+                            key={status.uuid}
+                            applicationStatus={status}
+                        />
+                    );
+                })}
+
+                {/* new application status form */}
+                {this.props.isShowApplicationStatuses && (!this.state.isApplicationStatusFormOpened ? (
                     <Button
                         onClick={clickEvent => {
                             this.setState({
@@ -74,7 +94,10 @@ export class ApplicationComponent extends Component<
                     </Button>
                 ) : (
                     <div className="application-component__status-form">
-                        <h3>Add new status to application for {this.props.application.position_title} </h3>
+                        <h3>
+                            Add new status to application for{" "}
+                            {this.props.application.position_title}{" "}
+                        </h3>
                         <ApplicationStatusFormComponentContainer
                             application={this.props.application}
                             onCancel={clickEvent => {
@@ -84,7 +107,7 @@ export class ApplicationComponent extends Component<
                             }}
                         />
                     </div>
-                )}
+                ))}
             </div>
         ) : (
             <span>application object has no uuid.</span>

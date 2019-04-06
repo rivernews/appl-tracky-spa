@@ -105,6 +105,7 @@ class UserComAppPage extends Component<
                 </Button>
                 <h1>{this.state.company.name}</h1>
 
+                {/* application form */}
                 {(!this.state.isApplicationFormOpened) ? (
                     <Button
                         onClick={clickEvent => {
@@ -124,10 +125,14 @@ class UserComAppPage extends Component<
                         company={this.state.company}
                     />
                 )}
+
                 <br />
+
+                {/* application list */}
                 {this.state.company.uuid && (
                     <CompanyApplicationComponentContainer
                         company={this.state.company}
+                        isShowApplicationStatuses
                     />
                 )}
             </div>

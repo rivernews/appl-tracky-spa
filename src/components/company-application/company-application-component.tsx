@@ -13,15 +13,19 @@ import {
     ApplicationActions,
     Application
 } from "../../store/data-model/application";
+import { ApplicationStatus } from "../../store/data-model/application-status";
 
 /** Components */
 // objects
 import { CompanyComponent } from "../company/company-component";
 import { ApplicationComponent } from "../application/application-component";
 
+
 interface ICompanyApplicationComponentProps {
     company: Company;
     applicationStore: IObjectStore<Application>
+    applicationStatusStore: IObjectStore<ApplicationStatus>
+    isShowApplicationStatuses?: boolean
     deleteObject: (companyToDelete: Company, callback?: Function) => void
 }
 
@@ -44,14 +48,21 @@ class CompanyApplicationComponent extends Component<ICompanyApplicationComponent
                         application => application.user_company === this.props.company.uuid
                     )
                     .map(application => {
+                        const applicationStatusList = (
+                            this.props.isShowApplicationStatuses || false
+                        ) ? Object.values(this.props.applicationStatusStore.collection).filter(
+                            (applicationStatus) => applicationStatus.application === application.uuid
+                        ) : [];
                         return (
                             <ApplicationComponent
                                 key={application.uuid}
                                 application={application}
+                                applicationStatusList={applicationStatusList}
+                                isShowApplicationStatuses={this.props.isShowApplicationStatuses}
                             />
                         );
                     })}
-                <hr />
+                {(!this.props.isShowApplicationStatuses) && <hr />}
             </div>
         );
     }
@@ -59,7 +70,8 @@ class CompanyApplicationComponent extends Component<ICompanyApplicationComponent
 
 const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
-    applicationStore: store.application
+    applicationStore: store.application,
+    applicationStatusStore: store.applicationStatus,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {

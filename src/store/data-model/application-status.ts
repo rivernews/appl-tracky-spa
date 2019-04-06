@@ -5,6 +5,7 @@ import { Link } from "./link";
 interface IApplicationStatusProps {
     text?: string;
     application?: IRelationship;
+    application_status_links?: Array<IRelationship>
     date?: string;
     order?: number
 }
@@ -12,12 +13,14 @@ interface IApplicationStatusProps {
 export class ApplicationStatus extends BaseModel {
     public text: string;
     public application: IRelationship;
+    public application_status_links: Array<IRelationship>
     public date: string;
     public order: number;
 
     constructor({
         text = "",
         application = "",
+        application_status_links = [],
         date = "",
         order = 0,
         ...args
@@ -25,6 +28,7 @@ export class ApplicationStatus extends BaseModel {
         super(args);
         this.text = text;
         this.application = application;
+        this.application_status_links = application_status_links;
         this.date = date;
         this.order = order;
     }
