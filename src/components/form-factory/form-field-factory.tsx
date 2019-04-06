@@ -32,6 +32,7 @@ export enum InputFieldType {
     PASSWORD = "password",
     EMAIL = "email",
     URL = "url",
+    DATE = "date"
 }
 
 export class FormInputFieldProps {
@@ -62,7 +63,7 @@ export class FormInputFieldFactory extends Component<IFormInputFieldFactoryProps
                     // trailingIcon={<MaterialIcon role="button" icon="clear" />}
                 >
                     <Input
-                        type={this.props.type || "text"}
+                        type={this.props.type || InputFieldType.TEXT}
                         name={this.props.fieldName}
                         inputType="input"
                         onChange={this.props.onChange}

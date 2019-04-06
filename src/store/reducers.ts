@@ -9,6 +9,8 @@ import { RootActionNames } from "./actions";
 import { CompanyReducer } from "./data-model/company";
 import { AddressReducer } from "./data-model/address";
 import { ApplicationReducer } from "./data-model/application";
+import { ApplicationStatusReducer } from "./data-model/application-status";
+import { ApplicationStatusLinkReducer } from "./data-model/application-status-link";
 
 /** router */
 import { History } from "history";
@@ -35,6 +37,10 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             rootStateChecked.company = undefined;
             rootStateChecked.address = undefined;
             rootStateChecked.application = undefined;
+            rootStateChecked.applicationStatus = undefined;
+            rootStateChecked.applicationStatusLink = undefined;
+            // add initial state for new sub-store here
+            // ...
         } else if (action.type === RootActionNames.ResetAllStore) {
             rootStateChecked = {
                 router: rootState.router
@@ -52,6 +58,10 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             company: CompanyReducer(rootStateChecked.company, action),
             address: AddressReducer(rootStateChecked.address, action),
             application: ApplicationReducer(rootStateChecked.application, action),
+            applicationStatus: ApplicationStatusReducer(rootStateChecked.applicationStatus, action),
+            applicationStatusLink: ApplicationStatusLinkReducer(rootStateChecked.applicationStatusLink, action),
+            // add new reducer here
+            // ...
         }
         console.log("afterRootStore", afterStore);
 

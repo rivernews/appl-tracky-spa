@@ -466,17 +466,29 @@ But first of all, we need to list all the applications.
 
 If everything goes right, then...
 
-- [ ] 🔥 🔥 🔥Consider refactor backend serializer mixin
+- [x] Consider refactor backend serializer mixin
 - [ ] You want to double check application status model's field - esp the `text` field.
     - What do u want to achieve? Reusable status type.
+    - We want to leave it for user to define their own status. But, in the future, we may implement sth like "suggested words" based on history status text input.
 - [ ] (You might want to refactor frontend form validator and modularize them)
+    - We can push back validator, and complete all fields first. Also it'll be more clear what kind of field types we have and need what kinds of validator.
 - [ ] (In order to let trailingIconSelect to work and clear the field, we might need to get the `ref` of `<Input>` in `form-field-factory.tsx`, i.e., manually change the input element value. This should also trigger the `onChange` event so Formik's value is also updated)
-- [ ] test out the mixin to enable relational field write operation in serializer and view.
-- [ ] Put everything together: test out the application status form and check in database.
+    - It's better to just not use trailing icon functionality at this point. It will also use up a tab hit as well so, not very useful feature.
+- [x] test out the mixin to enable relational field write operation in serializer and view.
+- [x] Put everything together: test out the application status form and check in database.
+    - Especially, complete all fields
+        - [x] But we have to refactor previous forms first, so it'll be easier to augment fields to them.
+    - [ ] We will leave date validation as TODO.
+    - [ ] We need to make our frontend URL validator stricter, since our backend URLfield is pretty strict, and the API call will fail.
+
+- [ ] 🔥 🔥 🔥List out app statuses and status links
+- Add update/delete feature, to all: company, application, and application status.
+    - [ ] delete application status
+    - [ ] update company|app|app status|app status link
 
 - [ ] And stop ... reflection on next steps and roadmaps.
     - [ ] Update feature?
-    - [ ] user permission feature. Now user will get all companies from the database.
+    - [x] user permission feature. Now user will get all companies from the database.
         - Have to enable google console "allow all user even outside of orgs"
 
 # Reference

@@ -60,20 +60,23 @@ export class ApplicationComponent extends Component<
                     )}
                 </p>
 
-                <Button
-                    onClick={clickEvent => {
-                        this.setState({ isApplicationStatusFormOpened: true });
-                    }}
-                    unelevated
-                    icon={<MaterialIcon hasRipple icon="add" />}
-                >
-                    Add New Status
-                </Button>
-
-                {this.state.isApplicationStatusFormOpened && (
-                    <div className="application-status-form">
-                        Application status form here!
-                        <ApplicationStatusFormComponentContainer 
+                {!this.state.isApplicationStatusFormOpened ? (
+                    <Button
+                        onClick={clickEvent => {
+                            this.setState({
+                                isApplicationStatusFormOpened: true
+                            });
+                        }}
+                        unelevated
+                        icon={<MaterialIcon hasRipple icon="add" />}
+                    >
+                        Add New Status
+                    </Button>
+                ) : (
+                    <div className="application-component__status-form">
+                        <h3>Add new status to application for {this.props.application.position_title} </h3>
+                        <ApplicationStatusFormComponentContainer
+                            application={this.props.application}
                             onCancel={clickEvent => {
                                 this.setState({
                                     isApplicationStatusFormOpened: false

@@ -3,7 +3,7 @@ import { BaseModel, IBaseModelProps, IRelationship } from "./base-model";
 import { Link } from "./link";
 
 interface IApplicationProps {
-    user?: string;
+    user?: IRelationship;
     user_company?: IRelationship;
     position_title?: string;
     job_description_page?: Link;

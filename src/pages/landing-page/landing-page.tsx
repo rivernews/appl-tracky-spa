@@ -20,7 +20,8 @@ import { SocialAuthButtonContainer } from "../../components/social-auth/social-a
 import {
     FormFactory,
     FormActionButtonProps,
-    IFormFactoryProps
+    IFormFactoryProps,
+    ActionButtonType
 } from "../../components/form-factory/form-factory";
 import {
     FormInputFieldFactory,
@@ -30,6 +31,7 @@ import {
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 import { AuthenticationService } from "../../utils/auth";
 import { RestApiService } from "../../utils/rest-api";
+
 
 let styles = {
     backgroundColor: "purple",
@@ -110,7 +112,7 @@ class LandingPage extends Component<ILandingPageProps> {
                 )
             ],
             actionButtonPropsList: [
-                new FormActionButtonProps("Login", undefined, "submit")
+                new FormActionButtonProps("Login", undefined, ActionButtonType.SUBMIT)
             ]
         };
     };

@@ -27,11 +27,16 @@ import {
 } from "formik";
 import { FormInputFieldFactory, FormInputFieldProps } from "./form-field-factory";
 
+export enum ActionButtonType {
+    SUBMIT = "submit",
+    BUTTON = "button"
+}
+
 export class FormActionButtonProps {
     constructor(
         public text: string = "", 
         public onClick?: (event: any) => void, 
-        public type?: string
+        public type?: ActionButtonType
     ) {}
 }
 
@@ -88,7 +93,7 @@ export class FormFactory<DataModel> extends Component<
                                 (actionButtonProps: FormActionButtonProps, index) => (
                                     <Button
                                         key={index}
-                                        type={actionButtonProps.type}
+                                        type={actionButtonProps.type || ActionButtonType.BUTTON}
                                         disabled={isSubmitting}
                                         unelevated
                                         onClick={actionButtonProps.onClick}

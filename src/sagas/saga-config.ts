@@ -5,6 +5,8 @@ import { authLoginSaga, authLogoutSaga } from "./auth/sagas";
 import { CompanySagas } from "../store/data-model/company";
 import { AddressSagas } from "../store/data-model/address";
 import { ApplicationSagas } from "../store/data-model/application";
+import { ApplicationStatusSagas } from "../store/data-model/application-status";
+import { ApplicationStatusLinkSagas } from "../store/data-model/application-status-link";
 
 /** setup saga */
 const sagaMiddleware = createSagaMiddleware();
@@ -20,6 +22,8 @@ const rootSaga = function*() {
         ...CompanySagas.map((saga) => saga()),
         ...AddressSagas.map((saga) => saga()),
         ...ApplicationSagas.map((saga) => saga()),
+        ...ApplicationStatusSagas.map((saga) => saga()),
+        ...ApplicationStatusLinkSagas.map((saga) => saga()),
         // add new saga here
         // ...
     ]);
