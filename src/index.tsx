@@ -24,7 +24,7 @@ interface IRootProps {
 const Root: React.SFC<IRootProps> = props => {
     return (
         <Provider store={props.store}>
-            <ConnectedRouter history={history}>
+            <ConnectedRouter history={history} >
                 <App />
             </ConnectedRouter>
         </Provider>

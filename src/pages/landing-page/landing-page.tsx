@@ -67,9 +67,10 @@ class LandingPage extends Component<ILandingPageProps> {
 
         // post to get login token
 
-        fetch(`http://localhost:8000/api-token-auth/`, {
+        fetch(`${RestApiService.state.apiBaseUrl}api-token-auth/`, {
             method: "POST",
             mode: "cors",
+            credentials: "omit",
             headers: {
                 "Content-Type": "application/json"
             },

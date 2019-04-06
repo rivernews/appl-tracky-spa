@@ -13,7 +13,12 @@ import { sagaMiddleware, runSagaMiddleaware } from "../sagas/saga-config";
 
 
 
-const history = createBrowserHistory();
+const history = createBrowserHistory({
+    basename: (process.env.NODE_ENV === 'development') ?  
+    ``
+    :
+    `/appl-tracky-spa`
+});
 
 const preloadedState = {
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { TObject, IObjectBase } from "../store/rest-api-redux-factory";
 import { BaseModel } from "../store/data-model/base-model";
 import { AuthenticationService } from "./auth";
@@ -74,7 +75,11 @@ export class RestApi {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
         code: ``,
         redirectUri: `postmessage`,
-        apiBaseUrl: `http://localhost:8000/`,
+        apiBaseUrl: (process.env.NODE_ENV === 'development') ? 
+        `http://localhost:8000/api/`
+        :
+        `https://appl-tracky-api-https.shaungc.com/api/`
+        ,
         apiLoginUrl: `login/social/`,
         socialAuthProvider: `google-oauth2`,
 

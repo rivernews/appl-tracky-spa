@@ -482,7 +482,10 @@ If everything goes right, then...
     - [ ] We need to make our frontend URL validator stricter, since our backend URLfield is pretty strict, and the API call will fail.
 
 - [x] List out app statuses
-- [ ] ...🔥 🔥 🔥and status links
+- [x] ...and status links
+
+- [ ] 🔥 🔥 🔥Checkpoint: deploy to production server and test!
+
 - Add update/delete feature, to all: company, application, and application status.
     - [ ] delete application status
     - [ ] update company|app|app status|app status link
