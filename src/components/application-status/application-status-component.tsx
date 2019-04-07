@@ -18,7 +18,6 @@ import { ApplicationStatusLink } from "../../store/data-model/application-status
 
 interface IApplicationStatusComponentProps extends RouteComponentProps {
     applicationStatus: ApplicationStatus;
-    applicationStatusLinkStore: IObjectStore<ApplicationStatusLink>;
 }
 
 class ApplicationStatusComponent extends Component<
@@ -56,7 +55,6 @@ class ApplicationStatusComponent extends Component<
 
 const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
-    applicationStatusLinkStore: store.applicationStatusLink
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<any>>) => {

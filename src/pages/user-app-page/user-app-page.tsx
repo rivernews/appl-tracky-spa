@@ -32,7 +32,7 @@ class UserAppPage extends Component<IUserAppPageProps> {
     render() {
         return (
             <div className="UserAppPage">
-                <h1>UserAppPage Works!</h1>
+                <h1>Your Applications</h1>
                 <Button
                     onClick={()=>{ this.props.history.push("/add-com/") }}
                     unelevated

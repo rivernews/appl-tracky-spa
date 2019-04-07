@@ -123,9 +123,9 @@ class LandingPage extends Component<ILandingPageProps> {
             <div className="LandingPage" style={styles}>
                 {/** redirect logged in user to private routes */
                 this.props.auth.isLogin && <Redirect to="/home/" />}
-                <h1>LandingPage Works!</h1>
+                <h1>Appl Tracky</h1>
                 <SocialAuthButtonContainer />
-                <h2>Or login by username and password:</h2>
+                <h2>Or login locally:</h2>
                 <FormFactory {...this.formFactoryProps} />
             </div>
         );

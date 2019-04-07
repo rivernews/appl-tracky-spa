@@ -13,7 +13,6 @@ import {
 } from "../../store/data-model/application-status";
 import {
     ApplicationStatusLink,
-    ApplicationStatusLinkActions
 } from "../../store/data-model/application-status-link";
 import { Application } from "../../store/data-model/application";
 import { Link } from "../../store/data-model/link";
@@ -44,10 +43,6 @@ interface IApplicationStatusFormComponentProps extends RouteComponentProps {
     applicationStatusStore: IObjectStore<ApplicationStatus>
     createApplicationStatus: (
         applicationStatusFormData: ApplicationStatus,
-        callback?: Function
-    ) => void;
-    createApplicationStatusLink: (
-        applicationStatusLinkFormData: ApplicationStatusLink,
         callback?: Function
     ) => void;
 }
@@ -181,15 +176,6 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<ApplicationStatus> 
                     RequestStatus.TRIGGERED
                 ].action(applicationStatusFormData, callback)
             ),
-        createApplicationStatusLink: (
-            applicationStatusLinkFormData: ApplicationStatusLink,
-            callback?: Function
-        ) =>
-            dispatch(
-                ApplicationStatusLinkActions[CrudType.CREATE][
-                    RequestStatus.TRIGGERED
-                ].action(applicationStatusLinkFormData, callback)
-            )
     };
 };
 

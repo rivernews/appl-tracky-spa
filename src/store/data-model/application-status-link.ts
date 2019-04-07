@@ -21,12 +21,3 @@ export class ApplicationStatusLink extends BaseModel {
         this.link = link;
     }
 }
-
-const initialApplicationStatusLinkInstance = new ApplicationStatusLink({});
-const ApplicationStatusLinkRestApiRedux = RestApiReduxFactory<ApplicationStatusLink>(
-    "application-status-links",
-    initialApplicationStatusLinkInstance
-);
-export const ApplicationStatusLinkActions = ApplicationStatusLinkRestApiRedux.actions;
-export const ApplicationStatusLinkReducer = ApplicationStatusLinkRestApiRedux.storeReducer;
-export const ApplicationStatusLinkSagas = ApplicationStatusLinkRestApiRedux.sagas;

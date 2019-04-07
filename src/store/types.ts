@@ -20,7 +20,6 @@ export interface IRootState {
     address: IObjectStore<Address>
     application: IObjectStore<Application>
     applicationStatus: IObjectStore<ApplicationStatus>
-    applicationStatusLink: IObjectStore<ApplicationStatusLink>
     // ...
 
 

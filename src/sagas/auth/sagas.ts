@@ -13,7 +13,6 @@ import { resetAllStoreAction } from "../../store/actions";
 import { CompanyActions, Company } from "../../store/data-model/company";
 import { ApplicationActions, Application } from "../../store/data-model/application";
 import { ApplicationStatusActions, ApplicationStatus } from "../../store/data-model/application-status";
-import { ApplicationStatusLinkActions, ApplicationStatusLink } from "../../store/data-model/application-status-link";
 // redux-saga
 import { takeEvery, call, put } from "redux-saga/effects";
 
@@ -43,7 +42,6 @@ function* authLoginSagaHandler(
         yield put(ApplicationActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Application({})))
         yield put(CompanyActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({})))
         yield put(ApplicationStatusActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new ApplicationStatus({})))
-        yield put(ApplicationStatusLinkActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new ApplicationStatusLink({})))
     } catch (error) {
         console.warn("auth saga: error")
         yield put(FailureAuth(error));

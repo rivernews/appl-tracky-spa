@@ -20,7 +20,7 @@ class UserProfilePage extends Component<IUserProfilePageProps, any> {
     render() {
         return (
             <div>
-                <h1>(Internal Page) User Profile Page works!</h1>
+                <h1>My Profile</h1>
                 <UserInfo auth={this.props.auth} />
                 <SocialAuthButtonContainer />
             </div>
