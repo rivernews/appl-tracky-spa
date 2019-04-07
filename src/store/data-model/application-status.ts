@@ -1,11 +1,11 @@
 import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps, IRelationship } from "./base-model";
-import { Link } from "./link";
+import { ApplicationStatusLink } from "./application-status-link";
 
 interface IApplicationStatusProps {
     text?: string;
     application?: IRelationship;
-    application_status_links?: Array<IRelationship>
+    applicationstatuslink_set?: Array<ApplicationStatusLink>
     date?: string;
     order?: number
 }
@@ -13,14 +13,14 @@ interface IApplicationStatusProps {
 export class ApplicationStatus extends BaseModel {
     public text: string;
     public application: IRelationship;
-    public application_status_links: Array<IRelationship>
+    public applicationstatuslink_set: Array<ApplicationStatusLink>
     public date: string;
     public order: number;
 
     constructor({
         text = "",
         application = "",
-        application_status_links = [],
+        applicationstatuslink_set = [],
         date = "",
         order = 0,
         ...args
@@ -28,7 +28,7 @@ export class ApplicationStatus extends BaseModel {
         super(args);
         this.text = text;
         this.application = application;
-        this.application_status_links = application_status_links;
+        this.applicationstatuslink_set = applicationstatuslink_set;
         this.date = date;
         this.order = order;
     }

@@ -32,13 +32,8 @@ class ApplicationStatusComponent extends Component<
                     <br />
                     <span>{this.props.applicationStatus.date}</span>
                     <br />
-                    {this.props.applicationStatus.application_status_links.map(
-                        applicationStatusLinkID => {
-                            console.log("applicationStatusLinkID=", applicationStatusLinkID)
-                            const applicationStatusLink: ApplicationStatusLink = this
-                                .props.applicationStatusLinkStore.collection[
-                                applicationStatusLinkID
-                            ];
+                    {this.props.applicationStatus.applicationstatuslink_set.map(
+                        applicationStatusLink => {
                             console.log("applicationStatusLinkID Obj=", applicationStatusLink);
                             return (
                                 (applicationStatusLink && applicationStatusLink.link) && <span key={applicationStatusLink.uuid}>
@@ -48,7 +43,7 @@ class ApplicationStatusComponent extends Component<
                                     >
                                         {applicationStatusLink.link.text}
                                     </a>{" "}
-                                    |
+                                    |{" "}
                                 </span>
                             );
                         }

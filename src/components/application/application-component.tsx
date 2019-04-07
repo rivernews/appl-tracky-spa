@@ -105,6 +105,9 @@ export class ApplicationComponent extends Component<
                                     isApplicationStatusFormOpened: false
                                 });
                             }}
+                            onSubmitSuccess={() => {
+                                this.setState({ isApplicationStatusFormOpened: false } )
+                            }}
                         />
                     </div>
                 ))}

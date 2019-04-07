@@ -37,6 +37,7 @@ import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationStatusFormComponentProps extends RouteComponentProps {
     onCancel: (event: any) => void;
+    onSubmitSuccess?: () => void;
 
     /** redux */
     application: Application;
@@ -122,55 +123,35 @@ class ApplicationStatusFormComponent extends Component<
             return;
         }
 
+        // create link(s)
+        let links = [];
+        const indexes = [0, 1];
+        for (let index of indexes) {
+            if (values[`application_status__link${index}__url`]) {
+                links.push(new Link({
+                    url: values[`application_status__link${index}__url`],
+                    text: values[`application_status__link${index}__text`] || `Link of status`,
+                }))
+            }
+        }
+        // create main object for applicationStatusLink(s)
+        const applicationStatusLinks = links.map(link => {
+            return new ApplicationStatusLink({
+                link,
+            });
+        });
+
         // create main object for application status
         const applicationStatus = new ApplicationStatus({
             text: values.application_status__text,
             application: application__id,
-            date: values.application_status__date
+            date: values.application_status__date,
+            applicationstatuslink_set: applicationStatusLinks,
         });
 
         // dispatch for application status
         this.props.createApplicationStatus(applicationStatus, () => {
-            // get application status uuid
-            const newApplicationStatusID = this.props.applicationStatusStore.lastChangedObjectID;
-            if (!newApplicationStatusID) {
-                console.error("AppStatusForm: application status store has no lastChangedObjectID, so we cannot create the associated AppStatusLinks.")
-                return
-            }
-
-            const newApplicationStatus = this.props.applicationStatusStore.collection[
-                newApplicationStatusID
-            ];
-
-            if (!newApplicationStatus.uuid) {
-                console.error("AppStatusForm: newApplicationStatus has no uuid.")
-                return 
-            }
-
-            // create link(s)
-            let links = [];
-            const indexes = [0, 1];
-            for (let index of indexes) {
-                if (values[`application_status__link${index}__url`]) {
-                    links.push(new Link({
-                        url: values[`application_status__link${index}__url`],
-                        text: values[`application_status__link${index}__text`] || `Link of status`,
-                    }))
-                }
-            }
-
-            // create main object for applicationStatusLink(s)
-            const applicationStatusLinks = links.map(link => {
-                return new ApplicationStatusLink({
-                    link,
-                    application_status: newApplicationStatus.uuid,
-                });
-            });
-
-            // dispatch
-            applicationStatusLinks.map(statusLink => {
-                this.props.createApplicationStatusLink(statusLink);
-            });
+            this.props.onSubmitSuccess && this.props.onSubmitSuccess();
         });
     };
 

@@ -122,6 +122,9 @@ class UserComAppPage extends Component<
                             console.log("onCancel clicked");
                             this.setState({ isApplicationFormOpened: false })
                         }}
+                        onSubmitSuccess={() => this.setState({
+                            isApplicationFormOpened: false
+                        })}
                         company={this.state.company}
                     />
                 )}

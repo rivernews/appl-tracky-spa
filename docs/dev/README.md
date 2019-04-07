@@ -484,9 +484,11 @@ If everything goes right, then...
 - [x] List out app statuses
 - [x] ...and status links
 
-- [ ] 🔥 🔥 🔥Checkpoint: deploy to production server and test!
+- [x] Checkpoint: deploy to production server and test!
+- [x] Some bug - when new status created, frontend list didn't show links. But when you login again, they are their now.
+- [x] Bug - after form submit - clicked "Create", the form did not close.
 
-- Add update/delete feature, to all: company, application, and application status.
+- 🔥 🔥 🔥Add update/delete feature, to all: company, application, and application status.
     - [ ] delete application status
     - [ ] update company|app|app status|app status link
 

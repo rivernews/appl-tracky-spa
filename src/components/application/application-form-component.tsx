@@ -34,6 +34,7 @@ import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 interface IApplicationFormComponentProps {
     company: Company;
     onCancel: (event: any) => void;
+    onSubmitSuccess?: () => void;
 
     /** redux */
     application: IObjectStore<Application>;
@@ -140,6 +141,7 @@ class ApplicationFormComponent extends Component<
                     this.props.application.lastChangedObjectID
                 ];
                 console.log("new application:", newApplication);
+                this.props.onSubmitSuccess && this.props.onSubmitSuccess();
             } else {
                 console.error("application store has no lastChangedObjectID");
             }
