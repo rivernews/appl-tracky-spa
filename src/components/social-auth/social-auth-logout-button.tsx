@@ -10,6 +10,7 @@ import Button from "@material/react-button";
 
 interface ISocialAuthLogoutButtonProps {
     onSuccess(authResponse?: any): void;
+    disabled?: boolean
 }
 
 export class SocialAuthLogoutButton extends Component<
@@ -28,6 +29,7 @@ export class SocialAuthLogoutButton extends Component<
                             onClick={renderProps.onClick}
                             unelevated
                             icon={<MaterialIcon hasRipple icon="eject" />}
+                            disabled={this.props.disabled}
                         >
                             Logout
                         </Button>

@@ -13,6 +13,7 @@ interface ISocialAuthLoginButtonProps {
     redirectUri?: string;
     onSuccess(authResponse?: any): void;
     onFailure?(error: any): void;
+    disabled?: boolean;
 }
 
 export class SocialAuthLoginButton extends Component<
@@ -51,6 +52,7 @@ export class SocialAuthLoginButton extends Component<
                             icon={
                                 <MaterialIcon hasRipple icon="account_circle" />
                             }
+                            disabled={this.props.disabled}
                         >
                             Google Login
                         </Button>

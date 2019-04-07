@@ -8,6 +8,9 @@ import { IRootState } from "../../store/types";
 import { IUpdateAuthAction, IRequestedLoginAuthAction, TAuthActions, IUpdateAuthState } from "../../store/auth/types";
 import { UpdateAuth, RequestedLoginAuth, RequestedLogoutAuth } from "../../store/auth/actions";
 
+/** rest api */
+import { RequestStatus } from "../../utils/rest-api";
+
 /** Components */
 import { SocialAuthLoginButton } from "./social-auth-login-button";
 import { SocialAuthLogoutButton } from "./social-auth-logout-button";
@@ -69,10 +72,12 @@ class SocialAuthButton extends Component<
                         clientID={this.state.clientID}
                         onSuccess={this.onSocialLoginSuccess}
                         onFailure={this.onSocialLoginFailure}
+                        disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
                     />
                 ) : (
                     <SocialAuthLogoutButton
                         onSuccess={this.onSocialLogoutSuccess}
+                        disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
                     />
                 )}
             </div>
