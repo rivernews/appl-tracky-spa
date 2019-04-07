@@ -13,7 +13,8 @@ export interface IUpdateAuthState {
     userName: string
     socialAuthToken: string
     apiToken: string
-    expireDateTime: string,
+    expireDateTime: string
+    avatarUrl: string
 }
 
 // async partial store types
@@ -32,6 +33,7 @@ export interface ISuccessAuthState {
     userName: string
     expireDateTime: string
     apiToken: string
+    avatarUrl: string
 }
 
 export interface IFailureAuthState {

@@ -16,6 +16,7 @@ const initialAuthState: IUpdateAuthState = {
     apiToken: "",
     userName: "",
     expireDateTime: "",
+    avatarUrl: "",
 }
 
 // authStore will be stored as a sub-entry in global store; this is defined in ./store/types.ts

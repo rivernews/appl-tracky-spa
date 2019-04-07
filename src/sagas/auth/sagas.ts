@@ -33,9 +33,13 @@ function* authLoginSagaHandler(
     try {
         // TODO: define interface typing for api response
         const jsonResponse = yield call(AuthenticationService.serverLogin, socialAuthToken);
-        console.log("auth saga: navigating. jsonRes:", jsonResponse);
+        console.log("auth saga: server login using code from social button. server jsonRes=", jsonResponse);
         AuthenticationService.state.apiLoginToken = jsonResponse.token;
-        yield put(SuccessLoginAuth(jsonResponse.email, "", jsonResponse.token));
+        yield put(SuccessLoginAuth(
+            jsonResponse.email, "", 
+            jsonResponse.token, 
+            jsonResponse.avatar_url
+        ));
         // yield put(push("/home/"));
 
         // initial fetch user data

@@ -52,27 +52,6 @@ class Authentication {
                 data: authFormData,
                 endpointUrl: this.state.apiLoginUrl
             })
-
-            // .then(jsonData => {
-            //     console.log("API login res:", JSON.stringify(jsonData));
-            //     if (jsonData.email) {
-            //         console.log("API login success.");
-            //         this.state.userEmail = jsonData.email;
-            //         this.state.userFirstName = jsonData.userFirstName;
-            //         this.state.userLastName = jsonData.userLastName;
-            //         this.state.apiLoginToken = restApi.state.apiLoginToken = jsonData.apiLoginToken;
-
-            //         return jsonData;
-            //     } else {
-            //         console.warn("API server login failure.");
-            //         return Error("API server login failure.")
-            //     }
-            // })
-
-            // .catch(error => {
-            //     console.error("API login error:", error);
-            //     return Error(`API login error: ${error}`);
-            // });
     }
 
     serverLogout = async () => {

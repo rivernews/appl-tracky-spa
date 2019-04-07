@@ -40,7 +40,7 @@ let styles = {
 
 interface ILandingPageProps extends RouteComponentProps {
     auth: IUpdateAuthState;
-    loginSuccess: (userName: string, apiToken: string) => void;
+    loginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
     listApplication: () => void
     listCompany: () => void
 }
@@ -83,7 +83,7 @@ class LandingPage extends Component<ILandingPageProps> {
                 AuthenticationService.state.apiLoginToken = res.token;
 
                 // set redux auth store isLogin state --- have to write action and reducer.
-                this.props.loginSuccess(values.username, res.token);
+                this.props.loginSuccess(values.username, res.token, res.avatar_url);
 
                 // request com & app list (dispatch)
                 this.props.listApplication();
@@ -139,8 +139,8 @@ const mapStateToProps = (state: IRootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
-        loginSuccess: (userName: string, apiToken: string) =>
-            dispatch(SuccessLoginAuth(userName, "", apiToken)),
+        loginSuccess: (userName: string, apiToken: string, avatarUrl: string) =>
+            dispatch(SuccessLoginAuth(userName, "", apiToken, avatarUrl)),
         listApplication: () =>
             dispatch(
                 ApplicationActions[CrudType.LIST][
