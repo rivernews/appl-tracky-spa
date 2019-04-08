@@ -31,6 +31,10 @@ import {
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 import { AuthenticationService } from "../../utils/auth";
 import { RestApiService } from "../../utils/rest-api";
+import MaterialIcon from "@material/react-material-icon";
+// mdc react button
+import "@material/react-button/dist/button.css";
+import Button from "@material/react-button";
 
 
 let styles = {
@@ -125,8 +129,19 @@ class LandingPage extends Component<ILandingPageProps> {
                 this.props.auth.isLogin && <Redirect to="/home/" />}
                 <h1>Appl Tracky</h1>
                 <SocialAuthButtonContainer />
-                <h2>Or login locally:</h2>
+                <h2>Or login locally (admin only):</h2>
                 <FormFactory {...this.formFactoryProps} />
+                <hr />
+                <Button
+                    href="https://github.com/rivernews/appl-tracky-spa"
+                    target="_blank"
+                    unelevated
+                    icon={
+                        <MaterialIcon hasRipple icon="code" />
+                    }
+                >
+                    Github Repository
+                </Button>
             </div>
         );
     }
