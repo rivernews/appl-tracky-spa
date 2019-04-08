@@ -11,11 +11,6 @@ export class UserInfo extends Component<UserInfoProps, any> {
     render() {
         return (
             <div>
-                {this.props.auth.avatarUrl && (
-                    <div>
-                        <img src={this.props.auth.avatarUrl} />
-                    </div>
-                )}
                 <div>
                     Logged in:{" "}
                     {(this.props.auth.isLogin &&

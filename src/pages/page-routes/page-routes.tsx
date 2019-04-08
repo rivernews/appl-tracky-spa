@@ -43,13 +43,8 @@ class PageRoutes extends Component<IPageRoutesProps> {
                     <Route path="/" exact component={LandingPageContainer} />
                 ) : (
                     <div className="PrivateRoutesContainer">
-
-                        {
-                            /** protect private routes */
-                            (!this.props.auth.isLogin) && (
-                                <Redirect to="/" />
-                            )
-                        }
+                        {/** protect private routes */
+                        !this.props.auth.isLogin && <Redirect to="/" />}
 
                         <TopAppBar
                             title="Appl Tracky"
@@ -61,12 +56,20 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                         icon="home"
                                     />
                                 </Link>,
+
                                 <Link to="/profile/">
-                                    <MaterialIcon
-                                        hasRipple
-                                        key="itemProfile"
-                                        icon="account_circle"
-                                    />
+                                    {this.props.auth.avatarUrl === "" ? (
+                                        <MaterialIcon
+                                            hasRipple
+                                            key="itemProfile"
+                                            icon="account_circle"
+                                        />
+                                    ) : (
+                                        <img style={{
+                                            "height": "100%",
+                                            "border-radius": "50%",
+                                        }} src={this.props.auth.avatarUrl} />
+                                    )}
                                 </Link>
                             ]}
                         />
