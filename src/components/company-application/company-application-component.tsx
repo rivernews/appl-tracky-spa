@@ -26,14 +26,14 @@ interface ICompanyApplicationComponentProps {
     applicationStore: IObjectStore<Application>
     applicationStatusStore: IObjectStore<ApplicationStatus>
     isShowApplicationStatuses?: boolean
-    deleteObject: (companyToDelete: Company, callback?: Function) => void
+    deleteCompany: (companyToDelete: Company, callback?: Function) => void
 }
 
 class CompanyApplicationComponent extends Component<ICompanyApplicationComponentProps> {
 
     onDeleteClick = (event: any) => {
         if (this.props.company.uuid) {
-            this.props.deleteObject(this.props.company);
+            this.props.deleteCompany(this.props.company);
         } else {
             console.error("Attempted to delete but company obj has no uuid");
         }
@@ -77,7 +77,7 @@ const mapStateToProps = (store: IRootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
     // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
-        deleteObject: (companyToDelete: Company, callback?: Function) =>
+        deleteCompany: (companyToDelete: Company, callback?: Function) =>
         	dispatch(
         		CompanyActions[CrudType.DELETE][RequestStatus.TRIGGERED].action(
         			companyToDelete,

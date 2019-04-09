@@ -9,15 +9,22 @@ import {
     IObjectAction,
     IObjectStore
 } from "../../store/rest-api-redux-factory";
+import { CrudType, RequestStatus } from "../../utils/rest-api";
 
 /** data model */
-import { ApplicationStatus } from "../../store/data-model/application-status";
+import { ApplicationStatus, ApplicationStatusActions } from "../../store/data-model/application-status";
 import { ApplicationStatusLink } from "../../store/data-model/application-status-link";
 
 /** Components */
+import MaterialIcon from "@material/react-material-icon";
+// mdc-react icon button
+import '@material/react-icon-button/dist/icon-button.css';
+import IconButton from '@material/react-icon-button';
+
 
 interface IApplicationStatusComponentProps extends RouteComponentProps {
     applicationStatus: ApplicationStatus;
+    deleteApplicationStatus: (applicationStatusToDelete: ApplicationStatus, callback?: Function) => void;
 }
 
 class ApplicationStatusComponent extends Component<
@@ -28,6 +35,9 @@ class ApplicationStatusComponent extends Component<
             <div className="ApplicationStatusComponent">
                 <p>
                     <span>Status: {this.props.applicationStatus.text}</span>
+                    <IconButton onClick={() => this.props.deleteApplicationStatus(this.props.applicationStatus)}>
+                        <MaterialIcon hasRipple icon="delete"/>
+                    </IconButton>
                     <br />
                     <span>{this.props.applicationStatus.date}</span>
                     <br />
@@ -57,16 +67,16 @@ const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<any>>) => {
+const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<ApplicationStatus>>) => {
     // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
-        // listObjectName: (callback?: Function) =>
-        // 	dispatch(
-        // 		ObjectNameActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
-        // 			new ObjectName({}),
-        // 			callback
-        // 		)
-        // 	),
+        deleteApplicationStatus: (applicationStatusToDelete: ApplicationStatus, callback?: Function) =>
+        	dispatch(
+        		ApplicationStatusActions[CrudType.DELETE][RequestStatus.TRIGGERED].action(
+        			applicationStatusToDelete,
+        			callback
+        		)
+        	),
     };
 };
 

@@ -212,6 +212,10 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
                 console.log("Saga: res from server", jsonResponse);
 
+                if ((jsonResponse as any).status && (jsonResponse as any).status >= 400) {
+                    throw new Error("Server error, see message in res.");
+                } 
+
                 // success state
                 if (crudKeyword === CrudType.DELETE) {
                     yield put(
