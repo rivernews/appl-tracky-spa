@@ -67,7 +67,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                     ) : (
                                         <img style={{
                                             "height": "100%",
-                                            "border-radius": "50%",
+                                            "borderRadius": "50%",
                                         }} src={this.props.auth.avatarUrl} />
                                     )}
                                 </Link>
@@ -80,7 +80,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                     component={UserAppPageContainer}
                                 />
                                 <Route
-                                    path="/add-com/"
+                                    path="/com-form/:uuid?/"
                                     component={AddComPageContainer}
                                 />
                                 <Route

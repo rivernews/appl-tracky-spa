@@ -5,7 +5,10 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
-import { IObjectAction, IObjectStore } from "../../store/rest-api-redux-factory";
+import {
+    IObjectAction,
+    IObjectStore
+} from "../../store/rest-api-redux-factory";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 // data models
 import { CompanyActions, Company } from "../../store/data-model/company";
@@ -20,49 +23,65 @@ import { ApplicationStatus } from "../../store/data-model/application-status";
 import { CompanyComponent } from "../company/company-component";
 import { ApplicationComponent } from "../application/application-component";
 
-
-interface ICompanyApplicationComponentProps {
+interface ICompanyApplicationComponentProps extends RouteComponentProps {
     company: Company;
-    applicationStore: IObjectStore<Application>
-    applicationStatusStore: IObjectStore<ApplicationStatus>
-    isShowApplicationStatuses?: boolean
-    deleteCompany: (companyToDelete: Company, callback?: Function) => void
+    applicationStore: IObjectStore<Application>;
+    applicationStatusStore: IObjectStore<ApplicationStatus>;
+    isShowApplicationStatuses?: boolean;
+    deleteCompany: (companyToDelete: Company, callback?: Function) => void;
+    updateCompany: (companyToUpdate: Company, callback?: Function) => void;
 }
 
-class CompanyApplicationComponent extends Component<ICompanyApplicationComponentProps> {
-
+class CompanyApplicationComponent extends Component<
+    ICompanyApplicationComponentProps
+> {
     onDeleteClick = (event: any) => {
         if (this.props.company.uuid) {
             this.props.deleteCompany(this.props.company);
         } else {
             console.error("Attempted to delete but company obj has no uuid");
         }
-    }
+    };
 
     render() {
         return (
             <div className="CompanyApplicationContainer">
-                <CompanyComponent company={this.props.company} onDeleteIconClicked={this.onDeleteClick} />
+                <CompanyComponent
+                    company={this.props.company}
+                    onDeleteIconClicked={this.onDeleteClick}
+                    onEditIconClicked={() => {
+                        this.props.history.push(`/com-form/${this.props.company.uuid}/`);
+                    }}
+                />
                 {Object.values(this.props.applicationStore.collection)
                     .filter(
-                        application => application.user_company === this.props.company.uuid
+                        application =>
+                            application.user_company === this.props.company.uuid
                     )
                     .map(application => {
-                        const applicationStatusList = (
+                        const applicationStatusList =
                             this.props.isShowApplicationStatuses || false
-                        ) ? Object.values(this.props.applicationStatusStore.collection).filter(
-                            (applicationStatus) => applicationStatus.application === application.uuid
-                        ) : [];
+                                ? Object.values(
+                                      this.props.applicationStatusStore
+                                          .collection
+                                  ).filter(
+                                      applicationStatus =>
+                                          applicationStatus.application ===
+                                          application.uuid
+                                  )
+                                : [];
                         return (
                             <ApplicationComponent
                                 key={application.uuid}
                                 application={application}
                                 applicationStatusList={applicationStatusList}
-                                isShowApplicationStatuses={this.props.isShowApplicationStatuses}
+                                isShowApplicationStatuses={
+                                    this.props.isShowApplicationStatuses
+                                }
                             />
                         );
                     })}
-                {(!this.props.isShowApplicationStatuses) && <hr />}
+                {!this.props.isShowApplicationStatuses && <hr />}
             </div>
         );
     }
@@ -71,23 +90,32 @@ class CompanyApplicationComponent extends Component<ICompanyApplicationComponent
 const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
     applicationStore: store.application,
-    applicationStatusStore: store.applicationStatus,
+    applicationStatusStore: store.applicationStatus
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
     // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
         deleteCompany: (companyToDelete: Company, callback?: Function) =>
-        	dispatch(
-        		CompanyActions[CrudType.DELETE][RequestStatus.TRIGGERED].action(
-        			companyToDelete,
-        			callback
-        		)
-        	),
+            dispatch(
+                CompanyActions[CrudType.DELETE][RequestStatus.TRIGGERED].action(
+                    companyToDelete,
+                    callback
+                )
+            ),
+        updateCompany: (companyToUpdate: Company, callback?: Function) =>
+            dispatch(
+                CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
+                    companyToUpdate,
+                    callback
+                )
+            )
     };
 };
 
-export const CompanyApplicationComponentContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(CompanyApplicationComponent);
+export const CompanyApplicationComponentContainer = withRouter(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(CompanyApplicationComponent)
+);

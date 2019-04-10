@@ -202,7 +202,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                 // api call
                 const jsonResponse:
                     | IListRestApiResponse<TObjectSchema>
-                    | ISingleRestApiResponse<TObjectSchema> = yield call(
+                    | ISingleRestApiResponse<TObjectSchema> 
+                    | any = yield call(
                     (<(params: IRequestParams<TObjectSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)]),
                     {
                         data: formData,
@@ -212,7 +213,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
                 console.log("Saga: res from server", jsonResponse);
 
-                if ((jsonResponse as any).status && (jsonResponse as any).status >= 400) {
+                if (jsonResponse.status && jsonResponse.status >= 400) {
+                    console.error("Server error, see message in res.");
                     throw new Error("Server error, see message in res.");
                 } 
 
@@ -224,6 +226,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         ].action(jsonResponse, formData)
                     );
                 } else {
+                    console.log("Saga: ready to dispatch success action")
                     yield put(
                         ObjectRestApiRedux[crudKeyword][
                             RequestStatus.SUCCESS

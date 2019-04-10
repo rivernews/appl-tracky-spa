@@ -42,18 +42,32 @@ import {
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 import { CompanyFormComponentContainer } from "../../components/company/company-form-component";
 
-interface IAddComPageProps extends RouteComponentProps {
+interface IAddComPageParams {
+    uuid?: string;
+}
+
+interface IAddComPageProps extends RouteComponentProps<IAddComPageParams> {
     company: IObjectStore<Company>;
 }
 
 class AddComPage extends Component<IAddComPageProps> {
-    
     render() {
+        const company: Company | undefined = (this.props.match.params.uuid && this.props.company.collection[this.props.match.params.uuid])
+            ? this.props.company.collection[this.props.match.params.uuid]
+            : undefined;
+        console.log(
+            "com form page: params is",
+            this.props.match.params.uuid,
+            "company is",
+            company
+        );
         return (
             <div className="AddComPage">
-                <h1>AddComPage Works!</h1>
-                <CompanyFormComponentContainer 
+                <h1>{company ? "Add a Company" : `Update Company`}</h1>
+                <CompanyFormComponentContainer
+                    company={company}
                     onSubmitSuccess={() => {
+                        console.log("com form page: onSubmitSuccess");
                         if (this.props.company.lastChangedObjectID) {
                             let newCompany = this.props.company.collection[
                                 this.props.company.lastChangedObjectID
@@ -66,7 +80,7 @@ class AddComPage extends Component<IAddComPageProps> {
                             console.error("store has no lastChangedObjectID");
                         }
                     }}
-                    onCancel={(event) => {
+                    onCancel={event => {
                         this.props.history.push(`/`);
                     }}
                 />
@@ -77,13 +91,12 @@ class AddComPage extends Component<IAddComPageProps> {
 
 const mapStateToProps = (state: IRootState) => ({
     // prop: state.prop
-    company: state.company,
+    company: state.company
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
-    return {
-    };
+    return {};
 };
 
 export const AddComPageContainer = withRouter(

@@ -10,10 +10,7 @@ import {
     IObjectAction
 } from "../../store/rest-api-redux-factory";
 // data models
-import {
-    Company,
-    CompanyActions
-} from "../../store/data-model/company";
+import { Company, CompanyActions } from "../../store/data-model/company";
 import { Link } from "../../store/data-model/link";
 import { Address } from "../../store/data-model/address";
 
@@ -22,7 +19,7 @@ import {
     FormFactory,
     FormActionButtonProps,
     IFormFactoryProps,
-    ActionButtonType,
+    ActionButtonType
 } from "../form-factory/form-factory";
 import {
     FormInputFieldFactory,
@@ -32,19 +29,16 @@ import {
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface ICompanyFormComponentProps {
+    company?: Company;
     onCancel: (event: any) => void;
-    onSubmitSuccess?: (event: any) => void;
+    onSubmitSuccess?: () => void;
 
     /** redux */
-    createCompany: (
-        companyFormData: Company,
-        callback?: Function
-    ) => void;
+    createCompany: (companyFormData: Company, callback?: Function) => void;
+    updateCompany: (companyFormData: Company, callback?: Function) => void;
 }
 
-class CompanyFormComponent extends Component<
-    ICompanyFormComponentProps
-> {
+class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
     formFactoryProps: IFormFactoryProps<any>;
 
     constructor(props: ICompanyFormComponentProps) {
@@ -52,9 +46,9 @@ class CompanyFormComponent extends Component<
 
         // prepare for new company form
         const initialValues = {
-            company__name: "",
-            company__hq_location__full_address: "",
-            company__home_page__url: ""
+            company__name: this.props.company && this.props.company.name ||  "",
+            company__hq_location__full_address: this.props.company && this.props.company.hq_location.full_address ||  "",
+            company__home_page__url: this.props.company && this.props.company.home_page.url || "",
         };
 
         this.formFactoryProps = {
@@ -62,10 +56,7 @@ class CompanyFormComponent extends Component<
             validate: this.validateAppForm,
             onSubmit: this.onSubmitAppForm,
             formInputFieldPropsList: [
-                new FormInputFieldProps(
-                    "company__name",
-                    "Company Name*"
-                ),
+                new FormInputFieldProps("company__name", "Company Name*"),
                 new FormInputFieldProps(
                     "company__hq_location__full_address",
                     "HQ Address or Location"
@@ -76,7 +67,11 @@ class CompanyFormComponent extends Component<
                 )
             ],
             actionButtonPropsList: [
-                new FormActionButtonProps("Create", undefined, ActionButtonType.SUBMIT),
+                new FormActionButtonProps(
+                    !this.props.company ? "Create" : "Update",
+                    undefined,
+                    ActionButtonType.SUBMIT
+                ),
                 new FormActionButtonProps("Cancel", this.props.onCancel)
             ]
         };
@@ -118,7 +113,15 @@ class CompanyFormComponent extends Component<
         });
 
         // dispatch
-        this.props.createCompany(company, this.props.onSubmitSuccess);
+        if (!this.props.company) {
+            console.log("company form: dispatching createCompany action");
+            this.props.createCompany(company, this.props.onSubmitSuccess);
+        }
+        else  {
+            console.log("company form: dispatching updateCompany action");
+            company.uuid = this.props.company.uuid;
+            this.props.updateCompany(company, this.props.onSubmitSuccess);
+        }
     };
 
     render() {
@@ -130,19 +133,23 @@ class CompanyFormComponent extends Component<
     }
 }
 
-const mapStateToProps = (store: IRootState) => ({
-});
+const mapStateToProps = (store: IRootState) => ({});
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     return {
-        createCompany: (
-            companyFormData: Company,
-            callback?: Function
-        ) =>
+        createCompany: (companyFormData: Company, callback?: Function) =>
             dispatch(
-                CompanyActions[CrudType.CREATE][
-                    RequestStatus.TRIGGERED
-                ].action(companyFormData, callback)
+                CompanyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
+                    companyFormData,
+                    callback
+                )
+            ),
+        updateCompany: (companyFormData: Company, callback?: Function) =>
+            dispatch(
+                CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
+                    companyFormData,
+                    callback
+                )
             )
     };
 };

@@ -34,7 +34,7 @@ class UserAppPage extends Component<IUserAppPageProps> {
             <div className="UserAppPage">
                 <h1>Your Applications</h1>
                 <Button
-                    onClick={()=>{ this.props.history.push("/add-com/") }}
+                    onClick={()=>{ this.props.history.push("/com-form/") }}
                     unelevated
                     icon={<MaterialIcon hasRipple icon="add" />}
                     children="Add Company"

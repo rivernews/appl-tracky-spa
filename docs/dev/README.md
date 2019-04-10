@@ -488,6 +488,12 @@ If everything goes right, then...
 - [x] Some bug - when new status created, frontend list didn't show links. But when you login again, they are their now.
 - [x] Bug - after form submit - clicked "Create", the form did not close.
 
+- TODO issues: some server error does not reflect on React saga and will just fail silently. Example:
+    - If login fails, sometimes react will still navigate to internal pages.
+        - [x] OK, we kind of try to fix this, by manually checking server res.status to detect status code larger than 400.
+    - When permission denied, e.g., when performing a delete, will fail silently & even redux will think the obj is deleted and reflect on frontend, but in fact backend database does not perform such deletion.
+        - [x] We tried to fix this by intercepting the "user attribute not on obj" error when checking obj level permission.
+
 - 🔥 🔥 🔥Add update/delete feature, to all: company, application, and application status.
     - [x] delete application status
     - [ ] update company|app|app status|app status link
@@ -497,11 +503,8 @@ If everything goes right, then...
     - [x] user permission feature. Now user will get all companies from the database.
         - Have to enable google console "allow all user even outside of orgs"
 
-- TODO issues: some server error does not reflect on React saga and will just fail silently. Example:
-    - If login fails, sometimes react will still navigate to internal pages.
-        - [x] OK, we kind of try to fix this, by manually checking server res.status to detect status code larger than 400.
-    - When permission denied, e.g., when performing a delete, will fail silently & even redux will think the obj is deleted and reflect on frontend, but in fact backend database does not perform such deletion.
-        - [x] We tried to fix this by intercepting the "user attribute not on obj" error when checking obj level permission.
+- [ ] Polish frontend layout.
+- [ ] Previous TODO not fulfilled?
 
 # Reference
 

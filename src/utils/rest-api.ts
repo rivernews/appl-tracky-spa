@@ -134,7 +134,7 @@ export class RestApi {
                 ...this.setApiAuthHeaders(),
                 body: JSON.stringify(data)
             }
-        );
+        ).then(res => res.json());
     };
 
     delete = <Schema>({ data, objectName, endpointUrl }: IRequestParams<Schema>) => {
