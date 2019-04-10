@@ -494,12 +494,48 @@ If everything goes right, then...
     - When permission denied, e.g., when performing a delete, will fail silently & even redux will think the obj is deleted and reflect on frontend, but in fact backend database does not perform such deletion.
         - [x] We tried to fix this by intercepting the "user attribute not on obj" error when checking obj level permission.
 
+### Adding the last piece - Update Operation
+
 - 🔥 🔥 🔥Add update/delete feature, to all: company, application, and application status.
     - [x] delete application status
-    - [ ] update company|app|app status|app status link
+    - update company|app|app status|app status link
+        - [x] update company
+    - Let's stop here - and see what is required to enable a data model to do update operation:
+        - Form has to distinguish between create & update. This is usually done by the form component accepting an optional model object, say, use form's props to pass in the model object. If passed in, then treat the form as an update; otherwise, it's a form for creation.
+            1. Initial value needs conditional assignment; either using the provided model object, or use a default value.
+            1. Submit button text has to change: either `Update` or `Create`.
+            1. Submit function has to change: either dispatching a createAction, or a updateAction.
+                - Add udpateAction to `mapDispatchToProps`.
+        - The component that accomodates form is responsible for providing the model object to update. In case of company, the `add-com-page` component is responsible for fetching the company object. Here, `add-com-page` obtain the company by trying to fetch the `uuid` of a company from its route params.
+            - There's a chain of passing company object here: form props expects company object --> `add-com-page` expects uuid from its route params --> there's a edit button on `<CompanyComponent>`, and its onClick will navigate route to `add-com-page` w/ the company uuid in the url.
+        - The start point of update operation is a button click, most likely from the edit button's onClick callback. How to propogate model object info from there, to the form, is the main goal here.
+
+- Add update operation to the following data models:
+    - [ ] update application
+        - The edit button: most likely in the model's component class. Here its `<ApplicationComponent>`.
+        - How to propogate to form component:
+            - The hierarchy structure: `<ApplicationComponent>` --> ... --> `<ApplicationFormComponent>`
+            - **The form is not necessarily in the model component**. It's ok to have model component and form be separated components, and it should be. It's just our passing object chain is not trivial and not propogating downward to child, because here, **model component & form are siblings**. We might want to change this in the future, but under existing hierarchy, we need to pass obj info one level upward, then pass to form.
+            - One way to do it: 
+                1. `<ApplicationComponent>` delegate onClick to its parent by expososing in props, and pass the app object by callback args.
+                1. `<CompanyApplicationComponent>` is the parent and implements the onClick, & accept the app object. However, **it does not accomodates form component**. `user-com-app-page` does.
+                1. Maybe we should refactor this structure. It seems like the best practice is to let form and the displaying component be as close as to each other, so it's easier for form to obtain the object. Some of people even merge form and display into one component, and use conditional rendering to handle read/create/update.
+
+#### Refactoring Component Hierarchy for Update Operation
+
+1. [ ] We need a review of current hierarchy first. Draw a diagram for this.
+1. [ ] Now make changes to the diagram, and let form be closer to display component.
+1. [ ] Implement the change
+
+---
+
+- [ ] update appplication status
+- [ ] update application status link
+
+- [ ] (Refining all fields on data models)
+- [ ] Let tab work in user app page. You may want to decide whether label or status should be the tabs. No matter which one, it should be a fixed or stable amount.
 
 - [ ] And stop ... reflection on next steps and roadmaps.
-    - [ ] Update feature?
     - [x] user permission feature. Now user will get all companies from the database.
         - Have to enable google console "allow all user even outside of orgs"
 
