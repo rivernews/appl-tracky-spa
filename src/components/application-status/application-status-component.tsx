@@ -12,52 +12,151 @@ import {
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 
 /** data model */
-import { ApplicationStatus, ApplicationStatusActions } from "../../store/data-model/application-status";
+import {
+    ApplicationStatus,
+    ApplicationStatusActions
+} from "../../store/data-model/application-status";
 import { ApplicationStatusLink } from "../../store/data-model/application-status-link";
+import { Application } from "../../store/data-model/application";
 
 /** Components */
 import MaterialIcon from "@material/react-material-icon";
 // mdc-react icon button
-import '@material/react-icon-button/dist/icon-button.css';
-import IconButton from '@material/react-icon-button';
-
+import "@material/react-icon-button/dist/icon-button.css";
+import IconButton from "@material/react-icon-button";
+// mdc react button
+import "@material/react-button/dist/button.css";
+import Button from "@material/react-button";
+import { ApplicationStatusFormComponentContainer } from "./application-status-form-component";
 
 interface IApplicationStatusComponentProps extends RouteComponentProps {
-    applicationStatus: ApplicationStatus;
-    deleteApplicationStatus: (applicationStatusToDelete: ApplicationStatus, callback?: Function) => void;
+    applicationStatus?: ApplicationStatus;
+    application?: Application; // needed by form
+    deleteApplicationStatus: (
+        applicationStatusToDelete: ApplicationStatus,
+        callback?: Function
+    ) => void;
+}
+
+interface IApplicationStatusComponentState {
+    isFormOpened: boolean;
 }
 
 class ApplicationStatusComponent extends Component<
-    IApplicationStatusComponentProps
+    IApplicationStatusComponentProps,
+    IApplicationStatusComponentState
 > {
-    render() {
+    state = {
+        isFormOpened: false
+    };
+
+    renderDisplay = (applicationStatus: ApplicationStatus) => {
         return (
             <div className="ApplicationStatusComponent">
                 <p>
-                    <span>Status: {this.props.applicationStatus.text}</span>
-                    <IconButton onClick={() => this.props.deleteApplicationStatus(this.props.applicationStatus)}>
-                        <MaterialIcon hasRipple icon="delete"/>
+                    <span>Status: {applicationStatus.text}</span>
+                    <IconButton
+                        onClick={() =>
+                            this.props.deleteApplicationStatus(
+                                applicationStatus
+                            )
+                        }
+                    >
+                        <MaterialIcon hasRipple icon="delete" />
                     </IconButton>
                     <br />
-                    <span>{this.props.applicationStatus.date}</span>
+                    <span>{applicationStatus.date}</span>
                     <br />
-                    {this.props.applicationStatus.applicationstatuslink_set.map(
+                    {applicationStatus.applicationstatuslink_set.map(
                         applicationStatusLink => {
-                            console.log("applicationStatusLinkID Obj=", applicationStatusLink);
+                            console.log(
+                                "applicationStatusLinkID Obj=",
+                                applicationStatusLink
+                            );
                             return (
-                                (applicationStatusLink && applicationStatusLink.link) && <span key={applicationStatusLink.uuid}>
-                                    <a
-                                        href={applicationStatusLink.link.url}
-                                        target="_blank"
-                                    >
-                                        {applicationStatusLink.link.text}
-                                    </a>{" "}
-                                    |{" "}
-                                </span>
+                                applicationStatusLink &&
+                                applicationStatusLink.link && (
+                                    <span key={applicationStatusLink.uuid}>
+                                        <a
+                                            href={
+                                                applicationStatusLink.link.url
+                                            }
+                                            target="_blank"
+                                        >
+                                            {applicationStatusLink.link.text}
+                                        </a>{" "}
+                                        |{" "}
+                                    </span>
+                                )
                             );
                         }
                     )}
                 </p>
+            </div>
+        );
+    };
+
+    renderFormController = (
+        application: Application,
+        applicationStatus?: ApplicationStatus
+    ) => {
+        return (
+            <div className="application-status-form-controller">
+                {/* new application status form */}
+                {!this.state.isFormOpened ? (
+                    <Button
+                        onClick={clickEvent => {
+                            this.setState({
+                                isFormOpened: true
+                            });
+                        }}
+                        unelevated
+                        icon={<MaterialIcon hasRipple icon="add" />}
+                    >
+                        Add New Status
+                    </Button>
+                ) : (
+                    <div className="application-component__status-form">
+                        <h3>
+                            Add new status to application for{" "}
+                            {application.position_title}{" "}
+                        </h3>
+                        <ApplicationStatusFormComponentContainer
+                            application={application}
+                            onCancel={clickEvent => {
+                                this.setState({
+                                    isFormOpened: false
+                                });
+                            }}
+                            onSubmitSuccess={() => {
+                                this.setState({
+                                    isFormOpened: false
+                                });
+                            }}
+                        />
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    render() {
+        return (
+            <div className="ApplicationStatusComponent">
+                {this.props.applicationStatus && !this.props.application ? (
+                    this.renderDisplay(this.props.applicationStatus)
+                ) : this.props.application ? (
+                    this.renderFormController(
+                        this.props.application,
+                        this.props.applicationStatus
+                    )
+                ) : (
+                    <span>
+                        Nothing to render: no application status provided so
+                        cannot display; no application provided so form for
+                        create/update are not allowed.
+                    </span>
+                )}
             </div>
         );
     }
@@ -67,16 +166,20 @@ const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<ApplicationStatus>>) => {
+const mapDispatchToProps = (
+    dispatch: Dispatch<IObjectAction<ApplicationStatus>>
+) => {
     // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
-        deleteApplicationStatus: (applicationStatusToDelete: ApplicationStatus, callback?: Function) =>
-        	dispatch(
-        		ApplicationStatusActions[CrudType.DELETE][RequestStatus.TRIGGERED].action(
-        			applicationStatusToDelete,
-        			callback
-        		)
-        	),
+        deleteApplicationStatus: (
+            applicationStatusToDelete: ApplicationStatus,
+            callback?: Function
+        ) =>
+            dispatch(
+                ApplicationStatusActions[CrudType.DELETE][
+                    RequestStatus.TRIGGERED
+                ].action(applicationStatusToDelete, callback)
+            )
     };
 };
 
