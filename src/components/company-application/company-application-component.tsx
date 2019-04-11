@@ -21,7 +21,7 @@ import { ApplicationStatus } from "../../store/data-model/application-status";
 /** Components */
 // objects
 import { CompanyComponent } from "../company/company-component";
-import { ApplicationComponent } from "../application/application-component";
+import { ApplicationComponentController } from "../application/application-component";
 
 interface ICompanyApplicationComponentProps extends RouteComponentProps {
     company: Company;
@@ -71,9 +71,10 @@ class CompanyApplicationComponent extends Component<
                                   )
                                 : [];
                         return (
-                            <ApplicationComponent
+                            <ApplicationComponentController
                                 key={application.uuid}
                                 application={application}
+                                company={this.props.company}
                                 applicationStatusList={applicationStatusList}
                                 isShowApplicationStatuses={
                                     this.props.isShowApplicationStatuses

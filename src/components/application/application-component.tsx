@@ -1,12 +1,21 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 /** Redux */
-import { Application } from "../../store/data-model/application";
+import { connect } from "react-redux";
+import {
+    Application,
+    ApplicationActions
+} from "../../store/data-model/application";
+import { IRootState } from "../../store/types";
+import { IObjectAction } from "../../store/rest-api-redux-factory";
+import { Dispatch } from "redux";
 
 /** data model */
 import { ApplicationStatus } from "../../store/data-model/application-status";
 import { Company } from "../../store/data-model/company";
+
+/** rest api */
+import { CrudType, RequestStatus } from "../../utils/rest-api";
 
 /** Components */
 // mdc react icon
@@ -14,7 +23,7 @@ import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
-import { ApplicationStatusFormComponentContainer } from "../../components/application-status/application-status-form-component";
+import IconButton from "@material/react-icon-button";
 import { ApplicationStatusComponentContainer } from "../application-status/application-status-component";
 import { ApplicationFormComponentContainer } from "./application-form-component";
 
@@ -25,12 +34,20 @@ interface IApplicationComponentProps {
     /** application form */
     company?: Company;
 
+    isOnlyForm?: boolean;
+
     applicationStatusList?: Array<ApplicationStatus>;
     isShowApplicationStatuses?: boolean;
+
+    /** redux */
+    deleteApplication: (
+        applicationToDelete: Application,
+        callback?: Function
+    ) => void;
 }
 
 interface IApplicationComponentState {
-    isApplicationFormOpened: boolean;
+    isFormOpened: boolean;
 }
 
 /** Main Class */
@@ -39,16 +56,20 @@ export class ApplicationComponent extends Component<
     IApplicationComponentState
 > {
     state = {
-        isApplicationStatusFormOpened: false,
-        isApplicationFormOpened: false
+        isFormOpened: false
     };
 
     render() {
         return (
             <div className="application-component">
-                {this.props.application
-                    ? this.renderApplicationDisplay()
-                    : this.renderApplicationFormController()}
+                {this.state.isFormOpened || this.props.isOnlyForm
+                    ? this.renderApplicationFormController()
+                    : this.props.application &&
+                      Array.isArray(this.props.applicationStatusList) &&
+                      this.renderApplicationDisplay(
+                          this.props.application,
+                          this.props.applicationStatusList
+                      )}
             </div>
         );
     }
@@ -57,11 +78,11 @@ export class ApplicationComponent extends Component<
         return (
             this.props.company && ( // application create or udpate must have company associate with it.
                 <div className="application-form-controller">
-                    {!this.state.isApplicationFormOpened ? (
+                    {!this.state.isFormOpened ? (
                         <Button
                             onClick={clickEvent => {
                                 this.setState({
-                                    isApplicationFormOpened: true
+                                    isFormOpened: true
                                 });
                             }}
                             unelevated
@@ -74,15 +95,16 @@ export class ApplicationComponent extends Component<
                             onCancel={event => {
                                 console.log("onCancel clicked");
                                 this.setState({
-                                    isApplicationFormOpened: false
+                                    isFormOpened: false
                                 });
                             }}
                             onSubmitSuccess={() =>
                                 this.setState({
-                                    isApplicationFormOpened: false
+                                    isFormOpened: false
                                 })
                             }
                             company={this.props.company}
+                            application={this.props.application}
                         />
                     )}
                 </div>
@@ -90,20 +112,35 @@ export class ApplicationComponent extends Component<
         );
     };
 
-    renderApplicationDisplay = () => {
-        const application = this.props.application;
-
-        if (!(application && this.props.applicationStatusList)) {
-            return;
-        }
-
+    renderApplicationDisplay = (
+        application: Application,
+        applicationStatusList: Array<ApplicationStatus>
+    ) => {
         return (
             <div className="application-component-display">
                 {/* application display view */}
+                <h3>Application</h3>
                 <p>
                     <span>
                         <strong>Position:</strong> {application.position_title}
                     </span>
+
+                    <IconButton
+                        onClick={() => {
+                            this.setState({
+                                isFormOpened: true // open form and close display
+                            });
+                        }}
+                    >
+                        <MaterialIcon hasRipple icon="edit" />
+                    </IconButton>
+                    <IconButton
+                        onClick={() =>
+                            this.props.deleteApplication(application)
+                        }
+                    >
+                        <MaterialIcon hasRipple icon="delete" />
+                    </IconButton>
                     <br />
                     <span>Application UUID: {application.uuid}</span>
                     <br />
@@ -130,7 +167,7 @@ export class ApplicationComponent extends Component<
 
                 {/* application statuses list */}
                 {this.props.isShowApplicationStatuses &&
-                    this.props.applicationStatusList.map(status => {
+                    applicationStatusList.map(status => {
                         return (
                             <ApplicationStatusComponentContainer
                                 key={status.uuid}
@@ -140,10 +177,34 @@ export class ApplicationComponent extends Component<
                     })}
 
                 {/* application status form controller */}
-                <ApplicationStatusComponentContainer 
+                <ApplicationStatusComponentContainer
                     application={application}
                 />
             </div>
         );
     };
 }
+
+const mapStateToProps = (store: IRootState) => ({
+
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
+    // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
+    return {
+        deleteApplication: (
+            applicationToDelete: Application,
+            callback?: Function
+        ) =>
+            dispatch(
+                ApplicationActions[CrudType.DELETE][
+                    RequestStatus.TRIGGERED
+                ].action(applicationToDelete, callback)
+            )
+    };
+};
+
+export const ApplicationComponentController = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ApplicationComponent);

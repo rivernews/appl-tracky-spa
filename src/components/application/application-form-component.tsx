@@ -167,6 +167,8 @@ class ApplicationFormComponent extends Component<
                 }
             });
         } else {
+            console.log("Update application form: application=", application);
+            application.uuid = this.props.application.uuid;
             this.props.updateApplication(application, this.props.onSubmitSuccess);
         }
     };
