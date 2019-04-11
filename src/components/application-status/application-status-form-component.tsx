@@ -35,6 +35,7 @@ import {
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationStatusFormComponentProps extends RouteComponentProps {
+    applicationStatus?: ApplicationStatus; // for update form
     onCancel: (event: any) => void;
     onSubmitSuccess?: () => void;
 
@@ -42,6 +43,10 @@ interface IApplicationStatusFormComponentProps extends RouteComponentProps {
     application: Application;
     applicationStatusStore: IObjectStore<ApplicationStatus>
     createApplicationStatus: (
+        applicationStatusFormData: ApplicationStatus,
+        callback?: Function
+    ) => void;
+    updateApplicationStatus: (
         applicationStatusFormData: ApplicationStatus,
         callback?: Function
     ) => void;
@@ -55,13 +60,14 @@ class ApplicationStatusFormComponent extends Component<
     constructor(props: IApplicationStatusFormComponentProps) {
         super(props);
 
+        const applicationStatus = this.props.applicationStatus;
         const initialValues = {
-            application_status__text: "",
-            application_status__date: "",
-            application_status__link0__url: "",
-            application_status__link0__text: "",
-            application_status__link1__url: "",
-            application_status__link1__text: "",
+            application_status__text: applicationStatus ? applicationStatus.text : "",
+            application_status__date: applicationStatus ? applicationStatus.date : "",
+            application_status__link0__url: applicationStatus ? applicationStatus.applicationstatuslink_set[0].link.url : "",
+            application_status__link0__text: applicationStatus ? applicationStatus.applicationstatuslink_set[0].link.text : "",
+            application_status__link1__url: applicationStatus ? applicationStatus.applicationstatuslink_set[1].link.url : "",
+            application_status__link1__text: applicationStatus ? applicationStatus.applicationstatuslink_set[1].link.text : "",
         }
 
         this.formFactoryProps = {
@@ -82,7 +88,9 @@ class ApplicationStatusFormComponent extends Component<
             ],
             actionButtonPropsList: [
                 new FormActionButtonProps(
-                    "Add",
+                    applicationStatus ?
+                    "Update Status":
+                    "Add Status",
                     undefined,
                     ActionButtonType.SUBMIT
                 ),
@@ -145,9 +153,12 @@ class ApplicationStatusFormComponent extends Component<
         });
 
         // dispatch for application status
-        this.props.createApplicationStatus(applicationStatus, () => {
-            this.props.onSubmitSuccess && this.props.onSubmitSuccess();
-        });
+        if (!this.props.applicationStatus) {
+            this.props.createApplicationStatus(applicationStatus, this.props.onSubmitSuccess);
+        } else {
+            this.props.updateApplicationStatus(applicationStatus, this.props.onSubmitSuccess);
+        }
+        
     };
 
     render() {
@@ -175,7 +186,18 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<ApplicationStatus> 
                 ApplicationStatusActions[CrudType.CREATE][
                     RequestStatus.TRIGGERED
                 ].action(applicationStatusFormData, callback)
-            ),
+            )
+        ,
+        updateApplicationStatus: (
+            applicationStatusFormData: ApplicationStatus,
+            callback?: Function
+        ) =>
+            dispatch(
+                ApplicationStatusActions[CrudType.UPDATE][
+                    RequestStatus.TRIGGERED
+                ].action(applicationStatusFormData, callback)
+            )
+        ,
     };
 };
 

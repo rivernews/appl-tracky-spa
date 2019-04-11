@@ -30,7 +30,6 @@ interface IApplicationComponentProps {
 }
 
 interface IApplicationComponentState {
-    isApplicationStatusFormOpened: boolean;
     isApplicationFormOpened: boolean;
 }
 
@@ -140,41 +139,10 @@ export class ApplicationComponent extends Component<
                         );
                     })}
 
-                {/* new application status form */}
-                {this.props.isShowApplicationStatuses &&
-                    (!this.state.isApplicationStatusFormOpened ? (
-                        <Button
-                            onClick={clickEvent => {
-                                this.setState({
-                                    isApplicationStatusFormOpened: true
-                                });
-                            }}
-                            unelevated
-                            icon={<MaterialIcon hasRipple icon="add" />}
-                        >
-                            Add New Status
-                        </Button>
-                    ) : (
-                        <div className="application-component__status-form">
-                            <h3>
-                                Add new status to application for{" "}
-                                {application.position_title}{" "}
-                            </h3>
-                            <ApplicationStatusFormComponentContainer
-                                application={application}
-                                onCancel={clickEvent => {
-                                    this.setState({
-                                        isApplicationStatusFormOpened: false
-                                    });
-                                }}
-                                onSubmitSuccess={() => {
-                                    this.setState({
-                                        isApplicationStatusFormOpened: false
-                                    });
-                                }}
-                            />
-                        </div>
-                    ))}
+                {/* application status form controller */}
+                <ApplicationStatusComponentContainer 
+                    application={application}
+                />
             </div>
         );
     };
