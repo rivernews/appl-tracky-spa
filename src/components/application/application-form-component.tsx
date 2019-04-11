@@ -22,7 +22,7 @@ import {
     FormFactory,
     FormActionButtonProps,
     IFormFactoryProps,
-    ActionButtonType,
+    ActionButtonType
 } from "../form-factory/form-factory";
 import {
     FormInputFieldFactory,
@@ -32,13 +32,18 @@ import {
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationFormComponentProps {
-    company: Company;
+    application?: Application;
     onCancel: (event: any) => void;
     onSubmitSuccess?: () => void;
 
+    company: Company;
     /** redux */
-    application: IObjectStore<Application>;
+    applicationStore: IObjectStore<Application>;
     createApplication: (
+        applicationFormData: Application,
+        callback?: Function
+    ) => void;
+    updateApplication: (
         applicationFormData: Application,
         callback?: Function
     ) => void;
@@ -53,10 +58,17 @@ class ApplicationFormComponent extends Component<
         super(props);
 
         // prepare for new application form
+        const application = this.props.application;
         const initialValues = {
-            application__position_title: "",
-            application__job_description_page__url: "",
-            application__job_source__url: ""
+            application__position_title: application
+                ? application.position_title
+                : "",
+            application__job_description_page__url: application
+                ? application.job_description_page.url
+                : "",
+            application__job_source__url: application
+                ? application.job_source.url
+                : ""
         };
 
         this.formFactoryProps = {
@@ -78,7 +90,11 @@ class ApplicationFormComponent extends Component<
                 )
             ],
             actionButtonPropsList: [
-                new FormActionButtonProps("Create", undefined, ActionButtonType.SUBMIT),
+                new FormActionButtonProps(
+                    application ? "Update" : "Create",
+                    undefined,
+                    ActionButtonType.SUBMIT
+                ),
                 new FormActionButtonProps("Cancel", this.props.onCancel)
             ]
         };
@@ -134,18 +150,25 @@ class ApplicationFormComponent extends Component<
         });
 
         // dispatch
-        this.props.createApplication(application, () => {
-            // log print newly created application
-            if (this.props.application.lastChangedObjectID) {
-                const newApplication = this.props.application.collection[
-                    this.props.application.lastChangedObjectID
-                ];
-                console.log("new application:", newApplication);
-                this.props.onSubmitSuccess && this.props.onSubmitSuccess();
-            } else {
-                console.error("application store has no lastChangedObjectID");
-            }
-        });
+        if (!this.props.application) {
+            this.props.createApplication(application, () => {
+                // log print newly created application
+                if (this.props.applicationStore.lastChangedObjectID) {
+                    const newApplication = this.props.applicationStore
+                        .collection[
+                        this.props.applicationStore.lastChangedObjectID
+                    ];
+                    console.log("new application:", newApplication);
+                    this.props.onSubmitSuccess && this.props.onSubmitSuccess();
+                } else {
+                    console.error(
+                        "application store has no lastChangedObjectID"
+                    );
+                }
+            });
+        } else {
+            this.props.updateApplication(application, this.props.onSubmitSuccess);
+        }
     };
 
     render() {
@@ -158,7 +181,7 @@ class ApplicationFormComponent extends Component<
 }
 
 const mapStateToProps = (store: IRootState) => ({
-    application: store.application
+    applicationStore: store.application
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
@@ -172,6 +195,17 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
                     RequestStatus.TRIGGERED
                 ].action(applicationFormData, callback)
             )
+        ,
+        updateApplication: (
+            applicationFormData: Application,
+            callback?: Function
+        ) =>
+            dispatch(
+                ApplicationActions[CrudType.UPDATE][
+                    RequestStatus.TRIGGERED
+                ].action(applicationFormData, callback)
+            )
+        ,
     };
 };
 

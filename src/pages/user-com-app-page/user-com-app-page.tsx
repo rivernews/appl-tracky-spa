@@ -44,6 +44,7 @@ import {
 } from "../../components/form-factory/form-field-factory";
 import { FormikValues, FormikErrors } from "formik";
 import { ApplicationFormComponentContainer } from "../../components/application/application-form-component";
+import { ApplicationComponent } from "../../components/application/application-component";
 
 interface IUserComAppPageParams {
     uuid: string;
@@ -105,29 +106,9 @@ class UserComAppPage extends Component<
                 </Button>
                 <h1>{this.state.company.name}</h1>
 
-                {/* application form */}
-                {(!this.state.isApplicationFormOpened) ? (
-                    <Button
-                        onClick={clickEvent => {
-                            this.setState({ isApplicationFormOpened: true });
-                        }}
-                        unelevated
-                        icon={<MaterialIcon hasRipple icon="add" />}
-                    >
-                        Add Application
-                    </Button>
-                ) : (
-                    <ApplicationFormComponentContainer
-                        onCancel={event => {
-                            console.log("onCancel clicked");
-                            this.setState({ isApplicationFormOpened: false })
-                        }}
-                        onSubmitSuccess={() => this.setState({
-                            isApplicationFormOpened: false
-                        })}
-                        company={this.state.company}
-                    />
-                )}
+                <ApplicationComponent 
+                    company={this.state.company}
+                />
 
                 <br />
 
