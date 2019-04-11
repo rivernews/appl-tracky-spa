@@ -44,7 +44,7 @@ import {
 } from "../../components/form-factory/form-field-factory";
 import { FormikValues, FormikErrors } from "formik";
 import { ApplicationFormComponentContainer } from "../../components/application/application-form-component";
-import { ApplicationComponent } from "../../components/application/application-component";
+import { ApplicationComponentController } from "../../components/application/application-component";
 
 interface IUserComAppPageParams {
     uuid: string;
@@ -53,7 +53,6 @@ interface IUserComAppPageParams {
 interface IUserComAppPageProps
     extends RouteComponentProps<IUserComAppPageParams> {
     company: IObjectStore<Company>;
-    application: IObjectStore<Application>;
     createApplication: (
         applicationFormData: Application,
         callback?: Function
@@ -61,7 +60,6 @@ interface IUserComAppPageProps
 }
 
 interface IUserComAppPageState {
-    isApplicationFormOpened: boolean;
     companyUuid: string;
     company: Company;
 }
@@ -71,7 +69,6 @@ class UserComAppPage extends Component<
     IUserComAppPageState
 > {
     readonly state: IUserComAppPageState = {
-        isApplicationFormOpened: false,
         companyUuid: "",
         company: new Company({})
     };
@@ -105,9 +102,11 @@ class UserComAppPage extends Component<
                     Back
                 </Button>
                 <h1>{this.state.company.name}</h1>
-
-                <ApplicationComponent 
+                
+                {/* application form controller - always create form */}
+                <ApplicationComponentController 
                     company={this.state.company}
+                    isOnlyForm
                 />
 
                 <br />
@@ -144,7 +143,6 @@ const mapStateToProps = (store: IRootState) => {
     return {
         // prop: store.prop
         company: store.company,
-        application: store.application
     };
 };
 

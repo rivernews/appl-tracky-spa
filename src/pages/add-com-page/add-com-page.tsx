@@ -81,7 +81,7 @@ class AddComPage extends Component<IAddComPageProps> {
                         }
                     }}
                     onCancel={event => {
-                        this.props.history.push(`/`);
+                        this.props.history.goBack()
                     }}
                 />
             </div>
