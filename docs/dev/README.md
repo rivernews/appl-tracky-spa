@@ -496,7 +496,7 @@ If everything goes right, then...
 
 ### Adding the last piece - Update Operation
 
-- 🔥 🔥 🔥Add update/delete feature, to all: company, application, and application status.
+- Add update/delete feature, to all: company, application, and application status.
     - [x] delete application status
     - update company|app|app status|app status link
         - [x] update company
@@ -523,9 +523,9 @@ If everything goes right, then...
 
 #### Refactoring Component Hierarchy for Update Operation
 
-1. [ ] We need a review of current hierarchy first. Draw a diagram for this.
+1. [x] We need a review of current hierarchy first. Draw a diagram for this.
 1. [ ] Now make changes to the diagram, and let form be closer to display component.
-1. [ ] Implement the change
+1. [ ] 🔥 🔥 🔥Implement the change
 
 ---
 
