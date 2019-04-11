@@ -4,23 +4,23 @@ self.__precacheManifest = [
     "url": "/appl-tracky-spa/static/js/runtime~main.372185f4.js"
   },
   {
-    "revision": "c66bcd2f65ca27b70762",
-    "url": "/appl-tracky-spa/static/js/main.c66bcd2f.chunk.js"
+    "revision": "fa5abb4871520f3ff981",
+    "url": "/appl-tracky-spa/static/js/main.fa5abb48.chunk.js"
   },
   {
-    "revision": "7bf1849d47ec67f36d83",
-    "url": "/appl-tracky-spa/static/js/2.7bf1849d.chunk.js"
+    "revision": "b839db5dfe67e96ef488",
+    "url": "/appl-tracky-spa/static/js/2.b839db5d.chunk.js"
   },
   {
-    "revision": "c66bcd2f65ca27b70762",
+    "revision": "fa5abb4871520f3ff981",
     "url": "/appl-tracky-spa/static/css/main.6a5ae9d7.chunk.css"
   },
   {
-    "revision": "7bf1849d47ec67f36d83",
+    "revision": "b839db5dfe67e96ef488",
     "url": "/appl-tracky-spa/static/css/2.e47fd6e0.chunk.css"
   },
   {
-    "revision": "e5bfc352ca9e62a1f281eaa67e6dffaa",
+    "revision": "afd64c63efca4598d124dc3cbc8d644c",
     "url": "/appl-tracky-spa/index.html"
   }
 ];
