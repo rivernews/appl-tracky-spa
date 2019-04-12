@@ -45,6 +45,7 @@ export const CrudMapToRest = (crudType: CrudType): RestMethod => {
 
 export interface IRequestParams<Schema> {
     endpointUrl?: string;
+    absoluteUrl?: string;
     objectName?: string;
     data?: TObject<Schema> | Array<TObject<Schema>>;
 }
@@ -91,10 +92,11 @@ export class RestApi {
         objectID: ``
     };
 
-    get = <Schema>({ endpointUrl, objectName, data }: IRequestParams<Schema>) => {
+    get = <Schema>({ endpointUrl, absoluteUrl, objectName, data }: IRequestParams<Schema>) => {
         return fetch(
             this.getRelativeUrl({
                 endpointUrl,
+                absoluteUrl,
                 objectName,
                 data
             }),
@@ -156,10 +158,14 @@ export class RestApi {
     private getRelativeUrl = <Schema>({
         objectName,
         data,
-        endpointUrl
+        endpointUrl,
+        absoluteUrl,
     }: IRequestParams<Schema>) => {
         let url = "";
-        if (endpointUrl) {
+        if (absoluteUrl) {
+            url = absoluteUrl;
+        }
+        else if (endpointUrl) {
             url = `${this.state.apiBaseUrl}${endpointUrl}`;
         } else {
             if (data && IsSingleFormDataTypeGuard(data) && data.uuid) {

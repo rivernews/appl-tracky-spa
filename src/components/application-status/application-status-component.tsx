@@ -32,6 +32,7 @@ import { ApplicationStatusFormComponentContainer } from "./application-status-fo
 interface IApplicationStatusComponentProps extends RouteComponentProps {
     applicationStatus?: ApplicationStatus;
     application?: Application; // needed by form
+    isOnlyForm?: boolean; // needed by add-button
     deleteApplicationStatus: (
         applicationStatusToDelete: ApplicationStatus,
         callback?: Function
@@ -50,11 +51,37 @@ class ApplicationStatusComponent extends Component<
         isFormOpened: false
     };
 
+    render() {
+        return (
+            <div className="ApplicationStatusComponent">
+                {(this.state.isFormOpened || this.props.isOnlyForm) && this.props.application ? (
+                    this.renderFormController(
+                        this.props.application,
+                        this.props.applicationStatus
+                    )
+                ) : this.props.applicationStatus ? (
+                    this.renderDisplay(this.props.applicationStatus)
+                ) : (
+                    <span>
+                        Nothing to render: no application status provided so
+                        cannot display; no application provided so form for
+                        create/update are not allowed.
+                    </span>
+                )}
+            </div>
+        );
+    }
+
     renderDisplay = (applicationStatus: ApplicationStatus) => {
         return (
             <div className="ApplicationStatusComponent">
                 <p>
                     <span>Status: {applicationStatus.text}</span>
+                    <IconButton
+                        onClick={() => this.setState({isFormOpened: true})}
+                    >
+                        <MaterialIcon hasRipple icon="edit" />
+                    </IconButton>
                     <IconButton
                         onClick={() =>
                             this.props.deleteApplicationStatus(
@@ -139,27 +166,6 @@ class ApplicationStatusComponent extends Component<
             </div>
         );
     };
-
-    render() {
-        return (
-            <div className="ApplicationStatusComponent">
-                {this.props.applicationStatus && !this.props.application ? (
-                    this.renderDisplay(this.props.applicationStatus)
-                ) : this.props.application ? (
-                    this.renderFormController(
-                        this.props.application,
-                        this.props.applicationStatus
-                    )
-                ) : (
-                    <span>
-                        Nothing to render: no application status provided so
-                        cannot display; no application provided so form for
-                        create/update are not allowed.
-                    </span>
-                )}
-            </div>
-        );
-    }
 }
 
 const mapStateToProps = (store: IRootState) => ({

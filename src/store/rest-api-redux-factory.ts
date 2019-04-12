@@ -1,5 +1,5 @@
 import { Action, Reducer } from "redux";
-import { takeEvery, call, put } from "redux-saga/effects";
+import { takeEvery, take, call, put, actionChannel } from "redux-saga/effects";
 import { SagaIterator } from "redux-saga";
 import {
     RequestStatus,
@@ -53,6 +53,9 @@ export interface IObjectAction<Schema> extends Action {
 
     // for saga to perform additional side effect e.g. navigation
     callback?: Function;
+
+    // for custumized api call
+    absoluteUrl?: string
     
     payload: {
         formData?: TObject<Schema> | Array<TObject<Schema>>;
@@ -97,8 +100,9 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
         // async actions ( & state...)
         ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED].action = (
-            objectClassInstance: TObjectSchema,
-            callback?: Function
+            objectClassInstance?: TObjectSchema,
+            callback?: Function,
+            absoluteUrl?: string,
         ): IObjectAction<TObjectSchema> => {
             console.log(`action:fired, trigger, ${crudKeyword}`);
             return {
@@ -106,7 +110,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
                         .actionTypeName,
                 crudType: crudKeyword,
-                callback: callback,
+                callback,
+                absoluteUrl,
                 payload: {
                     requestStatus: RequestStatus.TRIGGERED,
                     formData: objectClassInstance
@@ -193,11 +198,14 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
         ) {
             console.log(`Saga: action intercepted; aync=trigger, crud=${crudKeyword}, obj=${objectName}; ready to call api`);
             const formData = triggerAction.payload.formData;
+            const absoluteUrl = triggerAction.absoluteUrl;
+
             yield put(
                 ObjectRestApiRedux[crudKeyword][
                     RequestStatus.REQUESTING
                 ].action()
             );
+
             try {
                 // api call
                 const jsonResponse:
@@ -207,7 +215,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     (<(params: IRequestParams<TObjectSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)]),
                     {
                         data: formData,
-                        objectName
+                        objectName,
+                        absoluteUrl,
                     }
                 );
 
@@ -217,6 +226,14 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     console.error("Server error, see message in res.");
                     throw new Error("Server error, see message in res.");
                 } 
+
+                // if there is .next in res, then it's paginated data and we should perform a next request to next page data
+                if(jsonResponse.next) {
+                    console.log("Saga: res contains next url, so we will also trigger list request for next=", jsonResponse.next);
+                    yield put(ObjectRestApiRedux[CrudType.LIST][RequestStatus.TRIGGERED].action(
+                        undefined, undefined, jsonResponse.next
+                    ));
+                }
 
                 // success state
                 if (crudKeyword === CrudType.DELETE) {
@@ -252,11 +269,17 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
             RequestStatus.TRIGGERED
         ].saga = function*() {
             console.log(`Saga: action intercepted; async=trigger, crud=${crudKeyword}, obj=${objectName}`);
-            yield takeEvery(
+            
+            // queue style 
+            const objectTriggerActionChannel = yield actionChannel(
                 ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
-                    .actionTypeName,
-                sagaHandler
-            );
+                    .actionTypeName
+            )
+
+            while (true) {
+                const objectTriggerAction = yield take(objectTriggerActionChannel);
+                yield call(sagaHandler, objectTriggerAction);
+            }
         };
     }
 

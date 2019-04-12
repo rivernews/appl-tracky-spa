@@ -156,6 +156,7 @@ class ApplicationStatusFormComponent extends Component<
         if (!this.props.applicationStatus) {
             this.props.createApplicationStatus(applicationStatus, this.props.onSubmitSuccess);
         } else {
+            applicationStatus.uuid = this.props.applicationStatus.uuid;
             this.props.updateApplicationStatus(applicationStatus, this.props.onSubmitSuccess);
         }
         

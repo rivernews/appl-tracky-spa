@@ -179,6 +179,7 @@ export class ApplicationComponent extends Component<
                 {/* application status form controller */}
                 <ApplicationStatusComponentContainer
                     application={application}
+                    isOnlyForm
                 />
             </div>
         );
