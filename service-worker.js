@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/appl-tracky-spa/precache-manifest.67f0a773c9df64420fdc4a5a1250bd94.js"
+  "/appl-tracky-spa/precache-manifest.730f4b4fc90035ab070a78eaddae843a.js"
 );
 
 workbox.clientsClaim();
