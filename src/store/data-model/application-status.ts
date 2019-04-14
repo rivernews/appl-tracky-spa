@@ -13,6 +13,7 @@ interface IApplicationStatusProps {
 export class ApplicationStatus extends BaseModel {
     public text: string;
     public application: IRelationship;
+    // public applicationstatuslink_set: Array<ApplicationStatusLink>
     public applicationstatuslink_set: Array<ApplicationStatusLink>
     public date: string;
     public order: number;
@@ -20,6 +21,7 @@ export class ApplicationStatus extends BaseModel {
     constructor({
         text = "",
         application = "",
+        // applicationstatuslink_set = [],
         applicationstatuslink_set = [],
         date = "",
         order = 0,
@@ -28,6 +30,7 @@ export class ApplicationStatus extends BaseModel {
         super(args);
         this.text = text;
         this.application = application;
+        // this.applicationstatuslink_set = applicationstatuslink_set;
         this.applicationstatuslink_set = applicationstatuslink_set;
         this.date = date;
         this.order = order;

@@ -78,7 +78,10 @@ class ApplicationStatusComponent extends Component<
                 <p>
                     <span>Status: {applicationStatus.text}</span>
                     <IconButton
-                        onClick={() => this.setState({isFormOpened: true})}
+                        onClick={() => {
+                            console.log("application status component: edit button clicked.")
+                            this.setState({isFormOpened: true});
+                        }}
                     >
                         <MaterialIcon hasRipple icon="edit" />
                     </IconButton>
@@ -96,10 +99,6 @@ class ApplicationStatusComponent extends Component<
                     <br />
                     {applicationStatus.applicationstatuslink_set.map(
                         applicationStatusLink => {
-                            console.log(
-                                "applicationStatusLinkID Obj=",
-                                applicationStatusLink
-                            );
                             return (
                                 applicationStatusLink &&
                                 applicationStatusLink.link && (
@@ -150,6 +149,7 @@ class ApplicationStatusComponent extends Component<
                         </h3>
                         <ApplicationStatusFormComponentContainer
                             application={application}
+                            applicationStatus={applicationStatus}
                             onCancel={clickEvent => {
                                 this.setState({
                                     isFormOpened: false

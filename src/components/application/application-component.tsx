@@ -172,6 +172,7 @@ export class ApplicationComponent extends Component<
                             <ApplicationStatusComponentContainer
                                 key={status.uuid}
                                 applicationStatus={status}
+                                application={application}
                             />
                         );
                     })}
