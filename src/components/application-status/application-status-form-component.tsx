@@ -56,20 +56,46 @@ class ApplicationStatusFormComponent extends Component<
     IApplicationStatusFormComponentProps
 > {
     formFactoryProps: IFormFactoryProps<any>;
+    linkFieldsCount: number;
 
     constructor(props: IApplicationStatusFormComponentProps) {
         super(props);
 
         const applicationStatus = this.props.applicationStatus;
+        
+        // setup dynamic link fields for initialValues
+        let linkFieldInitialValues: { [key: string]: string } = {}
+        this.linkFieldsCount = 0;
+        if (applicationStatus) {
+            // is update form
+            this.linkFieldsCount = applicationStatus.applicationstatuslink_set.length;
+        }
+        else {
+            // is create form
+            this.linkFieldsCount = 2; // temp value; provide 2 link fields for create form; TODO: make this dynamic
+        }
+        for (let index = 0; index < this.linkFieldsCount; index++) {
+            linkFieldInitialValues[`application_status__application_status_link__link_${index}__url`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.url : "";
+            linkFieldInitialValues[`application_status__application_status_link__link_${index}__text`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.text : "";
+        }
+
         const initialValues = {
             application_status__text: applicationStatus ? applicationStatus.text : "",
             application_status__date: applicationStatus ? applicationStatus.date : "",
-            application_status__link0__url: applicationStatus ? applicationStatus.applicationstatuslink_set[0].link.url : "",
-            application_status__link0__text: applicationStatus ? applicationStatus.applicationstatuslink_set[0].link.text : "",
-            application_status__link1__url: applicationStatus ? applicationStatus.applicationstatuslink_set[1].link.url : "",
-            application_status__link1__text: applicationStatus ? applicationStatus.applicationstatuslink_set[1].link.text : "",
+            // application_status__link0__url: applicationStatus ? applicationStatus.applicationstatuslink_set[0].link.url : "",
+            // application_status__link0__text: applicationStatus ? applicationStatus.applicationstatuslink_set[0].link.text : "",
+            // application_status__link1__url: applicationStatus ? applicationStatus.applicationstatuslink_set[1].link.url : "",
+            // application_status__link1__text: applicationStatus ? applicationStatus.applicationstatuslink_set[1].link.text : "",
+            ...linkFieldInitialValues,
         }
 
+        const linkFieldPropsList = Object.keys(linkFieldInitialValues).map((field_input_name: string) => {
+            console.log("App status form: contructor(), linkFieldPropsList.field_input_name=", field_input_name);
+            const tokens = field_input_name.split('__');
+            const label = tokens[3].toUpperCase();
+            const index = tokens[2].split('_')[1];
+            return new FormInputFieldProps(field_input_name, `${label} ${index}`);
+        })
         this.formFactoryProps = {
             initialValues: initialValues,
             validate: this.validate,
@@ -81,10 +107,11 @@ class ApplicationStatusFormComponent extends Component<
                     "Date",
                     InputFieldType.DATE
                 ),
-                new FormInputFieldProps("application_status__link0__url", "Link 0 URL"),
-                new FormInputFieldProps("application_status__link0__text", "Link 0 Text"),
-                new FormInputFieldProps("application_status__link1__url", "Link 1 URL"),
-                new FormInputFieldProps("application_status__link1__text", "Link 1 Text"),
+                // new FormInputFieldProps("application_status__link0__url", "Link 0 URL"),
+                // new FormInputFieldProps("application_status__link0__text", "Link 0 Text"),
+                // new FormInputFieldProps("application_status__link1__url", "Link 1 URL"),
+                // new FormInputFieldProps("application_status__link1__text", "Link 1 Text"),
+                ...linkFieldPropsList,
             ],
             actionButtonPropsList: [
                 new FormActionButtonProps(
@@ -128,11 +155,10 @@ class ApplicationStatusFormComponent extends Component<
 
         // create link(s)
         let links = [];
-        const indexes = [0, 1];
-        for (let index of indexes) {
+        for (let index = 0; index < this.linkFieldsCount; index ++) {
             links.push(new Link({
-                url: values[`application_status__link${index}__url`],
-                text: values[`application_status__link${index}__text`] || `Link of status`,
+                url: values[`application_status__application_status_link__link_${index}__url`],
+                text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
                 uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
             }))
         }
