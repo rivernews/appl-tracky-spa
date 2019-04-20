@@ -163,7 +163,7 @@ class ApplicationStatusFormComponent extends Component<
             }))
         }
         // create main object for applicationStatusLink(s)
-        const applicationStatusLinks = links.map((link, index) => {
+        const applicationStatusLinks = links.filter(((link: Link) => link.text)).map((link, index) => {
             return new ApplicationStatusLink({
                 link,
                 uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].uuid : "",
