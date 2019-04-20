@@ -82,10 +82,10 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
         if (!values.company__name) {
             errors.company__name = "Required";
         }
-        if (!/^https*\:\/\/.+$/i.test(values.company__home_page__url)) {
-            errors.company__home_page__url =
-                "Please start by http:// or https://";
-        }
+        // if (!/^https*\:\/\/.+$/i.test(values.company__home_page__url)) {
+        //     errors.company__home_page__url =
+        //         "Please start by http:// or https://";
+        // }
         return errors;
     };
 

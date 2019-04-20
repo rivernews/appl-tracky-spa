@@ -105,7 +105,9 @@ class ApplicationStatusComponent extends Component<
                                     <span key={applicationStatusLink.uuid}>
                                         <a
                                             href={
-                                                applicationStatusLink.link.url
+                                                (applicationStatusLink.link.url.includes("//")) ?
+                                                applicationStatusLink.link.url :
+                                                `//${applicationStatusLink.link.url}`
                                             }
                                             target="_blank"
                                         >

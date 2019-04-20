@@ -105,18 +105,18 @@ class ApplicationFormComponent extends Component<
         if (!values.application__position_title) {
             errors.application__position_title = "Required";
         }
-        if (
-            !/^https*\:\/\/.+$/i.test(
-                values.application__job_description_page__url
-            )
-        ) {
-            errors.application__job_description_page__url =
-                "Please start by http:// or https://";
-        }
-        if (!/^https*\:\/\/.+$/i.test(values.application__job_source__url)) {
-            errors.application__job_source__url =
-                "Please start by http:// or https://";
-        }
+        // if (
+        //     !/^https*\:\/\/.+$/i.test(
+        //         values.application__job_description_page__url
+        //     )
+        // ) {
+        //     errors.application__job_description_page__url =
+        //         "Please start by http:// or https://";
+        // }
+        // if (!/^https*\:\/\/.+$/i.test(values.application__job_source__url)) {
+        //     errors.application__job_source__url =
+        //         "Please start by http:// or https://";
+        // }
         return errors;
     };
 
