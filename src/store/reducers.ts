@@ -7,7 +7,6 @@ import { IRootState } from "./types";
 import { RootActionNames } from "./actions";
 // rest api
 import { CompanyReducer } from "./data-model/company";
-import { AddressReducer } from "./data-model/address";
 import { ApplicationReducer } from "./data-model/application";
 import { ApplicationStatusReducer } from "./data-model/application-status";
 
@@ -34,7 +33,6 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             rootStateChecked.router = undefined;
             rootStateChecked.auth = undefined;
             rootStateChecked.company = undefined;
-            rootStateChecked.address = undefined;
             rootStateChecked.application = undefined;
             rootStateChecked.applicationStatus = undefined;
             // add initial state for new sub-store here
@@ -54,7 +52,6 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             router: connectRouter(history)(rootStateChecked.router, action as LocationChangeAction),
             auth: authReducer(rootStateChecked.auth, action),
             company: CompanyReducer(rootStateChecked.company, action),
-            address: AddressReducer(rootStateChecked.address, action),
             application: ApplicationReducer(rootStateChecked.application, action),
             applicationStatus: ApplicationStatusReducer(rootStateChecked.applicationStatus, action),
             // add new reducer here
