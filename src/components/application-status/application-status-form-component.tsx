@@ -156,14 +156,18 @@ class ApplicationStatusFormComponent extends Component<
         // create link(s)
         let links = [];
         for (let index = 0; index < this.linkFieldsCount; index ++) {
-            links.push(new Link({
-                url: values[`application_status__application_status_link__link_${index}__url`],
-                text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
-                uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
-            }))
+            if (
+                values[`application_status__application_status_link__link_${index}__text`]
+            ) {
+                links.push(new Link({
+                    url: values[`application_status__application_status_link__link_${index}__url`],
+                    text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
+                    uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
+                }));
+            }
         }
         // create main object for applicationStatusLink(s)
-        const applicationStatusLinks = links.filter(((link: Link) => link.text)).map((link, index) => {
+        const applicationStatusLinks = links.map((link, index) => {
             return new ApplicationStatusLink({
                 link,
                 uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].uuid : "",

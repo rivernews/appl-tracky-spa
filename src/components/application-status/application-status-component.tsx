@@ -7,7 +7,6 @@ import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
 import {
     IObjectAction,
-    IObjectStore
 } from "../../store/rest-api-redux-factory";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 
@@ -16,7 +15,6 @@ import {
     ApplicationStatus,
     ApplicationStatusActions
 } from "../../store/data-model/application-status";
-import { ApplicationStatusLink } from "../../store/data-model/application-status-link";
 import { Application } from "../../store/data-model/application";
 
 /** Components */
@@ -105,7 +103,10 @@ class ApplicationStatusComponent extends Component<
                                     <span key={applicationStatusLink.uuid}>
                                         <a
                                             href={
-                                                (applicationStatusLink.link.url.includes("//")) ?
+                                                (
+                                                    applicationStatusLink.link.url && 
+                                                    applicationStatusLink.link.url.includes("//")
+                                                ) ?
                                                 applicationStatusLink.link.url :
                                                 `//${applicationStatusLink.link.url}`
                                             }
