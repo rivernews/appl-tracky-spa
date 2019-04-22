@@ -6,7 +6,7 @@ This roadmap can be complemented by the issues in Github repo as well.
 
 [Backend Issue Page](https://github.com/rivernews/appl-tracky-api/issues).
 
-- [ ] Database needs backend mechanism in order for app to be usable. Consider AWS RDS.
+- [ ] Database needs back up mechanism in order for app to be usable. Consider AWS RDS.
 
 #### Form and User Inputs
 
