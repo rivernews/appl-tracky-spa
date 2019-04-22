@@ -72,7 +72,7 @@ class ApplicationStatusFormComponent extends Component<
         }
         else {
             // is create form
-            this.linkFieldsCount = 2; // temp value; provide 2 link fields for create form; TODO: make this dynamic
+            this.linkFieldsCount = 1; // temp value; provide 2 link fields for create form; TODO: make this dynamic
         }
         for (let index = 0; index < this.linkFieldsCount; index++) {
             linkFieldInitialValues[`application_status__application_status_link__link_${index}__url`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.url : "";
