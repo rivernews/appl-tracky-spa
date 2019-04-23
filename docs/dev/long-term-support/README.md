@@ -23,6 +23,7 @@ This roadmap can be complemented by the issues in Github repo as well.
     - [ ] Providing more fields in form, referring to backend data model. [#5](https://github.com/rivernews/appl-tracky-spa/issues/5)
     - [ ] Optional / required fields review for convenience. [#17](https://github.com/rivernews/appl-tracky-spa/issues/17)
 - User Requests
+
     - More input types for application (perhaps for company, ... also). [#21](https://github.com/rivernews/appl-tracky-spa/issues/21)
 - Backend CRUD refactoring
     - One to Many logic generalization. Useful for adding `label` feature. [#13](https://github.com/rivernews/appl-tracky-spa/issues/13)

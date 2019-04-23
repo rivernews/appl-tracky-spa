@@ -64,10 +64,10 @@ class ApplicationFormComponent extends Component<
                 ? application.position_title
                 : "",
             application__job_description_page__url: application
-                ? application.job_description_page.url
+                ? application.job_description_page.url || ""
                 : "",
             application__job_source__url: application
-                ? application.job_source.url
+                ? application.job_source.url || ""
                 : ""
         };
 
@@ -105,6 +105,7 @@ class ApplicationFormComponent extends Component<
         if (!values.application__position_title) {
             errors.application__position_title = "Required";
         }
+
         // if (
         //     !/^https*\:\/\/.+$/i.test(
         //         values.application__job_description_page__url
