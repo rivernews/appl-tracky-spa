@@ -40,7 +40,11 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                         <strong>HQ:</strong> {company.hq_location.full_address}
                     </span>
                     <br />
-                    <a target="_blank" href={company.home_page.url}>
+                    <a target="_blank" href={
+                        (company.home_page.url && company.home_page.url.includes("//")) ?
+                        company.home_page.url :
+                        `//${company.home_page.url}`
+                    }>
                         <strong>Homepage</strong>
                     </a>
                     <br />

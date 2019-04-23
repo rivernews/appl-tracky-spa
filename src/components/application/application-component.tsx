@@ -147,7 +147,11 @@ export class ApplicationComponent extends Component<
                     {application.job_description_page.url ? (
                         <a
                             target="_blank"
-                            href={application.job_description_page.url}
+                            href={
+                                application.job_description_page.url && application.job_description_page.url.includes("//") ?
+                                application.job_description_page.url :
+                                `//${application.job_description_page.url}`
+                            }
                         >
                             <strong>JD Page</strong>
                         </a>
@@ -157,7 +161,11 @@ export class ApplicationComponent extends Component<
 
                     <br />
                     {application.job_source.url ? (
-                        <a target="_blank" href={application.job_source.url}>
+                        <a target="_blank" href={
+                            (application.job_source.url && application.job_source.url.includes("//")) ?
+                            application.job_source.url :
+                            `//${application.job_source.url}`
+                        }>
                             <strong>Job Source</strong>
                         </a>
                     ) : (
