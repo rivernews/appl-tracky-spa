@@ -41,11 +41,13 @@ interface IApplicationFormComponentProps {
     applicationStore: IObjectStore<Application>;
     createApplication: (
         applicationFormData: Application,
-        callback?: Function
+        successCallback?: Function,
+        finalCallback?: Function,
     ) => void;
     updateApplication: (
         applicationFormData: Application,
-        callback?: Function
+        successCallback?: Function,
+        finalCallback?: Function,
     ) => void;
 }
 
@@ -125,7 +127,7 @@ class ApplicationFormComponent extends Component<
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => {
-        setSubmitting(false);
+        setSubmitting(true);
 
         // prep relationship object by data model
         const job_description_page = new Link({
@@ -166,11 +168,11 @@ class ApplicationFormComponent extends Component<
                         "application store has no lastChangedObjectID"
                     );
                 }
-            });
+            }, () => setSubmitting(false));
         } else {
             console.log("Update application form: application=", application);
             application.uuid = this.props.application.uuid;
-            this.props.updateApplication(application, this.props.onSubmitSuccess);
+            this.props.updateApplication(application, this.props.onSubmitSuccess, () => setSubmitting(false));
         }
     };
 
@@ -191,22 +193,24 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
     return {
         createApplication: (
             applicationFormData: Application,
-            callback?: Function
+            successCallback?: Function,
+            finalCallback?: Function,
         ) =>
             dispatch(
                 ApplicationActions[CrudType.CREATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationFormData, callback)
+                ].action(applicationFormData, successCallback, undefined, finalCallback)
             )
         ,
         updateApplication: (
             applicationFormData: Application,
-            callback?: Function
+            successCallback?: Function,
+            finalCallback?: Function,
         ) =>
             dispatch(
                 ApplicationActions[CrudType.UPDATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationFormData, callback)
+                ].action(applicationFormData, successCallback, undefined, finalCallback)
             )
         ,
     };

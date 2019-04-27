@@ -52,7 +52,10 @@ export interface IObjectAction<Schema> extends Action {
     triggerFormData?: TObject<Schema> | Array<TObject<Schema>>;
 
     // for saga to perform additional side effect e.g. navigation
-    callback?: Function;
+    // only for triggerActions
+    successCallback?: Function;
+    failureCallback?: (error: any) => void;
+    finalCallback?: Function;
 
     // for custumized api call
     absoluteUrl?: string
@@ -101,7 +104,9 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
         // async actions ( & state...)
         ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED].action = (
             objectClassInstance?: TObjectSchema,
-            callback?: Function,
+            successCallback?: Function,
+            failureCallback?: (error: any) => void,
+            finalCallback?: Function,
             absoluteUrl?: string,
         ): IObjectAction<TObjectSchema> => {
             console.log(`action:fired, trigger, ${crudKeyword}`);
@@ -110,7 +115,9 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
                         .actionTypeName,
                 crudType: crudKeyword,
-                callback,
+                finalCallback,
+                successCallback,
+                failureCallback,
                 absoluteUrl,
                 payload: {
                     requestStatus: RequestStatus.TRIGGERED,
@@ -251,8 +258,8 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     );
                 }
 
-                if (triggerAction.callback) {
-                    triggerAction.callback();
+                if (triggerAction.successCallback) {
+                    triggerAction.successCallback();
                 }
             } catch (error) {
                 // error state
@@ -261,7 +268,15 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         RequestStatus.FAILURE
                     ].action(error)
                 );
+
+                if (triggerAction.failureCallback) {
+                    triggerAction.failureCallback(error);
+                }
                 return;
+            }
+
+            if (triggerAction.finalCallback) {
+                triggerAction.finalCallback();
             }
         };
 

@@ -44,11 +44,13 @@ interface IApplicationStatusFormComponentProps extends RouteComponentProps {
     applicationStatusStore: IObjectStore<ApplicationStatus>
     createApplicationStatus: (
         applicationStatusFormData: ApplicationStatus,
-        callback?: Function
+        successCallback?: Function,
+        finalCallback?: Function,
     ) => void;
     updateApplicationStatus: (
         applicationStatusFormData: ApplicationStatus,
-        callback?: Function
+        successCallback?: Function,
+        finalCallback?: Function,
     ) => void;
 }
 
@@ -141,7 +143,7 @@ class ApplicationStatusFormComponent extends Component<
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => {
-        setSubmitting(false);
+        setSubmitting(true);
         console.log("values=", values);
 
         // prepare relational objects
@@ -156,15 +158,11 @@ class ApplicationStatusFormComponent extends Component<
         // create link(s)
         let links = [];
         for (let index = 0; index < this.linkFieldsCount; index ++) {
-            if (
-                values[`application_status__application_status_link__link_${index}__text`]
-            ) {
-                links.push(new Link({
-                    url: values[`application_status__application_status_link__link_${index}__url`],
-                    text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
-                    uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
-                }));
-            }
+            links.push(new Link({
+                url: values[`application_status__application_status_link__link_${index}__url`],
+                text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
+                uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
+            }));
         }
         // create main object for applicationStatusLink(s)
         const applicationStatusLinks = links.map((link, index) => {
@@ -186,10 +184,10 @@ class ApplicationStatusFormComponent extends Component<
 
         // dispatch for application status
         if (!this.props.applicationStatus) {
-            this.props.createApplicationStatus(applicationStatus, this.props.onSubmitSuccess);
+            this.props.createApplicationStatus(applicationStatus, this.props.onSubmitSuccess, () => setSubmitting(false));
         } else {
             applicationStatus.uuid = this.props.applicationStatus.uuid;
-            this.props.updateApplicationStatus(applicationStatus, this.props.onSubmitSuccess);
+            this.props.updateApplicationStatus(applicationStatus, this.props.onSubmitSuccess, () => setSubmitting(false));
         }
         
     };
@@ -213,22 +211,24 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<ApplicationStatus> 
     return {
         createApplicationStatus: (
             applicationStatusFormData: ApplicationStatus,
-            callback?: Function
+            successCallback?: Function,
+            failureCallback?: Function,
         ) =>
             dispatch(
                 ApplicationStatusActions[CrudType.CREATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationStatusFormData, callback)
+                ].action(applicationStatusFormData, successCallback, undefined, failureCallback)
             )
         ,
         updateApplicationStatus: (
             applicationStatusFormData: ApplicationStatus,
-            callback?: Function
+            successCallback?: Function,
+            failureCallback?: Function,
         ) =>
             dispatch(
                 ApplicationStatusActions[CrudType.UPDATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationStatusFormData, callback)
+                ].action(applicationStatusFormData, successCallback, undefined, failureCallback)
             )
         ,
     };

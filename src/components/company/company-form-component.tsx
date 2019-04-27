@@ -34,8 +34,8 @@ interface ICompanyFormComponentProps {
     onSubmitSuccess?: () => void;
 
     /** redux */
-    createCompany: (companyFormData: Company, callback?: Function) => void;
-    updateCompany: (companyFormData: Company, callback?: Function) => void;
+    createCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) => void;
+    updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) => void;
 }
 
 class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
@@ -93,7 +93,7 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => {
-        setSubmitting(false);
+        setSubmitting(true);
         console.log("values=", values);
 
         // prep relationship object by data model
@@ -115,12 +115,12 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
         // dispatch
         if (!this.props.company) {
             console.log("company form: dispatching createCompany action");
-            this.props.createCompany(company, this.props.onSubmitSuccess);
+            this.props.createCompany(company, this.props.onSubmitSuccess, () => setSubmitting(false));
         }
         else  {
             console.log("company form: dispatching updateCompany action");
             company.uuid = this.props.company.uuid;
-            this.props.updateCompany(company, this.props.onSubmitSuccess);
+            this.props.updateCompany(company, this.props.onSubmitSuccess, () => setSubmitting(false));
         }
     };
 
@@ -137,18 +137,22 @@ const mapStateToProps = (store: IRootState) => ({});
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     return {
-        createCompany: (companyFormData: Company, callback?: Function) =>
+        createCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) =>
             dispatch(
                 CompanyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
                     companyFormData,
-                    callback
+                    successCallback,
+                    undefined,
+                    finalCallback,
                 )
             ),
-        updateCompany: (companyFormData: Company, callback?: Function) =>
+        updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) =>
             dispatch(
                 CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
                     companyFormData,
-                    callback
+                    successCallback,
+                    undefined,
+                    finalCallback,
                 )
             )
     };
