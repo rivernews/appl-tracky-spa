@@ -24,10 +24,10 @@ import {
     ActionButtonType
 } from "../../components/form-factory/form-factory";
 import {
-    FormInputFieldFactory,
+    FormInputField,
     FormInputFieldProps,
     InputFieldType
-} from "../../components/form-factory/form-field-factory";
+} from "../../components/form-factory/form-input-field";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 import { AuthenticationService } from "../../utils/auth";
 import { RestApiService } from "../../utils/rest-api";

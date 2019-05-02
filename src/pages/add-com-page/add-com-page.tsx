@@ -35,10 +35,10 @@ import {
     IFormFactoryProps
 } from "../../components/form-factory/form-factory";
 import {
-    FormInputFieldFactory,
+    FormInputField,
     FormInputFieldProps,
     InputFieldType
-} from "../../components/form-factory/form-field-factory";
+} from "../../components/form-factory/form-input-field";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 import { CompanyFormComponentContainer } from "../../components/company/company-form-component";
 

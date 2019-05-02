@@ -28,10 +28,10 @@ import {
     ActionButtonType
 } from "../form-factory/form-factory";
 import {
-    FormInputFieldFactory,
+    FormInputField,
     FormInputFieldProps,
     InputFieldType
-} from "../form-factory/form-field-factory";
+} from "../form-factory/form-input-field";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationStatusFormComponentProps extends RouteComponentProps {

@@ -38,10 +38,10 @@ import {
 // formik
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import {
-    FormInputFieldFactory,
+    FormInputField,
     FormInputFieldProps,
     InputFieldType
-} from "../../components/form-factory/form-field-factory";
+} from "../../components/form-factory/form-input-field";
 import { FormikValues, FormikErrors } from "formik";
 import { ApplicationFormComponentContainer } from "../../components/application/application-form-component";
 import { ApplicationComponentController } from "../../components/application/application-component";

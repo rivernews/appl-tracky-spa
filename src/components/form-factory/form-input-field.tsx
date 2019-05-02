@@ -44,7 +44,7 @@ export class FormInputFieldProps {
     ) {}
 }
 
-interface IFormInputFieldFactoryProps extends FormInputFieldProps {
+interface IFormInputFieldProps extends FormInputFieldProps {
     /* formik */
     onChange: (event: any) => void
     onBlur: (event: any) => void
@@ -53,7 +53,7 @@ interface IFormInputFieldFactoryProps extends FormInputFieldProps {
     touched: FormikTouched<FormikValues>
 }
 
-export class FormInputFieldFactory extends Component<IFormInputFieldFactoryProps> {
+export class FormInputField extends Component<IFormInputFieldProps> {
     render() {
         return (
             <div className="FormFieldFactory">

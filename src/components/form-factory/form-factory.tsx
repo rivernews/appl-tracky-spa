@@ -25,7 +25,7 @@ import {
     FormikErrors,
     FormikTouched
 } from "formik";
-import { FormInputFieldFactory, FormInputFieldProps } from "./form-field-factory";
+import { FormInputField, FormInputFieldProps } from "./form-input-field";
 
 export enum ActionButtonType {
     SUBMIT = "submit",
@@ -79,7 +79,7 @@ export class FormFactory<DataModel> extends Component<
                     }) => (
                         <Form>
                             {this.props.formInputFieldPropsList.map((formInputFieldProps: FormInputFieldProps, index) => (
-                                <FormInputFieldFactory 
+                                <FormInputField 
                                     key={index}
                                     {...formInputFieldProps} 
                                     onChange={handleChange}
