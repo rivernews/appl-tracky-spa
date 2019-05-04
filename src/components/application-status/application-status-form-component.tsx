@@ -32,6 +32,7 @@ import {
     FormInputFieldProps,
     InputFieldType
 } from "../form-factory/form-input-field";
+import { FormLinkFieldProps } from "../form-factory/form-link-field";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationStatusFormComponentProps extends RouteComponentProps {
@@ -76,6 +77,7 @@ class ApplicationStatusFormComponent extends Component<
             // is create form
             this.linkFieldsCount = 1; // temp value; provide 2 link fields for create form; TODO: make this dynamic
         }
+        // setup initialValue, which should be flatten
         for (let index = 0; index < this.linkFieldsCount; index++) {
             linkFieldInitialValues[`application_status__application_status_link__link_${index}__url`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.url : "";
             linkFieldInitialValues[`application_status__application_status_link__link_${index}__text`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.text : "";
@@ -84,20 +86,15 @@ class ApplicationStatusFormComponent extends Component<
         const initialValues = {
             application_status__text: applicationStatus ? applicationStatus.text : "",
             application_status__date: applicationStatus ? applicationStatus.date : "",
-            // application_status__link0__url: applicationStatus ? applicationStatus.applicationstatuslink_set[0].link.url : "",
-            // application_status__link0__text: applicationStatus ? applicationStatus.applicationstatuslink_set[0].link.text : "",
-            // application_status__link1__url: applicationStatus ? applicationStatus.applicationstatuslink_set[1].link.url : "",
-            // application_status__link1__text: applicationStatus ? applicationStatus.applicationstatuslink_set[1].link.text : "",
             ...linkFieldInitialValues,
         }
 
-        const linkFieldPropsList = Object.keys(linkFieldInitialValues).map((field_input_name: string) => {
-            console.log("App status form: contructor(), linkFieldPropsList.field_input_name=", field_input_name);
-            const tokens = field_input_name.split('__');
-            const label = tokens[3].toUpperCase();
-            const index = tokens[2].split('_')[1];
-            return new FormInputFieldProps(field_input_name, `${label} ${index}`);
-        })
+        let linkFieldPropsList = []
+        for (let index = 0; index < this.linkFieldsCount; index++) {
+            linkFieldPropsList.push(
+                new FormLinkFieldProps(`application_status__application_status_link__link_${index}`, `Link haha ${index}`)
+            )
+        }
         this.formFactoryProps = {
             initialValues: initialValues,
             validate: this.validate,
@@ -109,10 +106,7 @@ class ApplicationStatusFormComponent extends Component<
                     "Date",
                     InputFieldType.DATE
                 ),
-                // new FormInputFieldProps("application_status__link0__url", "Link 0 URL"),
-                // new FormInputFieldProps("application_status__link0__text", "Link 0 Text"),
-                // new FormInputFieldProps("application_status__link1__url", "Link 1 URL"),
-                // new FormInputFieldProps("application_status__link1__text", "Link 1 Text"),
+                // new FormLinkFieldProps("application_status__application_status_link__link_0", "Link0.0"),
                 ...linkFieldPropsList,
             ],
             actionButtonPropsList: [

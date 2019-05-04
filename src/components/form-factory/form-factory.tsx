@@ -5,6 +5,8 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
+// data model
+import { Link } from "../../store/data-model/link";
 
 /** Components */
 // mdc react icon
@@ -25,7 +27,9 @@ import {
     FormikErrors,
     FormikTouched
 } from "formik";
-import { FormInputField, FormInputFieldProps } from "./form-input-field";
+import { FormInputField, FormInputFieldProps, IFormFieldProps } from "./form-input-field";
+// form fields
+import { FormLinkField } from "./form-link-field";
 
 export enum ActionButtonType {
     SUBMIT = "submit",
@@ -78,17 +82,36 @@ export class FormFactory<DataModel> extends Component<
                         [props: string]: any
                     }) => (
                         <Form>
-                            {this.props.formInputFieldPropsList.map((formInputFieldProps: FormInputFieldProps, index) => (
-                                <FormInputField 
-                                    key={index}
-                                    {...formInputFieldProps} 
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    values={values}
-                                    errors={errors}
-                                    touched={touched}
-                                />
-                            ))}
+                            {this.props.formInputFieldPropsList.map((formFieldProps: IFormFieldProps, index) => {
+                                if (!formFieldProps.model) {
+                                    return (
+                                        <FormInputField 
+                                            key={index}
+                                            {...formFieldProps} 
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            values={values}
+                                            errors={errors}
+                                            touched={touched}
+                                        />
+                                    )
+                                }
+                                else {
+                                    if (formFieldProps.model === Link) {
+                                        return (
+                                            <FormLinkField
+                                                key={index}
+                                                {...formFieldProps} 
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                values={values}
+                                                errors={errors}
+                                                touched={touched}
+                                            />
+                                        )
+                                    }
+                                }
+                            })}
                             {this.props.actionButtonPropsList.map(
                                 (actionButtonProps: FormActionButtonProps, index) => (
                                     <Button

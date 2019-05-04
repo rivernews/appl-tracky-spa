@@ -35,7 +35,13 @@ export enum InputFieldType {
     DATE = "date"
 }
 
-export class FormInputFieldProps {
+export interface IFormFieldProps {
+    fieldName: string
+    label: string
+    model?: any
+}
+
+export class FormInputFieldProps implements IFormFieldProps {
     constructor(
         public fieldName: string = "",
         public label: string = "",
@@ -44,7 +50,7 @@ export class FormInputFieldProps {
     ) {}
 }
 
-interface IFormInputFieldProps extends FormInputFieldProps {
+export interface IFormBaseFieldProps {
     /* formik */
     onChange: (event: any) => void
     onBlur: (event: any) => void
@@ -53,10 +59,13 @@ interface IFormInputFieldProps extends FormInputFieldProps {
     touched: FormikTouched<FormikValues>
 }
 
+interface IFormInputFieldProps extends FormInputFieldProps, IFormBaseFieldProps {
+}
+
 export class FormInputField extends Component<IFormInputFieldProps> {
     render() {
         return (
-            <div className="FormFieldFactory">
+            <div className="FormInputField">
                 <TextField
                     label={this.props.label}
                     onTrailingIconSelect={this.props.onTrailingIconSelect}

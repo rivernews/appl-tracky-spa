@@ -238,7 +238,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                 if(jsonResponse.next) {
                     console.log("Saga: res contains next url, so we will also trigger list request for next=", jsonResponse.next);
                     yield put(ObjectRestApiRedux[CrudType.LIST][RequestStatus.TRIGGERED].action(
-                        undefined, undefined, jsonResponse.next
+                        undefined, undefined, undefined, undefined, jsonResponse.next
                     ));
                 }
 
