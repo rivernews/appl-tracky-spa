@@ -58,8 +58,13 @@ interface IApplicationStatusFormComponentProps extends RouteComponentProps {
 class ApplicationStatusFormComponent extends Component<
     IApplicationStatusFormComponentProps
 > {
-    formFactoryProps: IFormFactoryProps<any>;
+    // formFactoryProps: IFormFactoryProps<any>;
     linkFieldsCount: number;
+
+    state: {
+        linkFieldPropsList: Array<FormLinkFieldProps>,
+        formFactoryProps: IFormFactoryProps<any>,
+    }
 
     constructor(props: IApplicationStatusFormComponentProps) {
         super(props);
@@ -75,7 +80,7 @@ class ApplicationStatusFormComponent extends Component<
         }
         else {
             // is create form
-            this.linkFieldsCount = 1; // temp value; provide 2 link fields for create form; TODO: make this dynamic
+            this.linkFieldsCount = 0; // temp value; provide 2 link fields for create form; TODO: make this dynamic
         }
         // setup initialValue, which should be flatten
         for (let index = 0; index < this.linkFieldsCount; index++) {
@@ -89,13 +94,13 @@ class ApplicationStatusFormComponent extends Component<
             ...linkFieldInitialValues,
         }
 
-        let linkFieldPropsList = []
+        let linkFieldPropsList: Array<FormLinkFieldProps> = []
         for (let index = 0; index < this.linkFieldsCount; index++) {
             linkFieldPropsList.push(
-                new FormLinkFieldProps(`application_status__application_status_link__link_${index}`, `Link haha ${index}`)
+                new FormLinkFieldProps(`application_status__application_status_link__link_${index}`, `Link ${index}`)
             )
         }
-        this.formFactoryProps = {
+        const formFactoryProps = {
             initialValues: initialValues,
             validate: this.validate,
             onSubmit: this.onSubmit,
@@ -106,10 +111,13 @@ class ApplicationStatusFormComponent extends Component<
                     "Date",
                     InputFieldType.DATE
                 ),
-                // new FormLinkFieldProps("application_status__application_status_link__link_0", "Link0.0"),
                 ...linkFieldPropsList,
             ],
             actionButtonPropsList: [
+                new FormActionButtonProps(
+                    "Add link",
+                    () => this.addLinkField(),
+                ) ,
                 new FormActionButtonProps(
                     applicationStatus ?
                     "Update Status":
@@ -120,6 +128,25 @@ class ApplicationStatusFormComponent extends Component<
                 new FormActionButtonProps("Cancel", this.props.onCancel)
             ]
         };
+
+        this.state = {
+            linkFieldPropsList,
+            formFactoryProps
+        }
+    }
+
+    addLinkField() {
+        this.setState({
+            formFactoryProps: {
+                ...this.state.formFactoryProps,
+                formInputFieldPropsList: [
+                    ...this.state.formFactoryProps.formInputFieldPropsList,
+                    new FormLinkFieldProps(`application_status__application_status_link__link_${this.linkFieldsCount}`, `Link ${this.linkFieldsCount}`)
+                ]
+            }
+        }, () => {
+            this.linkFieldsCount++;
+        })
     }
 
     validate = (values: FormikValues) => {
@@ -155,14 +182,14 @@ class ApplicationStatusFormComponent extends Component<
             links.push(new Link({
                 url: values[`application_status__application_status_link__link_${index}__url`],
                 text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
-                uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
+                uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index] && this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
             }));
         }
         // create main object for applicationStatusLink(s)
         const applicationStatusLinks = links.map((link, index) => {
             return new ApplicationStatusLink({
                 link,
-                uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index].uuid : "",
+                uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index] && this.props.applicationStatus.applicationstatuslink_set[index].uuid : "",
             });
         });
 
@@ -189,7 +216,7 @@ class ApplicationStatusFormComponent extends Component<
     render() {
         return (
             <div className="ApplicationStatusFormComponent">
-                <FormFactory {...this.formFactoryProps} />
+                <FormFactory {...this.state.formFactoryProps} />
             </div>
         );
     }
