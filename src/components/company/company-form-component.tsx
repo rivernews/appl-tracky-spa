@@ -21,11 +21,7 @@ import {
     IFormFactoryProps,
     ActionButtonType
 } from "../form-factory/form-factory";
-import {
-    FormInputField,
-    FormInputFieldProps,
-    InputFieldType
-} from "../form-factory/form-input-field";
+import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface ICompanyFormComponentProps {
@@ -56,15 +52,20 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
             validate: this.validateAppForm,
             onSubmit: this.onSubmitAppForm,
             formInputFieldPropsList: [
-                new FormInputFieldProps("company__name", "Company Name*"),
-                new FormInputFieldProps(
-                    "company__hq_location__full_address",
-                    "HQ Address or Location"
-                ),
-                new FormInputFieldProps(
-                    "company__home_page__url",
-                    "Company Home Page URL"
-                )
+                new FormInputFieldMeta({
+                    fieldName: "company__name",
+                    label: "Company Name*"
+                }),
+
+                new FormInputFieldMeta({
+                    fieldName: "company__hq_location__full_address",
+                    label: "HQ Address or Location"
+                }),
+
+                new FormInputFieldMeta({
+                    fieldName: "company__home_page__url",
+                    label: "Company Home Page URL"
+                }),
             ],
             actionButtonPropsList: [
                 new FormActionButtonProps(

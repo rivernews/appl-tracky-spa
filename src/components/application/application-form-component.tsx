@@ -24,11 +24,7 @@ import {
     IFormFactoryProps,
     ActionButtonType
 } from "../form-factory/form-factory";
-import {
-    FormInputField,
-    FormInputFieldProps,
-    InputFieldType
-} from "../form-factory/form-input-field";
+import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationFormComponentProps {
@@ -78,18 +74,18 @@ class ApplicationFormComponent extends Component<
             validate: this.validateAppForm,
             onSubmit: this.onSubmitAppForm,
             formInputFieldPropsList: [
-                new FormInputFieldProps(
-                    "application__position_title",
-                    "Position Title*"
-                ),
-                new FormInputFieldProps(
-                    "application__job_description_page__url",
-                    "Job Description URL"
-                ),
-                new FormInputFieldProps(
-                    "application__job_source__url",
-                    "Job Source URL"
-                )
+                new FormInputFieldMeta({
+                    fieldName: "application__position_title",
+                    label: "Position Title*"
+                }),
+                new FormInputFieldMeta({
+                    fieldName: "application__job_description_page__url",
+                    label: "Job Description URL"
+                }),
+                new FormInputFieldMeta({
+                    fieldName: "application__job_source__url",
+                    label: "Job Source URL"
+                }),
             ],
             actionButtonPropsList: [
                 new FormActionButtonProps(

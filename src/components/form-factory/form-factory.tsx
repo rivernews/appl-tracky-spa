@@ -1,35 +1,23 @@
 import React, { Component } from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
-
-/** Redux */
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
-// data model
-import { Link } from "../../store/data-model/link";
 
 /** Components */
-// mdc react icon
-import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
-// mdc-react input
-import "@material/react-text-field/dist/text-field.css";
-import TextField, { HelperText, Input } from "@material/react-text-field";
 // formik
 import {
     Formik,
     Form,
-    Field,
-    ErrorMessage,
     FormikValues,
     FormikErrors,
     FormikTouched
 } from "formik";
-import { FormInputField, FormInputFieldProps, IFormFieldProps } from "./form-input-field";
+import { FormInputField } from "./form-input-field/form-input-field";
+import { FormInputFieldMeta } from "./form-input-field/form-input-field-meta";
+import { IFormBaseFieldProps } from "./form-base-field/form-base-field-meta";
 // form fields
-import { FormLinkField } from "./form-link-field";
+import { FormLinkField } from "./form-link-field/form-link-field";
+import { FormLinkFieldMeta } from "./form-link-field/form-link-field-meta";
 
 export enum ActionButtonType {
     SUBMIT = "submit",
@@ -54,12 +42,17 @@ export interface IFormFactoryProps<DataModel> {
     ) => void;
 
     actionButtonPropsList: Array<FormActionButtonProps>;
-    formInputFieldPropsList: Array<FormInputFieldProps>
+    formInputFieldPropsList: Array<FormInputFieldMeta>
 }
 
 export class FormFactory<DataModel> extends Component<
     IFormFactoryProps<DataModel>
 > {
+
+    onSubmit() {
+
+    }
+
     render() {
         return (
             <div className="FormFactory">
@@ -70,11 +63,6 @@ export class FormFactory<DataModel> extends Component<
                 >
                     {({
                         values,
-                        errors,
-                        touched,
-                        handleChange,
-                        handleBlur,
-                        handleSubmit,
                         isSubmitting
                     }: {
                         values: FormikValues,
@@ -82,31 +70,23 @@ export class FormFactory<DataModel> extends Component<
                         [props: string]: any
                     }) => (
                         <Form>
-                            {this.props.formInputFieldPropsList.map((formFieldProps: IFormFieldProps, index) => {
+                            {this.props.formInputFieldPropsList.map((formFieldProps: IFormBaseFieldProps, index) => {
                                 if (!formFieldProps.model) {
                                     return (
                                         <FormInputField 
                                             key={index}
                                             {...formFieldProps} 
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                            values={values}
-                                            errors={errors}
-                                            touched={touched}
                                         />
                                     )
                                 }
                                 else {
-                                    if (formFieldProps.model === Link) {
+                                    if (formFieldProps instanceof FormLinkFieldMeta) {
                                         return (
                                             <FormLinkField
                                                 key={index}
-                                                {...formFieldProps} 
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                values={values}
-                                                errors={errors}
-                                                touched={touched}
+                                                {...formFieldProps}
+                                                formikValues={values}
+                                                isDynamic={formFieldProps.isDyanmic}
                                             />
                                         )
                                     }

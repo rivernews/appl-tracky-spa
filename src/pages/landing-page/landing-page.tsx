@@ -23,12 +23,10 @@ import {
     IFormFactoryProps,
     ActionButtonType
 } from "../../components/form-factory/form-factory";
-import {
-    FormInputField,
-    FormInputFieldProps,
-    InputFieldType
-} from "../../components/form-factory/form-input-field";
+import { FormInputFieldMeta } from "../../components/form-factory/form-input-field/form-input-field-meta";
+import { InputFieldType } from "../../components/form-factory/form-base-field/form-base-field-meta";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
+// api
 import { AuthenticationService } from "../../utils/auth";
 import { RestApiService } from "../../utils/rest-api";
 import MaterialIcon from "@material/react-material-icon";
@@ -109,12 +107,15 @@ class LandingPage extends Component<ILandingPageProps> {
             validate: this.validateLoginForm,
             onSubmit: this.onSubmitLoginForm,
             formInputFieldPropsList: [
-                new FormInputFieldProps("username", "Username"),
-                new FormInputFieldProps(
-                    "password",
-                    "Password",
-                    InputFieldType.PASSWORD
-                )
+                new FormInputFieldMeta({
+                    fieldName: "username",
+                    label: "Username"
+                }),
+                new FormInputFieldMeta({
+                    fieldName: "password",
+                    label: "Password",
+                    type: InputFieldType.PASSWORD
+                }),
             ],
             actionButtonPropsList: [
                 new FormActionButtonProps("Login", undefined, ActionButtonType.SUBMIT)

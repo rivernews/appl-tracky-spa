@@ -26,20 +26,6 @@ import Button from "@material/react-button";
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
 import TextField, { HelperText, Input } from "@material/react-text-field";
-// formik
-import { Formik, Form, Field } from "formik";
-// form factory
-import {
-    FormFactory,
-    FormActionButtonProps,
-    IFormFactoryProps
-} from "../../components/form-factory/form-factory";
-import {
-    FormInputField,
-    FormInputFieldProps,
-    InputFieldType
-} from "../../components/form-factory/form-input-field";
-import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 import { CompanyFormComponentContainer } from "../../components/company/company-form-component";
 
 interface IAddComPageParams {

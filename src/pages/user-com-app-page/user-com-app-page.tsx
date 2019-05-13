@@ -28,22 +28,6 @@ import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
-import TextField, { HelperText, Input } from "@material/react-text-field";
-// form factory
-import {
-    FormFactory,
-    FormActionButtonProps,
-    IFormFactoryProps
-} from "../../components/form-factory/form-factory";
-// formik
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import {
-    FormInputField,
-    FormInputFieldProps,
-    InputFieldType
-} from "../../components/form-factory/form-input-field";
-import { FormikValues, FormikErrors } from "formik";
-import { ApplicationFormComponentContainer } from "../../components/application/application-form-component";
 import { ApplicationComponentController } from "../../components/application/application-component";
 
 interface IUserComAppPageParams {

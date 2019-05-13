@@ -27,12 +27,9 @@ import {
     IFormFactoryProps,
     ActionButtonType
 } from "../form-factory/form-factory";
-import {
-    FormInputField,
-    FormInputFieldProps,
-    InputFieldType
-} from "../form-factory/form-input-field";
-import { FormLinkFieldProps } from "../form-factory/form-link-field";
+import {FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
+import { InputFieldType } from "../form-factory/form-base-field/form-base-field-meta";
+import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationStatusFormComponentProps extends RouteComponentProps {
@@ -62,7 +59,7 @@ class ApplicationStatusFormComponent extends Component<
     linkFieldsCount: number;
 
     state: {
-        linkFieldPropsList: Array<FormLinkFieldProps>,
+        // linkFieldPropsList: Array<FormLinkFieldProps>,
         formFactoryProps: IFormFactoryProps<any>,
     }
 
@@ -72,7 +69,7 @@ class ApplicationStatusFormComponent extends Component<
         const applicationStatus = this.props.applicationStatus;
         
         // setup dynamic link fields for initialValues
-        let linkFieldInitialValues: { [key: string]: string } = {}
+        // let linkFieldInitialValues: { [key: string]: string } = {}
         this.linkFieldsCount = 0;
         if (applicationStatus) {
             // is update form
@@ -80,44 +77,61 @@ class ApplicationStatusFormComponent extends Component<
         }
         else {
             // is create form
-            this.linkFieldsCount = 0; // temp value; provide 2 link fields for create form; TODO: make this dynamic
+            this.linkFieldsCount = 1; // temp value; provide 2 link fields for create form; TODO: make this dynamic
         }
         // setup initialValue, which should be flatten
-        for (let index = 0; index < this.linkFieldsCount; index++) {
-            linkFieldInitialValues[`application_status__application_status_link__link_${index}__url`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.url : "";
-            linkFieldInitialValues[`application_status__application_status_link__link_${index}__text`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.text : "";
-        }
+        // for (let index = 0; index < this.linkFieldsCount; index++) {
+        //     linkFieldInitialValues[`application_status__application_status_link__link_${index}__url`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.url : "";
+        //     linkFieldInitialValues[`application_status__application_status_link__link_${index}__text`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.text : "";
+        // }
 
         const initialValues = {
             application_status__text: applicationStatus ? applicationStatus.text : "",
             application_status__date: applicationStatus ? applicationStatus.date : "",
-            ...linkFieldInitialValues,
+            // ...linkFieldInitialValues,
+            application_status: {
+                application_status_link: {
+                    link: []
+                }
+            }
+
         }
 
-        let linkFieldPropsList: Array<FormLinkFieldProps> = []
-        for (let index = 0; index < this.linkFieldsCount; index++) {
-            linkFieldPropsList.push(
-                new FormLinkFieldProps(`application_status__application_status_link__link_${index}`, `Link ${index}`)
-            )
-        }
+        // let linkFieldPropsList: Array<FormLinkFieldProps> = []
+        // for (let index = 0; index < this.linkFieldsCount; index++) {
+        //     linkFieldPropsList.push(
+        //         new FormLinkFieldProps({
+        //             fieldName: `application_status__application_status_link__link_${index}`,
+        //             label: `Link ${index}`,
+        //         })
+        //     )
+        // }
         const formFactoryProps = {
             initialValues: initialValues,
             validate: this.validate,
             onSubmit: this.onSubmit,
             formInputFieldPropsList: [
-                new FormInputFieldProps("application_status__text", "Status*"),
-                new FormInputFieldProps(
-                    "application_status__date",
-                    "Date",
-                    InputFieldType.DATE
-                ),
-                ...linkFieldPropsList,
+                new FormInputFieldMeta({
+                    fieldName: "application_status__text",
+                    label: "Status*",
+                }),
+                new FormInputFieldMeta({
+                    fieldName: "application_status__date",
+                    label: "Date",
+                    type: InputFieldType.DATE
+                }),
+                // ...linkFieldPropsList,
+                new FormLinkFieldMeta({
+                    fieldName: `application_status.application_status_link.link`,
+                    label: `Link`,
+                    isDyanmic: true,
+                })
             ],
             actionButtonPropsList: [
-                new FormActionButtonProps(
-                    "Add link",
-                    () => this.addLinkField(),
-                ) ,
+                // new FormActionButtonProps(
+                //     "Add link",
+                //     () => this.addLinkField(),
+                // ) ,
                 new FormActionButtonProps(
                     applicationStatus ?
                     "Update Status":
@@ -130,7 +144,7 @@ class ApplicationStatusFormComponent extends Component<
         };
 
         this.state = {
-            linkFieldPropsList,
+            // linkFieldPropsList,
             formFactoryProps
         }
     }
@@ -141,7 +155,11 @@ class ApplicationStatusFormComponent extends Component<
                 ...this.state.formFactoryProps,
                 formInputFieldPropsList: [
                     ...this.state.formFactoryProps.formInputFieldPropsList,
-                    new FormLinkFieldProps(`application_status__application_status_link__link_${this.linkFieldsCount}`, `Link ${this.linkFieldsCount}`)
+                    new FormLinkFieldMeta({
+                        fieldName: `application_status__application_status_link__link_${this.linkFieldsCount}`,
+                        label: `Link ${this.linkFieldsCount}`,
+                        isDyanmic: true
+                    })
                 ]
             }
         }, () => {
@@ -164,54 +182,55 @@ class ApplicationStatusFormComponent extends Component<
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => {
-        setSubmitting(true);
+        
         console.log("values=", values);
 
-        // prepare relational objects
-        const application__id = this.props.application.uuid;
-        if (!application__id) {
-            console.error(
-                "Application object has no uuid so cannot submit form."
-            );
-            return;
-        }
+        setSubmitting(false);
+        // // prepare relational objects
+        // const application__id = this.props.application.uuid;
+        // if (!application__id) {
+        //     console.error(
+        //         "Application object has no uuid so cannot submit form."
+        //     );
+        //     return;
+        // }
 
-        // create link(s)
-        let links = [];
-        for (let index = 0; index < this.linkFieldsCount; index ++) {
-            links.push(new Link({
-                url: values[`application_status__application_status_link__link_${index}__url`],
-                text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
-                uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index] && this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
-            }));
-        }
-        // create main object for applicationStatusLink(s)
-        const applicationStatusLinks = links.map((link, index) => {
-            return new ApplicationStatusLink({
-                link,
-                uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index] && this.props.applicationStatus.applicationstatuslink_set[index].uuid : "",
-            });
-        });
+        // // create link(s)
+        // let links = [];
+        // for (let index = 0; index < this.linkFieldsCount; index ++) {
+        //     links.push(new Link({
+        //         url: values[`application_status__application_status_link__link_${index}__url`],
+        //         text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
+        //         uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index] && this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
+        //     }));
+        // }
+        // // create main object for applicationStatusLink(s)
+        // const applicationStatusLinks = links.map((link, index) => {
+        //     return new ApplicationStatusLink({
+        //         link,
+        //         uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index] && this.props.applicationStatus.applicationstatuslink_set[index].uuid : "",
+        //     });
+        // });
 
-        console.log("App status form: sending app status links=", applicationStatusLinks);
+        // console.log("App status form: sending app status links=", applicationStatusLinks);
 
-        // create main object for application status
-        const applicationStatus = new ApplicationStatus({
-            text: values.application_status__text,
-            application: application__id,
-            date: values.application_status__date,
-            applicationstatuslink_set: applicationStatusLinks,
-        });
+        // // create main object for application status
+        // const applicationStatus = new ApplicationStatus({
+        //     text: values.application_status__text,
+        //     application: application__id,
+        //     date: values.application_status__date,
+        //     applicationstatuslink_set: applicationStatusLinks,
+        // });
 
-        // dispatch for application status
-        if (!this.props.applicationStatus) {
-            this.props.createApplicationStatus(applicationStatus, this.props.onSubmitSuccess, () => setSubmitting(false));
-        } else {
-            applicationStatus.uuid = this.props.applicationStatus.uuid;
-            this.props.updateApplicationStatus(applicationStatus, this.props.onSubmitSuccess, () => setSubmitting(false));
-        }
+        // // dispatch for application status
+        // if (!this.props.applicationStatus) {
+        //     this.props.createApplicationStatus(applicationStatus, this.props.onSubmitSuccess, () => setSubmitting(false));
+        // } else {
+        //     applicationStatus.uuid = this.props.applicationStatus.uuid;
+        //     this.props.updateApplicationStatus(applicationStatus, this.props.onSubmitSuccess, () => setSubmitting(false));
+        // }
         
-    };
+    }
 
     render() {
         return (
