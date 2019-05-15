@@ -73,7 +73,7 @@ class ApplicationFormComponent extends Component<
             initialValues: initialValues,
             validate: this.validateAppForm,
             onSubmit: this.onSubmitAppForm,
-            formInputFieldPropsList: [
+            formFieldPropsList: [
                 new FormInputFieldMeta({
                     fieldName: "application__position_title",
                     label: "Position Title*"

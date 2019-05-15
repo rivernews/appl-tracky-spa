@@ -15,7 +15,6 @@ import {
     ApplicationStatusLink,
 } from "../../store/data-model/application-status-link";
 import { Application } from "../../store/data-model/application";
-import { Link } from "../../store/data-model/link";
 
 /** Rest API */
 import { CrudType, RequestStatus } from "../../utils/rest-api";
@@ -28,14 +27,16 @@ import {
     ActionButtonType
 } from "../form-factory/form-factory";
 import {FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
-import { InputFieldType } from "../form-factory/form-base-field/form-base-field-meta";
+import { InputFieldType, FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-field-meta";
+// form fields
 import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
+import { FormApplicationStatusLinkFieldMeta } from "../form-factory/form-application-status-link-field/form-application-status-link-field-meta";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationStatusFormComponentProps extends RouteComponentProps {
     applicationStatus?: ApplicationStatus; // for update form
-    onCancel: (event: any) => void;
     onSubmitSuccess?: () => void;
+    onCancel: () => void;
 
     /** redux */
     application: Application;
@@ -55,126 +56,49 @@ interface IApplicationStatusFormComponentProps extends RouteComponentProps {
 class ApplicationStatusFormComponent extends Component<
     IApplicationStatusFormComponentProps
 > {
-    // formFactoryProps: IFormFactoryProps<any>;
-    linkFieldsCount: number;
-
-    state: {
-        // linkFieldPropsList: Array<FormLinkFieldProps>,
-        formFactoryProps: IFormFactoryProps<any>,
-    }
+    formFieldPropsList: Array<FormBaseFieldMeta>;
+    actionButtonPropsList: Array<FormActionButtonProps>;
 
     constructor(props: IApplicationStatusFormComponentProps) {
         super(props);
 
-        const applicationStatus = this.props.applicationStatus;
-        
-        // setup dynamic link fields for initialValues
-        // let linkFieldInitialValues: { [key: string]: string } = {}
-        this.linkFieldsCount = 0;
-        if (applicationStatus) {
-            // is update form
-            this.linkFieldsCount = applicationStatus.applicationstatuslink_set.length;
-        }
-        else {
-            // is create form
-            this.linkFieldsCount = 1; // temp value; provide 2 link fields for create form; TODO: make this dynamic
-        }
-        // setup initialValue, which should be flatten
-        // for (let index = 0; index < this.linkFieldsCount; index++) {
-        //     linkFieldInitialValues[`application_status__application_status_link__link_${index}__url`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.url : "";
-        //     linkFieldInitialValues[`application_status__application_status_link__link_${index}__text`] = applicationStatus ? applicationStatus.applicationstatuslink_set[index].link.text : "";
-        // }
+        this.formFieldPropsList = [
+            new FormInputFieldMeta({
+                fieldName: "text",
+                label: "Status*",
+            }),
+            new FormInputFieldMeta({
+                fieldName: "date",
+                label: "Date",
+                type: InputFieldType.DATE
+            }),
+            new FormApplicationStatusLinkFieldMeta({
+                fieldName: `applicationstatuslink_set`,
+                label: `Status Link`,
+                isDynamic: true,
+            }),
+        ];
 
-        const initialValues = {
-            application_status__text: applicationStatus ? applicationStatus.text : "",
-            application_status__date: applicationStatus ? applicationStatus.date : "",
-            // ...linkFieldInitialValues,
-            application_status: {
-                application_status_link: {
-                    link: []
-                }
-            }
-
-        }
-
-        // let linkFieldPropsList: Array<FormLinkFieldProps> = []
-        // for (let index = 0; index < this.linkFieldsCount; index++) {
-        //     linkFieldPropsList.push(
-        //         new FormLinkFieldProps({
-        //             fieldName: `application_status__application_status_link__link_${index}`,
-        //             label: `Link ${index}`,
-        //         })
-        //     )
-        // }
-        const formFactoryProps = {
-            initialValues: initialValues,
-            validate: this.validate,
-            onSubmit: this.onSubmit,
-            formInputFieldPropsList: [
-                new FormInputFieldMeta({
-                    fieldName: "application_status__text",
-                    label: "Status*",
-                }),
-                new FormInputFieldMeta({
-                    fieldName: "application_status__date",
-                    label: "Date",
-                    type: InputFieldType.DATE
-                }),
-                // ...linkFieldPropsList,
-                new FormLinkFieldMeta({
-                    fieldName: `application_status.application_status_link.link`,
-                    label: `Link`,
-                    isDyanmic: true,
-                })
-            ],
-            actionButtonPropsList: [
-                // new FormActionButtonProps(
-                //     "Add link",
-                //     () => this.addLinkField(),
-                // ) ,
-                new FormActionButtonProps(
-                    applicationStatus ?
-                    "Update Status":
-                    "Add Status",
-                    undefined,
-                    ActionButtonType.SUBMIT
-                ),
-                new FormActionButtonProps("Cancel", this.props.onCancel)
-            ]
-        };
-
-        this.state = {
-            // linkFieldPropsList,
-            formFactoryProps
-        }
-    }
-
-    addLinkField() {
-        this.setState({
-            formFactoryProps: {
-                ...this.state.formFactoryProps,
-                formInputFieldPropsList: [
-                    ...this.state.formFactoryProps.formInputFieldPropsList,
-                    new FormLinkFieldMeta({
-                        fieldName: `application_status__application_status_link__link_${this.linkFieldsCount}`,
-                        label: `Link ${this.linkFieldsCount}`,
-                        isDyanmic: true
-                    })
-                ]
-            }
-        }, () => {
-            this.linkFieldsCount++;
-        })
+        this.actionButtonPropsList = [
+            new FormActionButtonProps(
+                this.props.applicationStatus ?
+                "Save Status":
+                "Create Status",
+                undefined,
+                ActionButtonType.SUBMIT
+            ),
+            new FormActionButtonProps("Cancel", this.props.onCancel)
+        ];
     }
 
     validate = (values: FormikValues) => {
         let errors: FormikErrors<any> = {};
-        if (!values.application_status__text) {
-            errors.application_status__text = "Required";
-        }
-        if (!values.application_status__date) {
-            errors.application_status__date = "Please give a valid date";
-        }
+        // if (!values.application_status__text) {
+        //     errors.application_status__text = "Required";
+        // }
+        // if (!values.application_status__date) {
+        //     errors.application_status__date = "Please give a valid date";
+        // }
         return errors;
     };
 
@@ -235,7 +159,25 @@ class ApplicationStatusFormComponent extends Component<
     render() {
         return (
             <div className="ApplicationStatusFormComponent">
-                <FormFactory {...this.state.formFactoryProps} />
+                <FormFactory
+                    model={ApplicationStatus}
+                    initialInstance={new ApplicationStatus({
+                        ...this.props.applicationStatus,
+                    })}
+                    enforcedInstanceData={{
+                        application: this.props.application.uuid
+                    }}
+        
+                    validate={this.validate}
+                    
+                    formFieldPropsList={this.formFieldPropsList}
+                    actionButtonPropsList={this.actionButtonPropsList}
+        
+                    createInstanceTriggerAction={this.props.createApplicationStatus}
+                    updateInstanceTriggerAction={this.props.updateApplicationStatus}
+
+                    onSubmitSuccess={this.props.onSubmitSuccess}
+                />
             </div>
         );
     }

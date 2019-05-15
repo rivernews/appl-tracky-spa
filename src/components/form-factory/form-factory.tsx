@@ -4,6 +4,8 @@ import React, { Component } from "react";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
+// data model
+import { DataModel, IGenericDataModel } from "../../store/data-model/base-model";
 // formik
 import {
     Formik,
@@ -13,11 +15,13 @@ import {
     FormikTouched
 } from "formik";
 import { FormInputField } from "./form-input-field/form-input-field";
-import { FormInputFieldMeta } from "./form-input-field/form-input-field-meta";
-import { IFormBaseFieldProps } from "./form-base-field/form-base-field-meta";
-// form fields
+import { IFormBaseFieldProps, FormBaseFieldMeta } from "./form-base-field/form-base-field-meta";
+// form link fields
 import { FormLinkField } from "./form-link-field/form-link-field";
 import { FormLinkFieldMeta } from "./form-link-field/form-link-field-meta";
+// form application status link fields
+import { FormApplicationStatusLinkField } from "./form-application-status-link-field/form-application-status-link-field";
+import { FormApplicationStatusLinkFieldMeta } from "./form-application-status-link-field/form-application-status-link-field-meta";
 
 export enum ActionButtonType {
     SUBMIT = "submit",
@@ -32,34 +36,104 @@ export class FormActionButtonProps {
     ) {}
 }
 
-export interface IFormFactoryProps<DataModel> {
-    initialValues: DataModel;
+export interface IFormFactoryProps<IDataModel> {
+    onSubmitSuccess?: () => void;
+    
+    initialValues?: any;
+    initialInstance?: IGenericDataModel<IDataModel>;
+    enforcedInstanceData?: any;
+    model?: DataModel;
+    actionButtonPropsList: Array<FormActionButtonProps>;
+    formFieldPropsList: Array<FormBaseFieldMeta>
 
-    validate: (values: FormikValues) => FormikErrors<FormikValues>;
-    onSubmit: (
+    onSubmit?: (
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => void;
+    validate: (values: FormikValues) => FormikErrors<FormikValues>;
 
-    actionButtonPropsList: Array<FormActionButtonProps>;
-    formInputFieldPropsList: Array<FormInputFieldMeta>
+    createInstanceTriggerAction?: (
+        instance: IDataModel,
+        successCallback?: Function,
+        finalCallback?: Function,
+    ) => void;
+    updateInstanceTriggerAction?: (
+        instance: IDataModel,
+        successCallback?: Function,
+        finalCallback?: Function,
+    ) => void;
 }
 
 export class FormFactory<DataModel> extends Component<
     IFormFactoryProps<DataModel>
 > {
 
-    onSubmit() {
+    initialInstance: IGenericDataModel<DataModel>;
 
+    constructor(props: IFormFactoryProps<DataModel>) {
+        super(props);
+        
+        // guarantee this.initialInstance
+        if (this.props.model && !this.props.initialInstance) {
+            const model = this.props.model;
+            this.initialInstance = new model({});
+        }
+        else if (this.props.initialInstance) {
+            this.initialInstance = this.props.initialInstance;
+        }
+        else {
+            // for backward compatibility; TODO: in the future, `this.props.initialValues` has tto go away
+            this.initialInstance = this.props.initialValues;
+        }
+        
+    }
+
+    onSubmit = (
+        values: FormikValues,
+        { setSubmitting }: { setSubmitting: Function }
+    ) => {
+        setSubmitting(true);
+        let instanceData: any = {};
+        for (let fieldProps of this.props.formFieldPropsList) {
+            const keyName = fieldProps.fieldName;
+            instanceData[keyName] = fieldProps.getInstance(values);
+        }
+
+        // packaging
+        const model = this.props.model;
+        if (model && this.props.createInstanceTriggerAction && this.props.updateInstanceTriggerAction) {
+            const instance = new model({
+                uuid: this.initialInstance.uuid,
+                ...instanceData, 
+                ...this.props.enforcedInstanceData
+            });
+
+            // dispatch API request
+            if (!instance.uuid) {
+                console.log("ready to send create data =", instance);
+                // this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
+                setSubmitting(false);
+            } else {
+                // instance.uuid = this.props.initialInstance.uuid;
+                console.log("ready to send update data =", instance);
+                // this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
+                setSubmitting(false);
+            }
+        }
+        else if (this.props.onSubmit) {
+            // backward compatibility - TODO: has to go away in the future
+            this.props.onSubmit(values, {setSubmitting});
+        }
     }
 
     render() {
         return (
             <div className="FormFactory">
                 <Formik
-                    initialValues={this.props.initialValues}
+                    // initialValues={this.props.initialValues}
+                    initialValues={this.initialInstance}
                     validate={this.props.validate}
-                    onSubmit={this.props.onSubmit}
+                    onSubmit={this.onSubmit}
                 >
                     {({
                         values,
@@ -70,10 +144,10 @@ export class FormFactory<DataModel> extends Component<
                         [props: string]: any
                     }) => (
                         <Form>
-                            {this.props.formInputFieldPropsList.map((formFieldProps: IFormBaseFieldProps, index) => {
+                            {this.props.formFieldPropsList.map((formFieldProps: IFormBaseFieldProps, index:number) => {
                                 if (!formFieldProps.model) {
                                     return (
-                                        <FormInputField 
+                                        <FormInputField
                                             key={index}
                                             {...formFieldProps} 
                                         />
@@ -86,7 +160,15 @@ export class FormFactory<DataModel> extends Component<
                                                 key={index}
                                                 {...formFieldProps}
                                                 formikValues={values}
-                                                isDynamic={formFieldProps.isDyanmic}
+                                            />
+                                        )
+                                    }
+                                    else if (formFieldProps instanceof FormApplicationStatusLinkFieldMeta) {
+                                        return (
+                                            <FormApplicationStatusLinkField
+                                                key={index}
+                                                {...formFieldProps}
+                                                formikValues={values}
                                             />
                                         )
                                     }

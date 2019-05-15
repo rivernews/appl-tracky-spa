@@ -2,38 +2,35 @@
 import { Link } from "../../../store/data-model/link";
 
 /** Components */
+// base field
+import { IFieldBaseMetaProps, FormBaseFieldMeta } from "../form-base-field/form-base-field-meta";
 // formik
-import {
-    FormikValues,
-} from "formik";
+import { FormikValues } from "formik";
 
-import { IFormBaseFieldProps } from "../form-base-field/form-base-field-meta";
+export class FormLinkFieldMeta extends FormBaseFieldMeta {
 
-export class FormLinkFieldMeta implements IFormBaseFieldProps {
-    model = Link;
-
-    fieldName: string;
-    label: string;
-    isDyanmic?: boolean;
-
-    constructor({
-        fieldName,
-        label,
-        isDyanmic = false
-    }: IFormBaseFieldProps & {
-        isDyanmic?: boolean
-    }) {
-        this.fieldName = fieldName;
-        this.label = label;
-        this.isDyanmic = isDyanmic;
+    constructor(props: IFieldBaseMetaProps) {
+        super(props)
+        this.model = Link;
     }
 
-    getValueInstance(values: FormikValues) {
-        if (this.isDyanmic) {
-            return values[this.fieldName].map((linkData: Link) => new Link(linkData));
-        }
-        else {
-            return new Link(values[this.fieldName]);
-        }
-    }
+    // getInstance = (values: FormikValues) => {
+    //     if (this.isDynamic) {
+    //         let instanceList: Array<Link> = super.getInstance(values);
+    //         instanceList = instanceList.map((instance: Link) => this.sanitizeInstance(instance))
+    //         return instanceList;
+    //     }
+    //     else {
+    //         let instance: Link = super.getInstance(values);
+    //         instance = this.sanitizeInstance(instance);
+    //         return instance;
+    //     }
+    // }
+
+    // sanitizeInstance(instance: Link) {
+    //     return new Link({
+    //         ...instance,
+    //         url: (instance.url) ? instance.url : "#"
+    //     })
+    // }
 }

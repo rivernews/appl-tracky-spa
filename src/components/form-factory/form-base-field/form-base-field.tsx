@@ -1,0 +1,97 @@
+import React from "react";
+
+/** Components */
+// mdc react icon
+import MaterialIcon from "@material/react-material-icon";
+// mdc react button
+import "@material/react-button/dist/button.css";
+import Button from "@material/react-button";
+// mdc-react icon button
+import '@material/react-icon-button/dist/icon-button.css';
+import IconButton from '@material/react-icon-button';
+// formik
+import {
+    FieldArray,
+    FormikValues,
+    ArrayHelpers,
+} from "formik";
+// base field
+import { IFormBaseFieldProps } from "./form-base-field-meta";
+
+interface IFormBaseDyanmicFieldControllsProps {
+    index: number
+    formikArrayHelpers: ArrayHelpers
+}
+
+const FormBaseDynamicFieldControlls = (props: IFormBaseDyanmicFieldControllsProps) => {
+
+    const deleteField = () => {
+        props.formikArrayHelpers.remove(props.index);
+    }
+
+    return (
+        <div className="FormBaseDynamicFieldControlls">
+            <IconButton onClick={deleteField}>
+                <MaterialIcon hasRipple icon="delete" />
+            </IconButton>
+        </div>
+    )
+}
+
+const BaseDynamicFieldAddButton = (props: {
+    formikArrayHelpers: ArrayHelpers
+    label: string
+}) => {
+
+    const onAddClick = () => {
+        props.formikArrayHelpers.push({});
+    }
+
+    return (
+        <Button type="button" onClick={onAddClick} children={`New ${props.label}`} />
+    )
+}
+
+export const withFormBaseField = (FormFieldComponent: React.ComponentType<IFormBaseFieldProps>) => (props: IFormBaseFieldProps) => {
+
+    if (props.isDynamic && !props.formikValues) {
+        alert("Oops! Something's wrong.");
+        throw Error("When `isDynamic` is true, you need to pass over `formikValues`.");
+    }
+
+    const formikValues = props.formikValues;
+
+    return (
+        (props.isDynamic && formikValues) ?
+            (<FieldArray
+                name={props.fieldName}
+                render={formikArrayHelpers => (
+                    <div className="FormApplicationStatusLinkFieldsContainer">
+                        {props.getInstanceDataFromFormikValues( formikValues ).map((instanceData: any, index: number) => (
+                            <div key={index} className="FormBaseDynamicField">
+                                <FormFieldComponent
+                                    fieldName={`${props.fieldName}[${index}]`}
+                                    label={`${props.label} ${index}`}
+                                    formikValues={props.formikValues}
+                                    getInstanceDataFromFormikValues={props.getInstanceDataFromFormikValues}
+                                />
+                                <FormBaseDynamicFieldControlls
+                                    index={index}
+                                    formikArrayHelpers={formikArrayHelpers}
+                                />
+                            </div>
+                        ))}
+
+                        <BaseDynamicFieldAddButton formikArrayHelpers={formikArrayHelpers} label={props.label} />
+                    </div>
+                )}
+            />)
+            :
+            (<FormFieldComponent
+                fieldName={props.fieldName}
+                label={props.label}
+                formikValues={props.formikValues}
+                getInstanceDataFromFormikValues={props.getInstanceDataFromFormikValues}
+            />)
+    )
+}

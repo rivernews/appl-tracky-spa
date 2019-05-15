@@ -51,7 +51,7 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
             initialValues: initialValues,
             validate: this.validateAppForm,
             onSubmit: this.onSubmitAppForm,
-            formInputFieldPropsList: [
+            formFieldPropsList: [
                 new FormInputFieldMeta({
                     fieldName: "company__name",
                     label: "Company Name*"

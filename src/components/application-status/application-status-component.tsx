@@ -153,7 +153,7 @@ class ApplicationStatusComponent extends Component<
                         <ApplicationStatusFormComponentContainer
                             application={application}
                             applicationStatus={applicationStatus}
-                            onCancel={clickEvent => {
+                            onCancel={() => {
                                 this.setState({
                                     isFormOpened: false
                                 });

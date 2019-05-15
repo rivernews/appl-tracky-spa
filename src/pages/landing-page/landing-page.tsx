@@ -106,7 +106,7 @@ class LandingPage extends Component<ILandingPageProps> {
             initialValues: initialValues,
             validate: this.validateLoginForm,
             onSubmit: this.onSubmitLoginForm,
-            formInputFieldPropsList: [
+            formFieldPropsList: [
                 new FormInputFieldMeta({
                     fieldName: "username",
                     label: "Username"

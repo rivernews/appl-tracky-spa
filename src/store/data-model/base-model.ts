@@ -1,5 +1,9 @@
 export type IRelationship = string;
 
+export type DataModel = new (props: any) => any
+
+export type IGenericDataModel<DataModel> = DataModel & BaseModel
+
 export interface IBaseModelProps {
     uuid?: IRelationship
     created_at?: string

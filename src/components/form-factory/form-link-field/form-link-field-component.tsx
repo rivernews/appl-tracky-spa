@@ -32,7 +32,7 @@ export class FormLinkFieldComponent extends Component<IFormLinkFieldComponentPro
     render() {
         return (
             <div className="FormLinkField">
-                <h4>{this.props.label}</h4>
+                {this.props.label && <h4>{this.props.label}</h4>}
                 <FormInputField
                     {...this.textInputFieldProps}
                 />
