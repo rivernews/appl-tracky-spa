@@ -13,17 +13,17 @@ export interface IFormLinkFieldComponentProps extends IFormBaseFieldProps {
 
 export class FormLinkFieldComponent extends Component<IFormLinkFieldComponentProps> {
 
-    textInputFieldProps: FormInputFieldMeta;
-    urlInputFieldProps: FormInputFieldMeta;
+    textInputFieldMeta: FormInputFieldMeta;
+    urlInputFieldMeta: FormInputFieldMeta;
 
     constructor(props: IFormLinkFieldComponentProps) {
         super(props)
 
-        this.textInputFieldProps = new FormInputFieldMeta({
+        this.textInputFieldMeta = new FormInputFieldMeta({
             fieldName: `${this.props.fieldName}.text`,
             label: "Description"
         });
-        this.urlInputFieldProps = new FormInputFieldMeta({
+        this.urlInputFieldMeta = new FormInputFieldMeta({
             fieldName: `${this.props.fieldName}.url`,
             label: "Link url"
         });
@@ -34,11 +34,11 @@ export class FormLinkFieldComponent extends Component<IFormLinkFieldComponentPro
             <div className="FormLinkField">
                 {this.props.label && <h4>{this.props.label}</h4>}
                 <FormInputField
-                    {...this.textInputFieldProps}
+                    {...this.textInputFieldMeta}
                 />
 
                 <FormInputField
-                    {...this.urlInputFieldProps}
+                    {...this.urlInputFieldMeta}
                 />
             </div>
         );

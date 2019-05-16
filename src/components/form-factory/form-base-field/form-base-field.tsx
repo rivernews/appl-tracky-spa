@@ -14,7 +14,6 @@ import { DataModelClass } from "../../../store/data-model/base-model";
 // formik
 import {
     FieldArray,
-    FormikValues,
     ArrayHelpers,
 } from "formik";
 // base field
@@ -68,14 +67,15 @@ export const withFormBaseField = (FormFieldComponent: React.ComponentType<IFormB
     }
 
     const formikValues = props.formikValues;
+    const getInstanceDataFromFormikValues = props.getInstanceDataFromFormikValues;
 
     return (
-        (props.isDynamic && formikValues) ?
+        (props.isDynamic && getInstanceDataFromFormikValues && formikValues) ?
             (<FieldArray
                 name={props.fieldName}
                 render={formikArrayHelpers => (
                     <div className="FormApplicationStatusLinkFieldsContainer">
-                        {props.getInstanceDataFromFormikValues(formikValues).map((instanceData: any, index: number) => (
+                        {getInstanceDataFromFormikValues(formikValues).map((instanceData: any, index: number) => (
                             <div key={index} className="FormBaseDynamicField">
                                 <FormFieldComponent
                                     fieldName={`${props.fieldName}[${index}]`}

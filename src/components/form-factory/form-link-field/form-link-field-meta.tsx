@@ -13,24 +13,4 @@ export class FormLinkFieldMeta extends FormBaseFieldMeta {
         this.model = Link;
         this.formField = FormLinkField;
     }
-
-    // getInstance = (values: FormikValues) => {
-    //     if (this.isDynamic) {
-    //         let instanceList: Array<Link> = super.getInstance(values);
-    //         instanceList = instanceList.map((instance: Link) => this.sanitizeInstance(instance))
-    //         return instanceList;
-    //     }
-    //     else {
-    //         let instance: Link = super.getInstance(values);
-    //         instance = this.sanitizeInstance(instance);
-    //         return instance;
-    //     }
-    // }
-
-    // sanitizeInstance(instance: Link) {
-    //     return new Link({
-    //         ...instance,
-    //         url: (instance.url) ? instance.url : "#"
-    //     })
-    // }
 }
