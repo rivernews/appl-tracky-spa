@@ -4,14 +4,14 @@ import { Link } from "../../../store/data-model/link";
 /** Components */
 // base field
 import { IFieldBaseMetaProps, FormBaseFieldMeta } from "../form-base-field/form-base-field-meta";
-// formik
-import { FormikValues } from "formik";
+import { FormLinkField } from "./form-link-field";
 
 export class FormLinkFieldMeta extends FormBaseFieldMeta {
 
     constructor(props: IFieldBaseMetaProps) {
         super(props)
         this.model = Link;
+        this.formField = FormLinkField;
     }
 
     // getInstance = (values: FormikValues) => {

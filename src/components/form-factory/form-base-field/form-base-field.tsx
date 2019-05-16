@@ -9,6 +9,8 @@ import Button from "@material/react-button";
 // mdc-react icon button
 import '@material/react-icon-button/dist/icon-button.css';
 import IconButton from '@material/react-icon-button';
+// data model
+import { DataModelClass } from "../../../store/data-model/base-model";
 // formik
 import {
     FieldArray,
@@ -40,11 +42,17 @@ const FormBaseDynamicFieldControlls = (props: IFormBaseDyanmicFieldControllsProp
 
 const BaseDynamicFieldAddButton = (props: {
     formikArrayHelpers: ArrayHelpers
+    model?: DataModelClass
     label: string
 }) => {
 
     const onAddClick = () => {
-        props.formikArrayHelpers.push({});
+        if (props.model) {
+            const model = props.model;
+            props.formikArrayHelpers.push(new model({}));
+        } else {
+            props.formikArrayHelpers.push({});
+        }
     }
 
     return (
@@ -67,7 +75,7 @@ export const withFormBaseField = (FormFieldComponent: React.ComponentType<IFormB
                 name={props.fieldName}
                 render={formikArrayHelpers => (
                     <div className="FormApplicationStatusLinkFieldsContainer">
-                        {props.getInstanceDataFromFormikValues( formikValues ).map((instanceData: any, index: number) => (
+                        {props.getInstanceDataFromFormikValues(formikValues).map((instanceData: any, index: number) => (
                             <div key={index} className="FormBaseDynamicField">
                                 <FormFieldComponent
                                     fieldName={`${props.fieldName}[${index}]`}
@@ -82,7 +90,11 @@ export const withFormBaseField = (FormFieldComponent: React.ComponentType<IFormB
                             </div>
                         ))}
 
-                        <BaseDynamicFieldAddButton formikArrayHelpers={formikArrayHelpers} label={props.label} />
+                        <BaseDynamicFieldAddButton
+                            formikArrayHelpers={formikArrayHelpers}
+                            label={props.label}
+                            model={props.model}
+                        />
                     </div>
                 )}
             />)

@@ -1,8 +1,6 @@
 export type IRelationship = string;
 
-export type DataModel = new (props: any) => any
-
-export type IGenericDataModel<DataModel> = DataModel & BaseModel
+export type DataModelClass = new (props: any) => any
 
 export interface IBaseModelProps {
     uuid?: IRelationship
@@ -25,3 +23,6 @@ export class BaseModel {
         this.modified_at = modified_at;
     }
 }
+
+// for newing model class instance and access base class's assets
+export type DataModelInstance<Model = BaseModel> = Model & BaseModel

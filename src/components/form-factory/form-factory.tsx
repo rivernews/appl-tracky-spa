@@ -5,7 +5,7 @@ import React, { Component } from "react";
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 // data model
-import { DataModel, IGenericDataModel } from "../../store/data-model/base-model";
+import { DataModelClass, DataModelInstance } from "../../store/data-model/base-model";
 // formik
 import {
     Formik,
@@ -30,19 +30,19 @@ export enum ActionButtonType {
 
 export class FormActionButtonProps {
     constructor(
-        public text: string = "", 
-        public onClick?: (event: any) => void, 
+        public text: string = "",
+        public onClick?: (event: any) => void,
         public type?: ActionButtonType
-    ) {}
+    ) { }
 }
 
 export interface IFormFactoryProps<IDataModel> {
     onSubmitSuccess?: () => void;
-    
+
     initialValues?: any;
-    initialInstance?: IGenericDataModel<IDataModel>;
+    initialInstance?: DataModelInstance<IDataModel>;
     enforcedInstanceData?: any;
-    model?: DataModel;
+    model?: DataModelClass;
     actionButtonPropsList: Array<FormActionButtonProps>;
     formFieldPropsList: Array<FormBaseFieldMeta>
 
@@ -66,13 +66,13 @@ export interface IFormFactoryProps<IDataModel> {
 
 export class FormFactory<DataModel> extends Component<
     IFormFactoryProps<DataModel>
-> {
+    > {
 
-    initialInstance: IGenericDataModel<DataModel>;
+    initialInstance: DataModelInstance<DataModel>;
 
     constructor(props: IFormFactoryProps<DataModel>) {
         super(props);
-        
+
         // guarantee this.initialInstance
         if (this.props.model && !this.props.initialInstance) {
             const model = this.props.model;
@@ -85,7 +85,7 @@ export class FormFactory<DataModel> extends Component<
             // for backward compatibility; TODO: in the future, `this.props.initialValues` has tto go away
             this.initialInstance = this.props.initialValues;
         }
-        
+
     }
 
     onSubmit = (
@@ -104,25 +104,25 @@ export class FormFactory<DataModel> extends Component<
         if (model && this.props.createInstanceTriggerAction && this.props.updateInstanceTriggerAction) {
             const instance = new model({
                 uuid: this.initialInstance.uuid,
-                ...instanceData, 
+                ...instanceData,
                 ...this.props.enforcedInstanceData
             });
 
             // dispatch API request
             if (!instance.uuid) {
                 console.log("ready to send create data =", instance);
-                // this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
-                setSubmitting(false);
+                this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
+                // setSubmitting(false);
             } else {
                 // instance.uuid = this.props.initialInstance.uuid;
                 console.log("ready to send update data =", instance);
-                // this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
-                setSubmitting(false);
+                this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
+                // setSubmitting(false);
             }
         }
         else if (this.props.onSubmit) {
             // backward compatibility - TODO: has to go away in the future
-            this.props.onSubmit(values, {setSubmitting});
+            this.props.onSubmit(values, { setSubmitting });
         }
     }
 
@@ -143,51 +143,28 @@ export class FormFactory<DataModel> extends Component<
                         touched: FormikTouched<FormikValues>,
                         [props: string]: any
                     }) => (
-                        <Form>
-                            {this.props.formFieldPropsList.map((formFieldProps: IFormBaseFieldProps, index:number) => {
-                                if (!formFieldProps.model) {
-                                    return (
-                                        <FormInputField
+                            <Form>
+                                {this.props.formFieldPropsList.map((formFieldMeta: FormBaseFieldMeta, index: number) => (
+                                    <formFieldMeta.formField 
+                                        key={index}
+                                        {...formFieldMeta}
+                                        formikValues={values}
+                                    />
+                                ) )}
+                                {this.props.actionButtonPropsList.map(
+                                    (actionButtonProps: FormActionButtonProps, index) => (
+                                        <Button
                                             key={index}
-                                            {...formFieldProps} 
+                                            type={actionButtonProps.type || ActionButtonType.BUTTON}
+                                            disabled={isSubmitting}
+                                            unelevated
+                                            onClick={actionButtonProps.onClick}
+                                            children={actionButtonProps.text}
                                         />
                                     )
-                                }
-                                else {
-                                    if (formFieldProps instanceof FormLinkFieldMeta) {
-                                        return (
-                                            <FormLinkField
-                                                key={index}
-                                                {...formFieldProps}
-                                                formikValues={values}
-                                            />
-                                        )
-                                    }
-                                    else if (formFieldProps instanceof FormApplicationStatusLinkFieldMeta) {
-                                        return (
-                                            <FormApplicationStatusLinkField
-                                                key={index}
-                                                {...formFieldProps}
-                                                formikValues={values}
-                                            />
-                                        )
-                                    }
-                                }
-                            })}
-                            {this.props.actionButtonPropsList.map(
-                                (actionButtonProps: FormActionButtonProps, index) => (
-                                    <Button
-                                        key={index}
-                                        type={actionButtonProps.type || ActionButtonType.BUTTON}
-                                        disabled={isSubmitting}
-                                        unelevated
-                                        onClick={actionButtonProps.onClick}
-                                        children={actionButtonProps.text}
-                                    />
-                                )
-                            )}
-                        </Form>
-                    )}
+                                )}
+                            </Form>
+                        )}
                 </Formik>
             </div>
         );

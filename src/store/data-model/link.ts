@@ -16,7 +16,7 @@ export class Link extends BaseModel {
     constructor({
         text = "",
         user = {},
-        url = "#",
+        url = "",
         order = 0,
         ...args
     }: ILinkProps & IBaseModelProps) {
