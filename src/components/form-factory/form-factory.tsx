@@ -112,12 +112,10 @@ export class FormFactory<DataModel> extends Component<
             if (!instance.uuid) {
                 console.log("ready to send create data =", instance);
                 this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
-                // setSubmitting(false);
             } else {
                 // instance.uuid = this.props.initialInstance.uuid;
                 console.log("ready to send update data =", instance);
                 this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
-                // setSubmitting(false);
             }
         }
         else if (this.props.onSubmit) {
