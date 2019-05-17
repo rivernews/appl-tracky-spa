@@ -42,13 +42,14 @@ export const RequestedLogoutAuth = (): IRequestedLogoutAuthAction => {
     };
 };
 
-export const SuccessLoginAuth = (userName: string, expireDateTime: string, apiToken: string, avatarUrl: string): ISuccessAuthAction => {
+export const SuccessLoginAuth = (userName: string, expireDateTime: string, apiToken: string, avatarUrl: string, isLocal: boolean): ISuccessAuthAction => {
     console.log("action username:", userName);
     return {
         type: AuthActionNames.SUCCESS_AUTH,
         payload: {
             requestStatus: RequestStatus.SUCCESS,
             isLogin: true,
+            isLocal: isLocal ? true : false,
             userName,
             expireDateTime,
             apiToken,
@@ -63,6 +64,7 @@ export const SuccessLogoutAuth = (): ISuccessAuthAction => {
         payload: {
             requestStatus: RequestStatus.SUCCESS,
             isLogin: false,
+            isLocal: false,
             userName: "",
             expireDateTime: "",
             apiToken: "",

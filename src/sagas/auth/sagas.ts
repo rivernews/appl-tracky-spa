@@ -38,7 +38,8 @@ function* authLoginSagaHandler(
         yield put(SuccessLoginAuth(
             jsonResponse.email, "", 
             jsonResponse.token, 
-            jsonResponse.avatar_url
+            jsonResponse.avatar_url,
+            false // is not local login, is social login
         ));
         // yield put(push("/home/"));
 

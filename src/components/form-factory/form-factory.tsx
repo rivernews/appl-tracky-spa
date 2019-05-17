@@ -33,7 +33,6 @@ export class FormActionButtonProps {
 export interface IFormFactoryProps<IDataModel> {
     onSubmitSuccess?: () => void;
 
-    initialValues?: any;
     initialInstance?: DataModelInstance<IDataModel>;
     enforcedInstanceData?: any;
     model?: DataModelClass;
@@ -44,7 +43,7 @@ export interface IFormFactoryProps<IDataModel> {
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => void;
-    validate: (values: FormikValues) => FormikErrors<FormikValues>;
+    validate?: (values: FormikValues) => FormikErrors<FormikValues>;
 
     createInstanceTriggerAction?: (
         instance: IDataModel,
@@ -62,7 +61,7 @@ export class FormFactory<DataModel> extends Component<
     IFormFactoryProps<DataModel>
     > {
 
-    initialInstance: DataModelInstance<DataModel>;
+    initialInstance: DataModelInstance<any>;
 
     constructor(props: IFormFactoryProps<DataModel>) {
         super(props);
@@ -72,21 +71,17 @@ export class FormFactory<DataModel> extends Component<
             const model = this.props.model;
             this.initialInstance = new model({});
         }
-        else if (this.props.initialInstance) {
+        else {
             this.initialInstance = this.props.initialInstance;
         }
-        else {
-            // for backward compatibility; TODO: in the future, `this.props.initialValues` has tto go away
-            this.initialInstance = this.props.initialValues;
-        }
-
     }
 
     onSubmit = (
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => {
-        setSubmitting(true);
+        console.log("submit values =", values); setSubmitting(false);
+        // setSubmitting(true);
         let instanceData: any = {};
         for (let fieldProps of this.props.formFieldPropsList) {
             const keyName = fieldProps.fieldName;
@@ -96,24 +91,27 @@ export class FormFactory<DataModel> extends Component<
         // packaging
         const model = this.props.model;
         if (model && this.props.createInstanceTriggerAction && this.props.updateInstanceTriggerAction) {
+            // a create / update form is assumed
+
             const instance = new model({
                 uuid: this.initialInstance.uuid,
                 ...instanceData,
                 ...this.props.enforcedInstanceData
-            });
+            })
+            console.log("instanceData =", instanceData);
+            console.log("instance =", instance);
 
             // dispatch API request
             if (!instance.uuid) {
-                console.log("ready to send create data =", instance);
+                console.log("ready to send create data", instance);
                 this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
             } else {
-                // instance.uuid = this.props.initialInstance.uuid;
-                console.log("ready to send update data =", instance);
+                console.log("ready to send update data", instance);
                 this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
             }
         }
         else if (this.props.onSubmit) {
-            // backward compatibility - TODO: has to go away in the future
+            // if caller has customize onSubmit, then use it instead
             this.props.onSubmit(values, { setSubmitting });
         }
     }
@@ -122,7 +120,6 @@ export class FormFactory<DataModel> extends Component<
         return (
             <div className="FormFactory">
                 <Formik
-                    // initialValues={this.props.initialValues}
                     initialValues={this.initialInstance}
                     validate={this.props.validate}
                     onSubmit={this.onSubmit}

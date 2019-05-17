@@ -15,17 +15,19 @@ import {
     Application,
     ApplicationActions
 } from "../../store/data-model/application";
-import { Link } from "../../store/data-model/link";
 
 /** Components */
 import {
     FormFactory,
     FormActionButtonProps,
-    IFormFactoryProps,
     ActionButtonType
 } from "../form-factory/form-factory";
+// form field
+import { FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-field-meta";
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
-import { ErrorMessage, FormikValues, FormikErrors } from "formik";
+import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
+// formik
+import { FormikValues, FormikErrors } from "formik";
 
 interface IApplicationFormComponentProps {
     application?: Application;
@@ -50,58 +52,41 @@ interface IApplicationFormComponentProps {
 class ApplicationFormComponent extends Component<
     IApplicationFormComponentProps
 > {
-    formFactoryProps: IFormFactoryProps<any>;
+
+    formFieldPropsList: Array<FormBaseFieldMeta>;
+    actionButtonPropsList: Array<FormActionButtonProps>;
 
     constructor(props: IApplicationFormComponentProps) {
         super(props);
 
-        // prepare for new application form
-        const application = this.props.application;
-        const initialValues = {
-            application__position_title: application
-                ? application.position_title
-                : "",
-            application__job_description_page__url: application
-                ? application.job_description_page.url || ""
-                : "",
-            application__job_source__url: application
-                ? application.job_source.url || ""
-                : ""
-        };
-
-        this.formFactoryProps = {
-            initialValues: initialValues,
-            validate: this.validateAppForm,
-            onSubmit: this.onSubmitAppForm,
-            formFieldPropsList: [
-                new FormInputFieldMeta({
-                    fieldName: "application__position_title",
-                    label: "Position Title*"
-                }),
-                new FormInputFieldMeta({
-                    fieldName: "application__job_description_page__url",
-                    label: "Job Description URL"
-                }),
-                new FormInputFieldMeta({
-                    fieldName: "application__job_source__url",
-                    label: "Job Source URL"
-                }),
-            ],
-            actionButtonPropsList: [
-                new FormActionButtonProps(
-                    application ? "Update" : "Create",
-                    undefined,
-                    ActionButtonType.SUBMIT
-                ),
-                new FormActionButtonProps("Cancel", this.props.onCancel)
-            ]
-        };
+        this.formFieldPropsList = [
+            new FormInputFieldMeta({
+                fieldName: "position_title",
+                label: "Position Title*"
+            }),
+            new FormLinkFieldMeta({
+                fieldName: "job_description_page",
+                label: "Job Description Link",
+            }),
+            new FormLinkFieldMeta({
+                fieldName: "job_source",
+                label: "Job Source Link",
+            }),
+        ];
+        this.actionButtonPropsList = [
+            new FormActionButtonProps(
+                this.props.company ? "Save Application" : "Create Application",
+                undefined,
+                ActionButtonType.SUBMIT
+            ),
+            new FormActionButtonProps("Cancel", this.props.onCancel)
+        ]
     }
 
     validateAppForm = (values: FormikValues) => {
         let errors: FormikErrors<any> = {};
-        if (!values.application__position_title) {
-            errors.application__position_title = "Required";
+        if (!values.position_title) {
+            errors.position_title = "Required";
         }
 
         // if (
@@ -119,63 +104,29 @@ class ApplicationFormComponent extends Component<
         return errors;
     };
 
-    onSubmitAppForm = (
-        values: FormikValues,
-        { setSubmitting }: { setSubmitting: Function }
-    ) => {
-        setSubmitting(true);
-
-        // prep relationship object by data model
-        const job_description_page = new Link({
-            url: values.application__job_description_page__url,
-            text: `Job description URL for application ${
-                values.application__position_title
-            } at company ${this.props.company.name}`
-        });
-        const job_source = new Link({
-            url: values.application__job_source__url,
-            text: `Job source URL for application ${
-                values.application__position_title
-            } at company ${this.props.company.name}`
-        });
-        const application__user_company__id = this.props.company.uuid;
-
-        // create main object
-        const application = new Application({
-            position_title: values.application__position_title,
-            job_description_page,
-            job_source,
-            user_company: application__user_company__id
-        });
-
-        // dispatch
-        if (!this.props.application) {
-            this.props.createApplication(application, () => {
-                // log print newly created application
-                if (this.props.applicationStore.lastChangedObjectID) {
-                    const newApplication = this.props.applicationStore
-                        .collection[
-                        this.props.applicationStore.lastChangedObjectID
-                    ];
-                    console.log("new application:", newApplication);
-                    this.props.onSubmitSuccess && this.props.onSubmitSuccess();
-                } else {
-                    console.error(
-                        "application store has no lastChangedObjectID"
-                    );
-                }
-            }, () => setSubmitting(false));
-        } else {
-            console.log("Update application form: application=", application);
-            application.uuid = this.props.application.uuid;
-            this.props.updateApplication(application, this.props.onSubmitSuccess, () => setSubmitting(false));
-        }
-    };
-
     render() {
         return (
             <div className="ApplicationFormComponent">
-                <FormFactory {...this.formFactoryProps} />
+                {/* <FormFactory {...this.formFactoryProps} /> */}
+                <FormFactory
+                    model={Application}
+                    initialInstance={new Application({
+                        ...this.props.application,
+                    })}
+                    enforcedInstanceData={{
+                        user_company: this.props.company.uuid
+                    }}
+        
+                    validate={this.validateAppForm}
+                    
+                    formFieldPropsList={this.formFieldPropsList}
+                    actionButtonPropsList={this.actionButtonPropsList}
+        
+                    createInstanceTriggerAction={this.props.createApplication}
+                    updateInstanceTriggerAction={this.props.updateApplication}
+
+                    onSubmitSuccess={this.props.onSubmitSuccess}
+                />
             </div>
         );
     }

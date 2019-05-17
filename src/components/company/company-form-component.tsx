@@ -6,23 +6,24 @@ import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 import {
-    IObjectStore,
     IObjectAction
 } from "../../store/rest-api-redux-factory";
 // data models
 import { Company, CompanyActions } from "../../store/data-model/company";
-import { Link } from "../../store/data-model/link";
-import { Address } from "../../store/data-model/address";
 
 /** Components */
 import {
     FormFactory,
     FormActionButtonProps,
-    IFormFactoryProps,
     ActionButtonType
 } from "../form-factory/form-factory";
+// form field
+import { FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-field-meta";
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
-import { ErrorMessage, FormikValues, FormikErrors } from "formik";
+import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
+import { FormAddressFieldMeta } from "../form-factory/form-address-field/form-address-field-meta";
+// formik
+import { FormikValues, FormikErrors } from "formik";
 
 interface ICompanyFormComponentProps {
     company?: Company;
@@ -35,53 +36,44 @@ interface ICompanyFormComponentProps {
 }
 
 class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
-    formFactoryProps: IFormFactoryProps<any>;
+
+    formFieldPropsList: Array<FormBaseFieldMeta>;
+    actionButtonPropsList: Array<FormActionButtonProps>;
 
     constructor(props: ICompanyFormComponentProps) {
         super(props);
 
-        // prepare for new company form
-        const initialValues = {
-            company__name: this.props.company && this.props.company.name ||  "",
-            company__hq_location__full_address: this.props.company && this.props.company.hq_location.full_address ||  "",
-            company__home_page__url: this.props.company && this.props.company.home_page.url || "",
-        };
+        this.formFieldPropsList = [
+            new FormInputFieldMeta({
+                fieldName: "name",
+                label: "Company Name*"
+            }),
 
-        this.formFactoryProps = {
-            initialValues: initialValues,
-            validate: this.validateAppForm,
-            onSubmit: this.onSubmitAppForm,
-            formFieldPropsList: [
-                new FormInputFieldMeta({
-                    fieldName: "company__name",
-                    label: "Company Name*"
-                }),
+            new FormAddressFieldMeta({
+                fieldName: "hq_location",
+                label: "Headquarter Location"
+            }),
 
-                new FormInputFieldMeta({
-                    fieldName: "company__hq_location__full_address",
-                    label: "HQ Address or Location"
-                }),
+            new FormLinkFieldMeta({
+                fieldName: "home_page",
+                label: "Company Website"
+            }),
+        ];
 
-                new FormInputFieldMeta({
-                    fieldName: "company__home_page__url",
-                    label: "Company Home Page URL"
-                }),
-            ],
-            actionButtonPropsList: [
-                new FormActionButtonProps(
-                    !this.props.company ? "Create" : "Update",
-                    undefined,
-                    ActionButtonType.SUBMIT
-                ),
-                new FormActionButtonProps("Cancel", this.props.onCancel)
-            ]
-        };
+        this.actionButtonPropsList = [
+            new FormActionButtonProps(
+                !this.props.company ? "Create Company" : "Save Company",
+                undefined,
+                ActionButtonType.SUBMIT
+            ),
+            new FormActionButtonProps("Cancel", this.props.onCancel)
+        ]
     }
 
     validateAppForm = (values: FormikValues) => {
         let errors: FormikErrors<any> = {};
-        if (!values.company__name) {
-            errors.company__name = "Required";
+        if (!values.name) {
+            errors.name = "Required";
         }
         // if (!/^https*\:\/\/.+$/i.test(values.company__home_page__url)) {
         //     errors.company__home_page__url =
@@ -90,45 +82,25 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
         return errors;
     };
 
-    onSubmitAppForm = (
-        values: FormikValues,
-        { setSubmitting }: { setSubmitting: Function }
-    ) => {
-        setSubmitting(true);
-        console.log("values=", values);
-
-        // prep relationship object by data model
-        const hq_location = new Address({
-            full_address: values.company__hq_location__full_address,
-            place_name: `HQ of ${values.company__name}`
-        });
-        const home_page = new Link({
-            url: values.company__home_page__url,
-            text: `Home page of ${values.company__name}`
-        });
-        // create main object
-        const company = new Company({
-            name: values.company__name,
-            hq_location,
-            home_page
-        });
-
-        // dispatch
-        if (!this.props.company) {
-            console.log("company form: dispatching createCompany action");
-            this.props.createCompany(company, this.props.onSubmitSuccess, () => setSubmitting(false));
-        }
-        else  {
-            console.log("company form: dispatching updateCompany action");
-            company.uuid = this.props.company.uuid;
-            this.props.updateCompany(company, this.props.onSubmitSuccess, () => setSubmitting(false));
-        }
-    };
-
     render() {
         return (
             <div className="CompanyFormComponent">
-                <FormFactory {...this.formFactoryProps} />
+                <FormFactory
+                    model={Company}
+                    initialInstance={new Company({
+                        ...this.props.company
+                    })}
+        
+                    validate={this.validateAppForm}
+                    
+                    formFieldPropsList={this.formFieldPropsList}
+                    actionButtonPropsList={this.actionButtonPropsList}
+        
+                    createInstanceTriggerAction={this.props.createCompany}
+                    updateInstanceTriggerAction={this.props.updateCompany}
+
+                    onSubmitSuccess={this.props.onSubmitSuccess}
+                />
             </div>
         );
     }

@@ -93,68 +93,14 @@ class ApplicationStatusFormComponent extends Component<
 
     validate = (values: FormikValues) => {
         let errors: FormikErrors<any> = {};
-        // if (!values.application_status__text) {
-        //     errors.application_status__text = "Required";
-        // }
-        // if (!values.application_status__date) {
-        //     errors.application_status__date = "Please give a valid date";
-        // }
+        if (!values.text) {
+            errors.text = "Required";
+        }
+        if (!values.date) {
+            errors.date = "Please give a valid date";
+        }
         return errors;
     };
-
-    onSubmit = (
-        values: FormikValues,
-        { setSubmitting }: { setSubmitting: Function }
-    ) => {
-        
-        console.log("values=", values);
-
-        setSubmitting(false);
-        // // prepare relational objects
-        // const application__id = this.props.application.uuid;
-        // if (!application__id) {
-        //     console.error(
-        //         "Application object has no uuid so cannot submit form."
-        //     );
-        //     return;
-        // }
-
-        // // create link(s)
-        // let links = [];
-        // for (let index = 0; index < this.linkFieldsCount; index ++) {
-        //     links.push(new Link({
-        //         url: values[`application_status__application_status_link__link_${index}__url`],
-        //         text: values[`application_status__application_status_link__link_${index}__text`] || `Link of status`,
-        //         uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index] && this.props.applicationStatus.applicationstatuslink_set[index].link.uuid : "",
-        //     }));
-        // }
-        // // create main object for applicationStatusLink(s)
-        // const applicationStatusLinks = links.map((link, index) => {
-        //     return new ApplicationStatusLink({
-        //         link,
-        //         uuid: (this.props.applicationStatus) ? this.props.applicationStatus.applicationstatuslink_set[index] && this.props.applicationStatus.applicationstatuslink_set[index].uuid : "",
-        //     });
-        // });
-
-        // console.log("App status form: sending app status links=", applicationStatusLinks);
-
-        // // create main object for application status
-        // const applicationStatus = new ApplicationStatus({
-        //     text: values.application_status__text,
-        //     application: application__id,
-        //     date: values.application_status__date,
-        //     applicationstatuslink_set: applicationStatusLinks,
-        // });
-
-        // // dispatch for application status
-        // if (!this.props.applicationStatus) {
-        //     this.props.createApplicationStatus(applicationStatus, this.props.onSubmitSuccess, () => setSubmitting(false));
-        // } else {
-        //     applicationStatus.uuid = this.props.applicationStatus.uuid;
-        //     this.props.updateApplicationStatus(applicationStatus, this.props.onSubmitSuccess, () => setSubmitting(false));
-        // }
-        
-    }
 
     render() {
         return (

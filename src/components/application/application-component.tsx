@@ -144,32 +144,34 @@ export class ApplicationComponent extends Component<
                     <br />
                     <span>Application UUID: {application.uuid}</span>
                     <br />
-                    {application.job_description_page.url ? (
-                        <a
-                            target="_blank"
-                            href={
-                                application.job_description_page.url && application.job_description_page.url.includes("//") ?
-                                application.job_description_page.url :
-                                `//${application.job_description_page.url}`
-                            }
-                        >
-                            <strong>JD Page</strong>
-                        </a>
-                    ) : (
-                        <span>JD Page</span>
+                    {application.job_description_page.url && (
+                        <span>
+                            <strong>JD Page: </strong>
+                            <a
+                                target="_blank"
+                                href={
+                                    application.job_description_page.url && application.job_description_page.url.includes("//") ?
+                                    application.job_description_page.url :
+                                    `//${application.job_description_page.url}`
+                                }
+                            >
+                                {application.job_description_page.text || "Link"}
+                            </a>
+                        </span> 
                     )}
 
                     <br />
-                    {application.job_source.url ? (
-                        <a target="_blank" href={
-                            (application.job_source.url && application.job_source.url.includes("//")) ?
-                            application.job_source.url :
-                            `//${application.job_source.url}`
-                        }>
-                            <strong>Job Source</strong>
-                        </a>
-                    ) : (
-                        <span>Job Source</span>
+                    {application.job_source.url && (
+                        <span>
+                            <strong>Job Source: </strong>
+                            <a target="_blank" href={
+                                (application.job_source.url && application.job_source.url.includes("//")) ?
+                                application.job_source.url :
+                                `//${application.job_source.url}`
+                            }>
+                                {application.job_source.text || "Link"}
+                            </a>
+                        </span>
                     )}
                 </p>
 

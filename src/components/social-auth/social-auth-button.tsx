@@ -76,7 +76,11 @@ class SocialAuthButton extends Component<
                     />
                 ) : (
                     <SocialAuthLogoutButton
+                        isLocal={this.props.auth.isLocal}
+
+                        onClickWhenIsLocal={this.onSocialLogoutSuccess}
                         onSuccess={this.onSocialLogoutSuccess}
+                        
                         disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
                     />
                 )}

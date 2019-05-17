@@ -26,27 +26,31 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                         {company.name}
                     </Link>
                     <IconButton onClick={this.props.onEditIconClicked}>
-                        <MaterialIcon hasRipple icon="edit"/>
+                        <MaterialIcon hasRipple icon="edit" />
                     </IconButton>
                     <IconButton onClick={this.props.onDeleteIconClicked}>
-                        <MaterialIcon hasRipple icon="delete"/>
+                        <MaterialIcon hasRipple icon="delete" />
                     </IconButton>
+
                     <br />
-                    <span>
-                        <strong>UUID:</strong> {company.uuid}
-                    </span>
+
+                    {(company.hq_location.full_address) && <span>
+                        <strong>{company.hq_location.place_name || "Location"}:</strong> {company.hq_location.full_address}
+                    </span>}
+
                     <br />
-                    <span>
-                        <strong>HQ:</strong> {company.hq_location.full_address}
-                    </span>
-                    <br />
-                    <a target="_blank" href={
-                        (company.home_page.url && company.home_page.url.includes("//")) ?
-                        company.home_page.url :
-                        `//${company.home_page.url}`
-                    }>
-                        <strong>Homepage</strong>
-                    </a>
+                    
+                    {(company.home_page.url) && <span>
+                        <strong>Company Website: </strong>
+                        {(company.home_page.url) && <a target="_blank" href={
+                            (company.home_page.url && company.home_page.url.includes("//")) ?
+                                company.home_page.url :
+                                `//${company.home_page.url}`
+                        }>
+                            {company.home_page.text || "Link"}
+                        </a>}
+                    </span>}
+                    
                     <br />
                 </p>
             </div>

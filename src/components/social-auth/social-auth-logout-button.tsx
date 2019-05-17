@@ -9,6 +9,8 @@ import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 
 interface ISocialAuthLogoutButtonProps {
+    isLocal: boolean
+    onClickWhenIsLocal?(): void
     onSuccess(authResponse?: any): void;
     disabled?: boolean
 }
@@ -26,7 +28,7 @@ export class SocialAuthLogoutButton extends Component<
                 <GoogleLogout
                     render={(renderProps: any) => (
                         <Button
-                            onClick={renderProps.onClick}
+                            onClick={(this.props.isLocal) ? this.props.onClickWhenIsLocal : renderProps.onClick}
                             unelevated
                             icon={<MaterialIcon hasRipple icon="eject" />}
                             disabled={this.props.disabled}

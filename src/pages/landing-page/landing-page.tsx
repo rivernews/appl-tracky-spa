@@ -26,6 +26,7 @@ import {
 import { FormInputFieldMeta } from "../../components/form-factory/form-input-field/form-input-field-meta";
 import { InputFieldType } from "../../components/form-factory/form-base-field/form-base-field-meta";
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
+    import { LoginForm } from "../../components/social-auth/login-form";
 // api
 import { AuthenticationService } from "../../utils/auth";
 import { RestApiService } from "../../utils/rest-api";
@@ -42,7 +43,7 @@ let styles = {
 
 interface ILandingPageProps extends RouteComponentProps {
     auth: IUpdateAuthState;
-    loginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
+    registerLocalLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
     listApplication: () => void
     listCompany: () => void
 }
@@ -52,87 +53,32 @@ class LandingPage extends Component<ILandingPageProps> {
 
     constructor(props: ILandingPageProps) {
         super(props);
-        this.prepareLoginForm();
     }
 
-    validateLoginForm = (values: FormikValues) => {
-        let errors: FormikErrors<any> = {};
-        return errors;
-    };
-
-    onSubmitLoginForm = (
-        values: FormikValues,
-        { setSubmitting }: { setSubmitting: Function }
-    ) => {
-        setSubmitting(false);
-        console.log("values=", values);
-
-        // post to get login token
-
-        fetch(`${RestApiService.state.apiBaseUrl}api-token-auth/`, {
-            method: "POST",
-            mode: "cors",
-            credentials: "omit",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(values)
-        })
-            .then(res => res.json())
-            .then(res => {
-                console.log("res=", res);
-                // set login token
-                AuthenticationService.state.apiLoginToken = res.token;
-
-                // set redux auth store isLogin state --- have to write action and reducer.
-                this.props.loginSuccess(values.username, res.token, res.avatar_url);
-
-                // request com & app list (dispatch)
-                this.props.listApplication();
-                this.props.listCompany();
-            })
-            .catch(err => {
-                console.error("login error~~", err);
-            });
-    };
-
-    prepareLoginForm = () => {
-        const initialValues = {
-            username: "",
-            password: ""
-        };
-
-        this.formFactoryProps = {
-            initialValues: initialValues,
-            validate: this.validateLoginForm,
-            onSubmit: this.onSubmitLoginForm,
-            formFieldPropsList: [
-                new FormInputFieldMeta({
-                    fieldName: "username",
-                    label: "Username"
-                }),
-                new FormInputFieldMeta({
-                    fieldName: "password",
-                    label: "Password",
-                    type: InputFieldType.PASSWORD
-                }),
-            ],
-            actionButtonPropsList: [
-                new FormActionButtonProps("Login", undefined, ActionButtonType.SUBMIT)
-            ]
-        };
-    };
+    onLoginSuccess = () => {
+        // request com & app list (dispatch)
+        this.props.listApplication();
+        this.props.listCompany();
+    }
 
     render() {
         return (
             <div className="LandingPage" style={styles}>
                 {/** redirect logged in user to private routes */
                 this.props.auth.isLogin && <Redirect to="/home/" />}
+                
                 <h1>Appl Tracky</h1>
+
                 <SocialAuthButtonContainer />
+
                 <h2>Or login locally (admin only):</h2>
-                <FormFactory {...this.formFactoryProps} />
+                <LoginForm 
+                    registerLoginSuccess={this.props.registerLocalLoginSuccess}
+                    onLoginSuccess={this.onLoginSuccess}
+                />
+
                 <hr />
+                
                 <Button
                     href="https://github.com/rivernews/appl-tracky-spa"
                     target="_blank"
@@ -155,8 +101,8 @@ const mapStateToProps = (state: IRootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
-        loginSuccess: (userName: string, apiToken: string, avatarUrl: string) =>
-            dispatch(SuccessLoginAuth(userName, "", apiToken, avatarUrl)),
+        registerLocalLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) =>
+            dispatch(SuccessLoginAuth(userName, "", apiToken, avatarUrl, true)),
         listApplication: () =>
             dispatch(
                 ApplicationActions[CrudType.LIST][
