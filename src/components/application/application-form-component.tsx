@@ -26,8 +26,6 @@ import {
 import { FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-field-meta";
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
-// formik
-import { FormikValues, FormikErrors } from "formik";
 
 interface IApplicationFormComponentProps {
     application?: Application;
@@ -83,27 +81,6 @@ class ApplicationFormComponent extends Component<
         ]
     }
 
-    validateAppForm = (values: FormikValues) => {
-        let errors: FormikErrors<any> = {};
-        if (!values.position_title) {
-            errors.position_title = "Required";
-        }
-
-        // if (
-        //     !/^https*\:\/\/.+$/i.test(
-        //         values.application__job_description_page__url
-        //     )
-        // ) {
-        //     errors.application__job_description_page__url =
-        //         "Please start by http:// or https://";
-        // }
-        // if (!/^https*\:\/\/.+$/i.test(values.application__job_source__url)) {
-        //     errors.application__job_source__url =
-        //         "Please start by http:// or https://";
-        // }
-        return errors;
-    };
-
     render() {
         return (
             <div className="ApplicationFormComponent">
@@ -117,8 +94,6 @@ class ApplicationFormComponent extends Component<
                         user_company: this.props.company.uuid
                     }}
         
-                    validate={this.validateAppForm}
-                    
                     formFieldPropsList={this.formFieldPropsList}
                     actionButtonPropsList={this.actionButtonPropsList}
         

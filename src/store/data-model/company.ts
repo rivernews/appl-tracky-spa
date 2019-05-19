@@ -45,8 +45,9 @@ export class Company extends BaseModel {
 
     static schema(){
         return Yup.object<Company>().shape({
-            name: Yup.string().required("Every company needs a name...!"),
+            name: Yup.string().required("Every company needs a name...!").max(100),
             home_page: Link.schema(),
+            hq_location: Address.schema()
         });
     }
 }

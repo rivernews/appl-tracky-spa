@@ -30,11 +30,11 @@ export class Link extends BaseModel {
 
     static schema(){
         return Yup.object<Link>().shape({
-            text:  Yup.string(),
+            text:  Yup.string().max(200),
             url: Yup.string().default("#").when(
                 "text", {
                     is: (text) => text,
-                    then: Yup.string().required("Since you gave the link some text, let's provide an url as well...!")
+                    then: Yup.string().required("Since you gave the link some text, let's provide an url as well...!").max(500, "URL is too long, only less than 500 characters please")
                 }
             ),
         });

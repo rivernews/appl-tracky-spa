@@ -34,79 +34,53 @@ import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
+/** Components */
 
+interface ILocalLoginPageProps extends RouteComponentProps {
 
-let styles = {
-    backgroundColor: "purple",
-    color: "white"
-};
-
-interface ILandingPageProps extends RouteComponentProps {
-    auth: IUpdateAuthState;
 
     /** redux */
+    auth: IUpdateAuthState;
     registerLocalLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
     listApplication: () => void
     listCompany: () => void
 }
 
-class LandingPage extends Component<ILandingPageProps> {
-    formFactoryProps: any;
+class LocalLoginPage extends Component<ILocalLoginPageProps> {
 
-    constructor(props: ILandingPageProps) {
-        super(props);
+    onLoginFormCancel = () => {
+        this.props.history.push("/");
     }
 
-    onStaffLoginClick = () => {
+    onLoginSuccess = () => {
         // request com & app list (dispatch)
-        // this.props.listApplication();
-        // this.props.listCompany();
-        this.props.history.push("/login/");
+        this.props.listApplication();
+        this.props.listCompany();
     }
 
     render() {
         return (
-            <div className="LandingPage" style={styles}>
+            <div className="LocalLoginPage">
                 {/** redirect logged in user to private routes */
                 this.props.auth.isLogin && <Redirect to="/home/" />}
-                
-                <h1>Appl Tracky</h1>
 
-                <SocialAuthButtonContainer />
-
-                <Button
-                    onClick={this.onStaffLoginClick}
-                    unelevated
-                    icon={
-                        <MaterialIcon hasRipple icon="warning" />
-                    }
-                >
-                    Staff Only
-                </Button>
-
-                <hr />
-                
-                <Button
-                    href="https://github.com/rivernews/appl-tracky-spa"
-                    target="_blank"
-                    unelevated
-                    icon={
-                        <MaterialIcon hasRipple icon="code" />
-                    }
-                >
-                    Github Repository
-                </Button>
+                <h1>Login Portal for Staff</h1>
+                <LoginForm 
+                    registerLoginSuccess={this.props.registerLocalLoginSuccess}
+                    onLoginSuccess={this.onLoginSuccess}
+                    onCancel={this.onLoginFormCancel}
+                />
             </div>
-        );
+        )
     }
 }
 
-const mapStateToProps = (state: IRootState) => ({
-    auth: state.auth
+const mapStateToProps = (store: IRootState) => ({
+    auth: store.auth
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
-    // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
+    // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
         registerLocalLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) =>
             dispatch(SuccessLoginAuth(userName, "", apiToken, avatarUrl, true)),
@@ -122,12 +96,10 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
                     RequestStatus.TRIGGERED
                 ].action(new Company({}))
             )
-    };
+    }
 };
 
-export const LandingPageContainer = withRouter(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )(LandingPage)
-);
+export const LocalLoginPageContainer = withRouter(connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(LocalLoginPage));

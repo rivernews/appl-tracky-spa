@@ -35,20 +35,23 @@ export class FormActionButtonProps {
 export interface IFormFactoryProps<IDataModel> {
     onSubmitSuccess?: () => void;
 
+    // pass in either `initialValues` or `initialInstance`, this is important for yup to render error message. If no initial info at all, yup will not display errors properly.
+    // `initialValues` should be used only for customize form; for data model forms please use `initialInstance` so update & create form can be handled together
+    initialValues?: any
     initialInstance?: DataModelInstance<IDataModel>;
     enforcedInstanceData?: any;
+
     model?: DataModelClass;
     actionButtonPropsList: Array<FormActionButtonProps>;
     formFieldPropsList: Array<FormBaseFieldMeta>
+    
+    validationSchema?: Yup.Schema<IDataModel>
 
     onSubmit?: (
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => void;
     
-    validate?: (values: FormikValues) => FormikErrors<FormikValues>;
-    validationSchema?: Yup.Schema<IDataModel>;
-
     createInstanceTriggerAction?: (
         instance: IDataModel,
         successCallback?: Function,
@@ -65,7 +68,7 @@ export class FormFactory<DataModel> extends Component<
     IFormFactoryProps<DataModel>
     > {
 
-    initialInstance: DataModelInstance<any>;
+    initialInstance?: DataModelInstance<any>;
     validationSchema?: Yup.Schema<DataModel>;
 
     constructor(props: IFormFactoryProps<DataModel>) {
@@ -73,18 +76,24 @@ export class FormFactory<DataModel> extends Component<
 
         // guarantee this.initialInstance
         if (this.props.model && !this.props.initialInstance) {
+            // for create form
             const model = this.props.model;
             this.initialInstance = new model({});
         }
         else {
+            // for update form
             this.initialInstance = this.props.initialInstance;
         }
 
-        if (this.props.model) {
-            this.validationSchema = this.props.model.schema;
-        } else {
-
+        // form behavior integrity check
+        if (!this.initialInstance) {
+            if (!this.props.initialValues || !this.props.onSubmit) {
+                throw Error("ERROR: form factory has no initialInstance - seems like you're building a custom form that does not use data model. Please pass in initialValues and onSubmit in props to handle the behavior manually.");
+            }
         }
+
+        this.validationSchema = this.props.validationSchema || this.props.model.schema;
+        console.log("this.validationSchema =", this.validationSchema);
     }
 
     onSubmit = (
@@ -92,7 +101,8 @@ export class FormFactory<DataModel> extends Component<
         { setSubmitting }: { setSubmitting: Function }
     ) => {
         console.log("submit values =", values); setSubmitting(false);
-        // setSubmitting(true);
+
+        setSubmitting(true);
         let instanceData: any = {};
         for (let fieldProps of this.props.formFieldPropsList) {
             const keyName = fieldProps.fieldName;
@@ -101,7 +111,10 @@ export class FormFactory<DataModel> extends Component<
 
         // packaging
         const model = this.props.model;
-        if (model && this.props.createInstanceTriggerAction && this.props.updateInstanceTriggerAction) {
+        if (
+            model && this.props.createInstanceTriggerAction && this.props.updateInstanceTriggerAction &&
+            this.initialInstance
+        ) {
             // a create / update form is assumed
 
             const instance = new model({
@@ -114,10 +127,10 @@ export class FormFactory<DataModel> extends Component<
 
             // dispatch API request
             if (!instance.uuid) {
-                console.log("ready to send create data", instance);
+                console.log("ready to send create instance");
                 this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
             } else {
-                console.log("ready to send update data", instance);
+                console.log("ready to send update instance");
                 this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
             }
         }
@@ -125,15 +138,21 @@ export class FormFactory<DataModel> extends Component<
             // if caller has customize onSubmit, then use it instead
             this.props.onSubmit(values, { setSubmitting });
         }
+        else {
+            console.log("this.props.initialInstance =", this.props.initialInstance);
+            console.log("this.props.onSubmit =", this.props.onSubmit);
+            console.log("this.props.model =", this.props.model);
+            alert("Something is wrong with the form...!")
+            throw Error("ERROR: form factory props not properly configured. See above props.")
+        }
     }
 
     render() {
         return (
             <div className="FormFactory">
                 <Formik
-                    initialValues={this.initialInstance}
-                    validate={this.props.validate}
-                    validationSchema={this.props.validationSchema || this.validationSchema}
+                    initialValues={this.initialInstance || this.props.initialValues}
+                    validationSchema={this.validationSchema}
                     onSubmit={this.onSubmit}
                 >
                     {({

@@ -16,6 +16,7 @@ import {
 } from "react-router-dom";
 // pages
 import { LandingPageContainer } from "../landing-page/landing-page";
+import { LocalLoginPageContainer } from "../login-page/local-login-page";
 import { UserAppPageContainer } from "../user-app-page/user-app-page";
 import { AddComPageContainer } from "../add-com-page/add-com-page";
 import { UserComAppPageContainer } from "../user-com-app-page/user-com-app-page";
@@ -39,8 +40,20 @@ class PageRoutes extends Component<IPageRoutesProps> {
     render() {
         return (
             <div className="PageRoutesContainer">
-                {this.props.location.pathname === "/" ? (
-                    <Route path="/" exact component={LandingPageContainer} />
+                {(
+                    this.props.location.pathname === "/" ||
+                    this.props.location.pathname === "/login/"
+                    // add more public page routres here
+                    // ...
+                ) ? (
+                    <Switch>
+                        <Route path="/" exact component={LandingPageContainer} />
+                        <Route path="/login/" exact component={LocalLoginPageContainer} />
+                        {
+                            /** add more public page routes here */
+                            // ...
+                        }
+                    </Switch>
                 ) : (
                     <div className="PrivateRoutesContainer">
                         {/** protect private routes */
@@ -95,7 +108,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                     path="/profile/"
                                     component={UserProfilePageContainer}
                                 />
-                                {/** add more page routes here */}
+                                {/** add more private page routes here */}
                             </Switch>
                         </TopAppBarFixedAdjust>
                     </div>

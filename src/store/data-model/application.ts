@@ -1,6 +1,7 @@
 import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps, IRelationship } from "./base-model";
 import { Link } from "./link";
+import * as Yup from "yup";
 
 interface IApplicationProps {
     user?: IRelationship;
@@ -35,6 +36,14 @@ export class Application extends BaseModel {
         this.job_description_page = job_description_page;
         this.job_source = job_source;
         this.labels = labels;
+    }
+
+    static schema(){
+        return Yup.object<Application>().shape({
+            position_title: Yup.string().required("We need a title...!").max(150, "No more than 150 characters"),
+            job_description_page: Link.schema(),
+            job_source: Link.schema(),
+        });
     }
 }
 

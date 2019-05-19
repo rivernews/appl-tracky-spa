@@ -29,9 +29,7 @@ import {
 import {FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { InputFieldType, FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-field-meta";
 // form fields
-import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
 import { FormApplicationStatusLinkFieldMeta } from "../form-factory/form-application-status-link-field/form-application-status-link-field-meta";
-import { ErrorMessage, FormikValues, FormikErrors } from "formik";
 
 interface IApplicationStatusFormComponentProps extends RouteComponentProps {
     applicationStatus?: ApplicationStatus; // for update form
@@ -91,17 +89,6 @@ class ApplicationStatusFormComponent extends Component<
         ];
     }
 
-    validate = (values: FormikValues) => {
-        let errors: FormikErrors<any> = {};
-        if (!values.text) {
-            errors.text = "Required";
-        }
-        if (!values.date) {
-            errors.date = "Please give a valid date";
-        }
-        return errors;
-    };
-
     render() {
         return (
             <div className="ApplicationStatusFormComponent">
@@ -114,8 +101,6 @@ class ApplicationStatusFormComponent extends Component<
                         application: this.props.application.uuid
                     }}
         
-                    validate={this.validate}
-                    
                     formFieldPropsList={this.formFieldPropsList}
                     actionButtonPropsList={this.actionButtonPropsList}
         

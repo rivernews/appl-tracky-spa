@@ -1,5 +1,6 @@
 import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps } from "./base-model";
+import * as Yup from "yup";
 
 export interface IAddressProps {
     place_name?: string;
@@ -40,6 +41,19 @@ export class Address extends BaseModel {
         this.full_address = full_address;
         this.zipcode = zipcode;
     }
+
+    static schema(){
+        return Yup.object<Address>().shape({
+            full_address: Yup.string().max(200),
+            street: Yup.string().max(150),
+            city: Yup.string().max(50),
+            state: Yup.string().max(50),
+            country: Yup.string().max(50),
+            place_name: Yup.string().max(50),
+            zipcode: Yup.string().max(20),
+        });
+    }
+
 }
 
 const initialAddressInstance = new Address({});

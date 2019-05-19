@@ -6,10 +6,13 @@ import { AuthenticationService } from "../../utils/auth";
 import { FormBaseFieldMeta, InputFieldType } from "../form-factory/form-base-field/form-base-field-meta";
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { FormActionButtonProps, ActionButtonType, FormFactory } from "../form-factory/form-factory";
+// yup
+import * as Yup from 'yup';
 
 interface ILoginFormProps {
     registerLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
     onLoginSuccess: () => void
+    onCancel: () => void
 }
 
 export const LoginForm = (props: ILoginFormProps) => {
@@ -26,7 +29,8 @@ export const LoginForm = (props: ILoginFormProps) => {
         }),
     ];
     const actionButtonPropsList: Array<FormActionButtonProps> = [
-        new FormActionButtonProps("Login", undefined, ActionButtonType.SUBMIT)
+        new FormActionButtonProps("Login", undefined, ActionButtonType.SUBMIT),
+        new FormActionButtonProps("Cancel", props.onCancel)
     ];
 
     const onSubmitLoginForm = async (
@@ -62,18 +66,33 @@ export const LoginForm = (props: ILoginFormProps) => {
             props.onLoginSuccess();
         }
         catch (err) {
-            alert("Oops! Login failed.");
+            alert("Oops! Wrong username or password.");
             console.error("ERROR: login failed. See error message:");
             console.error(err);
         }
     };
 
+    // validation
+    const loginFormInitialValues = {
+        username: "",
+        password: ""
+    }
+    type ILoginFormShape = typeof loginFormInitialValues;
+    const validationSchema: Yup.Schema<ILoginFormShape> = Yup.object<ILoginFormShape>().shape({
+        username: Yup.string().required("Forgot to type username...?"),
+        password: Yup.string().required("Password please...!")
+    })
+
+
     return (
         <div className="loginForm">
             <FormFactory
+                initialValues={loginFormInitialValues}
     
                 formFieldPropsList={formFieldPropsList}
                 actionButtonPropsList={actionButtonPropsList}
+
+                validationSchema={validationSchema}
     
                 onSubmit={onSubmitLoginForm}
             />
