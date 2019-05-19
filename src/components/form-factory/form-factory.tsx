@@ -5,7 +5,7 @@ import React, { Component } from "react";
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 // data model
-import { DataModelClass, DataModelInstance } from "../../store/data-model/base-model";
+import { DataModelClass, DataModelInstance, BaseModel } from "../../store/data-model/base-model";
 // formik
 import {
     Formik,
@@ -14,6 +14,8 @@ import {
     FormikErrors,
     FormikTouched
 } from "formik";
+// yup
+import * as Yup from 'yup';
 // base field
 import { FormBaseFieldMeta } from "./form-base-field/form-base-field-meta";
 
@@ -43,7 +45,9 @@ export interface IFormFactoryProps<IDataModel> {
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => void;
+    
     validate?: (values: FormikValues) => FormikErrors<FormikValues>;
+    validationSchema?: Yup.Schema<IDataModel>;
 
     createInstanceTriggerAction?: (
         instance: IDataModel,
@@ -62,6 +66,7 @@ export class FormFactory<DataModel> extends Component<
     > {
 
     initialInstance: DataModelInstance<any>;
+    validationSchema?: Yup.Schema<DataModel>;
 
     constructor(props: IFormFactoryProps<DataModel>) {
         super(props);
@@ -73,6 +78,12 @@ export class FormFactory<DataModel> extends Component<
         }
         else {
             this.initialInstance = this.props.initialInstance;
+        }
+
+        if (this.props.model) {
+            this.validationSchema = this.props.model.schema;
+        } else {
+
         }
     }
 
@@ -122,6 +133,7 @@ export class FormFactory<DataModel> extends Component<
                 <Formik
                     initialValues={this.initialInstance}
                     validate={this.props.validate}
+                    validationSchema={this.props.validationSchema || this.validationSchema}
                     onSubmit={this.onSubmit}
                 >
                     {({

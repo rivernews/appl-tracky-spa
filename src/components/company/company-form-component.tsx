@@ -24,6 +24,7 @@ import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-fie
 import { FormAddressFieldMeta } from "../form-factory/form-address-field/form-address-field-meta";
 // formik
 import { FormikValues, FormikErrors } from "formik";
+import * as Yup from "yup";
 
 interface ICompanyFormComponentProps {
     company?: Company;
@@ -68,6 +69,7 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
             ),
             new FormActionButtonProps("Cancel", this.props.onCancel)
         ]
+
     }
 
     validateAppForm = (values: FormikValues) => {
@@ -91,7 +93,7 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
                         ...this.props.company
                     })}
         
-                    validate={this.validateAppForm}
+                    // validate={this.validateAppForm}
                     
                     formFieldPropsList={this.formFieldPropsList}
                     actionButtonPropsList={this.actionButtonPropsList}

@@ -2,6 +2,7 @@ import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps } from "./base-model";
 import { Address } from "./address";
 import { Link } from "./link";
+import * as Yup from "yup";
 
 interface ICompanyProps {
     user?: string;
@@ -40,6 +41,13 @@ export class Company extends BaseModel {
         this.home_page = home_page;
         this.ratings = ratings;
         this.applications = applications;
+    }
+
+    static schema(){
+        return Yup.object<Company>().shape({
+            name: Yup.string().required("Every company needs a name...!"),
+            home_page: Link.schema(),
+        });
     }
 }
 
