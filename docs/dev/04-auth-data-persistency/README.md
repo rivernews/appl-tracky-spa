@@ -26,82 +26,91 @@
     - Once checked previous session exists, we don't clear out localStorage user data, and we want to recover the auth from localStorage first, and attempt a auth refresh. If successful, no further action required. By default will be redirected to home page.
     - If refresh not successful, we will degrade to case 2's 3rd point.
 
-## Navigation Persistence
+## Auth Persistency
 
 ```tsx
 
-function SPADidMount() {
-    try {
-        await login()
-        router.history.push("/home/")
-    }
-    catch (err) {
-        logout()
-    }
-}
+// case 3
 
-function logout() {
-    clearAuthData()
-    clearUserData()
-}
+function SpaDidMount() {
+    const auth = authDeserialize(localStorage);
+    if (auth) {
+        
+        loadAuthToRedux(auth);
 
-```
-
-## Auth Persistence
-
-```tsx
-
-function login() {
-    try {
-        await fetchAuthCache()
-
-        if (tokenExpired) {
-            try {
-                auth = await refreshLogin()
-                storeAuthCache(auth)
-                requestUserData()
-            }
-            catch (err) {
-                // ...
-            }
+        const isLoginVerified = await verifyLogin();
+        if (isLoginVerified) {
+            requestData("list company; list application");
         }
         else {
-            requestUserData()
+            // do nothing
         }
     }
-    catch (err) {
-        loginRequest()
+    else {
+        // do nothing
     }
 }
 
-function fetchAuthCache() {
-    return deserialize(localStorage)
+// case 1
+
+function onLoginCredentialSubmitted(res) {
+    if (res.success) {
+        authSerialize(res.auth);
+        requestData("list company; list application");
+    }
+    else {
+
+    }
 }
 
-function storeAuthCache(auth) {
-    serialize(auth, localStorage)
+// case 2
+
+function triggerRequestData(manifest) {
+    const isLoginVerified = await verifyLogin();
+    if (isLoginVerified) {
+        requestData(manifest);
+    }
+    else {
+        alert("Your session expired. Save all changes and re-login.")
+        // let user re-login themselved. They can still navigate within the SPA, just cannot send any request.
+    }
 }
 
-function refreshLogin() {
+// helper
+
+function authSerialize(auth) {
 
 }
 
-function loginRequest() {
+function authDeserialize(localStorage) {
 
 }
 
-```
+function requestData(requestManifest) {
 
-## Data Persistence
-
-```tsx
-
-function requestUserData() {
-    listCompany()
-    listApplication()
 }
 
-function listObjectCollection() {
+function loadAuthToRedux(auth) {
+
+}
+
+function verifyLogin() {
+    // check expired token
+    const isTokenExpired = await checkTokenExpired();
+    if (!isTokenExpired) {
+        return true;
+    }
+
+    // try refresh token
+    const isTokenRefreshed = await refreshToken();
+    if (isTokenRefreshed) {
+        return true;
+    }
+
+    return false;
+}
+
+function refreshToken() {
 
 }
 
