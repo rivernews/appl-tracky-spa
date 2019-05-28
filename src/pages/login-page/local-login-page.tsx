@@ -28,7 +28,7 @@ import { InputFieldType } from "../../components/form-factory/form-base-field/fo
 import { ErrorMessage, FormikValues, FormikErrors } from "formik";
     import { LoginForm } from "../../components/social-auth/login-form";
 // api
-import { AuthenticationService } from "../../utils/auth";
+import { AuthenticationService } from "../../utils/authentication";
 import { RestApiService } from "../../utils/rest-api";
 import MaterialIcon from "@material/react-material-icon";
 // mdc react button

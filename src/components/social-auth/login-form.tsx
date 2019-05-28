@@ -2,7 +2,7 @@ import React from "react";
 
 import { FormikValues } from "formik";
 import { RestApiService } from "../../utils/rest-api";
-import { AuthenticationService } from "../../utils/auth";
+import { AuthenticationService } from "../../utils/authentication";
 import { FormBaseFieldMeta, InputFieldType } from "../form-factory/form-base-field/form-base-field-meta";
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { FormActionButtonProps, ActionButtonType, FormFactory } from "../form-factory/form-factory";

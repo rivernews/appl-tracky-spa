@@ -1,7 +1,7 @@
 import React from "react";
 import { TObject, IObjectBase } from "../store/rest-api-redux-factory";
 import { BaseModel } from "../store/data-model/base-model";
-import { AuthenticationService } from "./auth";
+import { AuthenticationService } from "./authentication";
 
 export enum RequestStatus {
     TRIGGERED = "triggered",
@@ -85,7 +85,6 @@ export class RestApi {
         socialAuthProvider: `google-oauth2`,
 
         userEmail: ``,
-        apiLoginToken: ``,
         userFirstName: ``,
         userLastName: ``,
 
@@ -180,17 +179,13 @@ export class RestApi {
 
     private setApiAuthHeaders = (): RequestInit => {
 
-        this.state.apiLoginToken = (
-            AuthenticationService.state.apiLoginToken
-        ) ? AuthenticationService.state.apiLoginToken : this.state.apiLoginToken;
-
-        console.log("api: set header: got credentials?", this.state.apiLoginToken);
+        console.log("api: set header: got credentials?", AuthenticationService.state.apiLoginToken);
         return {
             mode: "cors",
-            credentials: this.state.apiLoginToken ? "include" : "omit",
+            credentials: AuthenticationService.state.apiLoginToken ? "include" : "omit",
             headers: {
-                Authorization: this.state.apiLoginToken
-                    ? `JWT ${this.state.apiLoginToken}`
+                Authorization: AuthenticationService.state.apiLoginToken
+                    ? `JWT ${AuthenticationService.state.apiLoginToken}`
                     : ``,
                 "Content-Type": "application/json"
             }

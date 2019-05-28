@@ -20,7 +20,7 @@ import { takeEvery, call, put } from "redux-saga/effects";
 import { push } from "connected-react-router";
 
 /** api */
-import { AuthenticationService } from "../../utils/auth";
+import { AuthenticationService } from "../../utils/authentication";
 import { RestApiService, CrudType, RequestStatus } from "../../utils/rest-api";
 
 function* authLoginSagaHandler(

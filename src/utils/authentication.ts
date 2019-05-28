@@ -1,13 +1,13 @@
 import { RestApiService } from "./rest-api";
 import { BaseModel, IBaseModelProps } from "../store/data-model/base-model";
 
-export interface IAuthObjectProps {
+export interface ILoginObjectProps {
     code?: string
     provider?: string
     redirect_uri?: string
 }
 
-export class AuthObject extends BaseModel {
+class LoginObject extends BaseModel {
     code: string
     provider: string
     redirect_uri: string
@@ -17,7 +17,7 @@ export class AuthObject extends BaseModel {
         provider = "",
         redirect_uri = "",
         ...args
-    }: IAuthObjectProps & IBaseModelProps) {
+    }: ILoginObjectProps & IBaseModelProps) {
         super(args);
         this.code = code;
         this.provider = provider;
@@ -42,14 +42,14 @@ class Authentication {
     };
 
     serverLogin = (socialLoginCode: string) => {
-        let authFormData = new AuthObject({
+        let loginObject = new LoginObject({
             code: socialLoginCode,
             provider: this.state.socialAuthProvider,
             redirect_uri: this.state.redirectUri
         })
         return RestApiService
-            .post<AuthObject>({
-                data: authFormData,
+            .post<LoginObject>({
+                data: loginObject,
                 endpointUrl: this.state.apiLoginUrl
             })
     }
@@ -60,7 +60,7 @@ class Authentication {
         this.state.userEmail = "";
         this.state.userFirstName = ""
         this.state.userLastName = ""
-        this.state.apiLoginToken = RestApiService.state.apiLoginToken = "";
+        this.state.apiLoginToken = "";
         return;
     }
 }
