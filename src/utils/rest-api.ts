@@ -81,7 +81,6 @@ export class RestApi {
         :
         `https://appl-tracky-api-https.shaungc.com/api/`
         ,
-        apiLoginUrl: `login/social/`,
         socialAuthProvider: `google-oauth2`,
 
         userEmail: ``,

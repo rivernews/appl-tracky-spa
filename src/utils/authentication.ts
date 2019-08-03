@@ -7,6 +7,22 @@ export interface ILoginObjectProps {
     redirect_uri?: string
 }
 
+export interface IRefreshObjectProps {
+    token: string
+}
+
+class RefreshObject extends BaseModel {
+    token: string
+
+    constructor({
+        token = "",
+        ...args
+    }: IRefreshObjectProps & IBaseModelProps) {
+        super(args);
+        this.token = token;
+    }
+}
+
 class LoginObject extends BaseModel {
     code: string
     provider: string
@@ -30,7 +46,9 @@ class Authentication {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
 
         redirectUri: `postmessage`,
-        apiLoginUrl: `login/social/`,
+        apiSocialLoginUrl: `login/social/`,
+        apiLocalLoginUrl: `api-token-auth/`,
+        apiLoginRefreshUrl: `api-token-refresh/`,
         socialAuthProvider: `google-oauth2`,
 
         userEmail: ``,
@@ -50,7 +68,18 @@ class Authentication {
         return RestApiService
             .post<LoginObject>({
                 data: loginObject,
-                endpointUrl: this.state.apiLoginUrl
+                endpointUrl: this.state.apiSocialLoginUrl
+            })
+    }
+
+    private refreshToken = () => {
+        let refreshObject = new RefreshObject({
+            token: this.state.apiLoginToken,
+        })
+        return RestApiService
+            .post<RefreshObject>({
+                data: refreshObject,
+                endpointUrl: this.state.apiLoginRefreshUrl
             })
     }
 

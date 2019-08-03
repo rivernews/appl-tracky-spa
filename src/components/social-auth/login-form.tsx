@@ -42,7 +42,7 @@ export const LoginForm = (props: ILoginFormProps) => {
 
         try {
             // post to get login token
-            const res = await fetch(`${RestApiService.state.apiBaseUrl}api-token-auth/`, {
+            const res = await fetch(`${RestApiService.state.apiBaseUrl}${AuthenticationService.state.apiLocalLoginUrl}`, {
                 method: "POST",
                 mode: "cors",
                 credentials: "omit",

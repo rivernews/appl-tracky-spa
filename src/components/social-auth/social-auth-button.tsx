@@ -26,14 +26,11 @@ class SocialAuthButton extends Component<
 > {
     state = {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
-        code: ``,
-        redirectUri: `postmessage`,
-        apiBaseUrl: `http://localhost:8000/`,
-        apiLoginUrl: `login/social/`,
-        socialAuthProvider: `google-oauth2`,
+        
+        code: ``, // get `code` from social login button, then obtain token from django server
+        apiLoginToken: ``,
 
         userEmail: ``,
-        apiLoginToken: ``,
         userFirstName: ``,
         userLastName: ``,
 
