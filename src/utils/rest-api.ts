@@ -79,7 +79,7 @@ export class RestApi {
         apiBaseUrl: (process.env.NODE_ENV === 'development') ? 
         `http://localhost:8000/api/`
         :
-        `https://appl-tracky-api-https.shaungc.com/api/`
+        `https://appl-tracky.api.shaungc.com/api/`
         ,
         socialAuthProvider: `google-oauth2`,
 
