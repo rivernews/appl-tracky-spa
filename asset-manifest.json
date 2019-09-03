@@ -1,15 +1,15 @@
 {
-  "main.css": "/appl-tracky-spa/static/css/main.6a5ae9d7.chunk.css",
-  "main.js": "/appl-tracky-spa/static/js/main.a1f49bf4.chunk.js",
-  "main.js.map": "/appl-tracky-spa/static/js/main.a1f49bf4.chunk.js.map",
+  "main.css": "/appl-tracky-spa/static/css/main.fa317dfb.chunk.css",
+  "main.js": "/appl-tracky-spa/static/js/main.34391393.chunk.js",
+  "main.js.map": "/appl-tracky-spa/static/js/main.34391393.chunk.js.map",
   "runtime~main.js": "/appl-tracky-spa/static/js/runtime~main.372185f4.js",
   "runtime~main.js.map": "/appl-tracky-spa/static/js/runtime~main.372185f4.js.map",
-  "static/css/2.e47fd6e0.chunk.css": "/appl-tracky-spa/static/css/2.e47fd6e0.chunk.css",
-  "static/js/2.56811ed2.chunk.js": "/appl-tracky-spa/static/js/2.56811ed2.chunk.js",
-  "static/js/2.56811ed2.chunk.js.map": "/appl-tracky-spa/static/js/2.56811ed2.chunk.js.map",
+  "static/css/2.a7b50abf.chunk.css": "/appl-tracky-spa/static/css/2.a7b50abf.chunk.css",
+  "static/js/2.cee8e7a9.chunk.js": "/appl-tracky-spa/static/js/2.cee8e7a9.chunk.js",
+  "static/js/2.cee8e7a9.chunk.js.map": "/appl-tracky-spa/static/js/2.cee8e7a9.chunk.js.map",
   "index.html": "/appl-tracky-spa/index.html",
-  "precache-manifest.1da0ef1e672674a8f1593da8826b46f7.js": "/appl-tracky-spa/precache-manifest.1da0ef1e672674a8f1593da8826b46f7.js",
+  "precache-manifest.02a4ab188f92efa9864152a5af11ea48.js": "/appl-tracky-spa/precache-manifest.02a4ab188f92efa9864152a5af11ea48.js",
   "service-worker.js": "/appl-tracky-spa/service-worker.js",
-  "static/css/2.e47fd6e0.chunk.css.map": "/appl-tracky-spa/static/css/2.e47fd6e0.chunk.css.map",
-  "static/css/main.6a5ae9d7.chunk.css.map": "/appl-tracky-spa/static/css/main.6a5ae9d7.chunk.css.map"
+  "static/css/2.a7b50abf.chunk.css.map": "/appl-tracky-spa/static/css/2.a7b50abf.chunk.css.map",
+  "static/css/main.fa317dfb.chunk.css.map": "/appl-tracky-spa/static/css/main.fa317dfb.chunk.css.map"
 }
