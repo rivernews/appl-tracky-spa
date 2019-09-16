@@ -26,6 +26,7 @@ import {
 import { FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-field-meta";
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
+import { FormRichTextFieldMeta } from "../form-factory/form-rich-text-field/form-rich-text-field-meta";
 
 interface IApplicationFormComponentProps {
     application?: Application;
@@ -69,6 +70,10 @@ class ApplicationFormComponent extends Component<
             new FormLinkFieldMeta({
                 fieldName: "job_source",
                 label: "Job Source Link",
+            }),
+            new FormRichTextFieldMeta({
+                fieldName: "notes",
+                label: "Notes",
             }),
         ];
         this.actionButtonPropsList = [

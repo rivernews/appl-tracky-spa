@@ -4,6 +4,8 @@
   "private": true,
   "homepage": "https://rivernews.github.io/appl-tracky-spa",
   "dependencies": {
+    "@ckeditor/ckeditor5-build-balloon": "^12.4.0",
+    "@ckeditor/ckeditor5-react": "^1.1.3",
     "@material/react-button": "^0.10.0",
     "@material/react-icon-button": "^0.11.0",
     "@material/react-material-icon": "^0.10.0",

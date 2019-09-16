@@ -10,6 +10,7 @@ interface IApplicationProps {
     job_description_page?: Link;
     job_source?: Link;
     labels?: any;
+    notes?: string;
 }
 
 export class Application extends BaseModel {
@@ -19,6 +20,7 @@ export class Application extends BaseModel {
     public job_description_page: Link;
     public job_source: Link;
     public labels: any;
+    public notes: string;
 
     constructor({
         user = "",
@@ -27,6 +29,7 @@ export class Application extends BaseModel {
         job_description_page = new Link({}),
         job_source = new Link({}),
         labels = {},
+        notes = "",
         ...args
     }: IApplicationProps & IBaseModelProps) {
         super(args);
@@ -36,6 +39,7 @@ export class Application extends BaseModel {
         this.job_description_page = job_description_page;
         this.job_source = job_source;
         this.labels = labels;
+        this.notes = notes;
     }
 
     static schema(){
@@ -43,6 +47,7 @@ export class Application extends BaseModel {
             position_title: Yup.string().required("We need a title...!").max(150, "No more than 150 characters"),
             job_description_page: Link.schema(),
             job_source: Link.schema(),
+            notes: Yup.string(),
         });
     }
 }

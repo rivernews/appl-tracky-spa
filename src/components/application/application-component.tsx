@@ -26,6 +26,9 @@ import Button from "@material/react-button";
 import IconButton from "@material/react-icon-button";
 import { ApplicationStatusComponentContainer } from "../application-status/application-status-component";
 import { ApplicationFormComponentContainer } from "./application-form-component";
+/** CKeditor */
+import CKEditor from '@ckeditor/ckeditor5-react';
+import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
 
 /** Types */
 interface IApplicationComponentProps {
@@ -174,6 +177,22 @@ export class ApplicationComponent extends Component<
                         </span>
                     )}
                 </p>
+
+                <div>
+                    <div><strong>Notes</strong></div>
+                    {application.notes ? (
+                        <CKEditor 
+                            editor={BalloonEditor}
+                            disabled={true}
+                            data={application.notes}
+                        />
+                        
+                    ) : (
+                        <p>
+                            No notes yet.
+                        </p>
+                    )}
+                </div>
 
                 {/* application statuses list */}
                 {this.props.isShowApplicationStatuses &&
