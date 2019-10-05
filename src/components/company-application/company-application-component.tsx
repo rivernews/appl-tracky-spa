@@ -59,28 +59,34 @@ class CompanyApplicationComponent extends Component<
                             application.user_company === this.props.company.uuid
                     )
                     .map(application => {
-                        const applicationStatusList =
-                            this.props.isShowApplicationStatuses || false
-                                ? Object.values(
+                        if (this.props.isShowApplicationStatuses) {
+                            const applicationStatusList = Object.values(
                                       this.props.applicationStatusStore
                                           .collection
                                   ).filter(
                                       applicationStatus =>
                                           applicationStatus.application ===
                                           application.uuid
-                                  )
-                                : [];
-                        return (
-                            <ApplicationComponentController
-                                key={application.uuid}
-                                application={application}
-                                company={this.props.company}
-                                applicationStatusList={applicationStatusList}
-                                isShowApplicationStatuses={
-                                    this.props.isShowApplicationStatuses
-                                }
-                            />
-                        );
+                                  );
+                            return (
+                                <ApplicationComponentController
+                                    key={application.uuid}
+                                    application={application}
+                                    company={this.props.company}
+                                    applicationStatusList={applicationStatusList}
+                                    isShowApplicationStatuses={
+                                        this.props.isShowApplicationStatuses
+                                    }
+                                /> 
+                            )
+                        }
+                        else {
+                            return (
+                                <div key={application.uuid}>
+                                    {application.position_title}
+                                </div>
+                            )
+                        }
                     })}
                 {!this.props.isShowApplicationStatuses && <hr />}
             </div>

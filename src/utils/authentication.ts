@@ -72,6 +72,14 @@ class Authentication {
             })
     }
 
+    get apiCallToken() {
+        return this.state.apiLoginToken;
+    }
+
+    set apiCallToken(token) {
+        this.state.apiLoginToken = token;
+    }
+
     private refreshToken = () => {
         let refreshObject = new RefreshObject({
             token: this.state.apiLoginToken,
