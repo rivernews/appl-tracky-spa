@@ -53,6 +53,7 @@ class LocalLoginPage extends Component<ILocalLoginPageProps> {
     }
 
     onLoginSuccess = () => {
+        sessionStorage.setItem('auth', JSON.stringify(this.props.auth));
         // request com & app list (dispatch)
         this.props.listApplication();
         this.props.listCompany();

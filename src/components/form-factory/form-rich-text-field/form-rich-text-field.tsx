@@ -18,6 +18,7 @@ import { IFormRichTextFieldProps } from "./form-rich-text-field-meta";
 // ckeditor
 import CKEditor from '@ckeditor/ckeditor5-react';
 import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
+// import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
 
 export class FormRichTextField extends Component<IFormRichTextFieldProps> {
     render() {

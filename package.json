@@ -12,6 +12,7 @@
     "@material/react-ripple": "^0.10.0",
     "@material/react-text-field": "^0.11.0",
     "@material/react-top-app-bar": "^0.9.0",
+    "@shaungc/ckeditor5-custom-balloon": "^1.0.2",
     "@types/jest": "24.0.9",
     "@types/lodash": "^4.14.123",
     "@types/node": "11.10.4",

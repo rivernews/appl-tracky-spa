@@ -59,7 +59,7 @@ export const LoginForm = (props: ILoginFormProps) => {
 
             const parsedJsonResponse = await res.json();
             // set login token
-            AuthenticationService.state.apiLoginToken = parsedJsonResponse.token;
+            AuthenticationService.apiCallToken = parsedJsonResponse.token;
             // set redux auth store isLogin state --- have to write action and reducer.
             props.registerLoginSuccess(values.username, parsedJsonResponse.token, parsedJsonResponse.avatar_url);
 

@@ -82,7 +82,7 @@ class Authentication {
 
     private refreshToken = () => {
         let refreshObject = new RefreshObject({
-            token: this.state.apiLoginToken,
+            token: this.apiCallToken,
         })
         return RestApiService
             .post<RefreshObject>({
@@ -97,7 +97,7 @@ class Authentication {
         this.state.userEmail = "";
         this.state.userFirstName = ""
         this.state.userLastName = ""
-        this.state.apiLoginToken = "";
+        this.apiCallToken = "";
         return;
     }
 }

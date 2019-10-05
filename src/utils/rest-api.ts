@@ -178,13 +178,13 @@ export class RestApi {
 
     private setApiAuthHeaders = (): RequestInit => {
 
-        console.log("api: set header: got credentials?", AuthenticationService.state.apiLoginToken);
+        console.log("api: set header: got credentials?", AuthenticationService.apiCallToken);
         return {
             mode: "cors",
-            credentials: AuthenticationService.state.apiLoginToken ? "include" : "omit",
+            credentials: AuthenticationService.apiCallToken ? "include" : "omit",
             headers: {
-                Authorization: AuthenticationService.state.apiLoginToken
-                    ? `JWT ${AuthenticationService.state.apiLoginToken}`
+                Authorization: AuthenticationService.apiCallToken
+                    ? `JWT ${AuthenticationService.apiCallToken}`
                     : ``,
                 "Content-Type": "application/json"
             }
