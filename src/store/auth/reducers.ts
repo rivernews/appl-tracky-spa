@@ -9,8 +9,10 @@ import {
 
 import { RequestStatus } from "../../utils/rest-api";
 
-const initialAuthState: IUpdateAuthState = {
-    requestStatus: RequestStatus.SUCCESS,
+let sessionAuthState = sessionStorage.getItem('authState') ? JSON.parse(sessionStorage.getItem('authState') || '{}') : {};
+
+const initialAuthState: IUpdateAuthState = (sessionAuthState.requestStatus) ?sessionAuthState : { // check if sessionAuthState is empty {} or indeed has state content
+    requestStatus: RequestStatus.SUCCESS, // initial status just set to SUCCESS
     isLogin: false,
     isLocal: false,
     socialAuthToken: "",
@@ -26,6 +28,10 @@ export const authReducer: Reducer<IUpdateAuthState> = (authStore = initialAuthSt
     // ...
 
     const authAction = action as TAuthActions;
+
+    if (authAction.type === AuthActionNames.SUCCESS_AUTH) {
+        sessionStorage.setItem('authState', JSON.stringify(authAction.payload));
+    }
 
     return {
         ...authStore,

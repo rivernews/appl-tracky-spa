@@ -46,73 +46,77 @@ class PageRoutes extends Component<IPageRoutesProps> {
                     // add more public page routres here
                     // ...
                 ) ? (
-                    <Switch>
-                        <Route path="/" exact component={LandingPageContainer} />
-                        <Route path="/local-login/" exact component={LocalLoginPageContainer} />
-                        {
-                            /** add more public page routes here */
-                            // ...
-                        }
-                    </Switch>
-                ) : (
-                    <div className="PrivateRoutesContainer">
-                        {/** protect private routes */
-                        !this.props.auth.isLogin && <Redirect to="/" />}
+                        <div className="PublicRoutesContainer">
+                            {/** direct user to home pagae (internal) if logged in */
+                                this.props.auth.isLogin && <Redirect to="/home/" />}
+                            <Switch>
+                                <Route path="/" exact component={LandingPageContainer} />
+                                <Route path="/local-login/" exact component={LocalLoginPageContainer} />
+                                {
+                                    /** add more public page routes here */
+                                    // ...
+                                }
+                            </Switch>
+                        </div>
+                    ) : (
+                        <div className="PrivateRoutesContainer">
+                            {/** protect private routes */
+                                !this.props.auth.isLogin && <Redirect to="/" />}
 
-                        <TopAppBar
-                            title="Appl Tracky"
-                            actionItems={[
-                                <Link to="/home/">
-                                    <MaterialIcon
-                                        hasRipple
-                                        key="itemHome"
-                                        icon="home"
-                                    />
-                                </Link>,
-
-                                <Link to="/profile/">
-                                    {this.props.auth.avatarUrl === "" ? (
+                            <TopAppBar
+                                title="Appl Tracky"
+                                actionItems={[
+                                    <Link to="/home/">
                                         <MaterialIcon
                                             hasRipple
-                                            key="itemProfile"
-                                            icon="account_circle"
+                                            key="itemHome"
+                                            icon="home"
                                         />
-                                    ) : (
-                                        <img style={{
-                                            "height": "100%",
-                                            "borderRadius": "50%",
-                                        }} src={this.props.auth.avatarUrl} />
-                                    )}
-                                </Link>
-                            ]}
-                        />
-                        <TopAppBarFixedAdjust>
-                            <Switch>
-                                <Route
-                                    path="/home/"
-                                    component={UserAppPageContainer}
-                                />
-                                <Route
-                                    path="/com-form/:uuid?/"
-                                    component={AddComPageContainer}
-                                />
-                                <Route
-                                    path="/com-app/:uuid/"
-                                    component={UserComAppPageContainer}
-                                />
-                                <Route
-                                    path="/com-app/"
-                                    component={UserComAppPageContainer}
-                                />
-                                <Route
-                                    path="/profile/"
-                                    component={UserProfilePageContainer}
-                                />
-                                {/** add more private page routes here */}
-                            </Switch>
-                        </TopAppBarFixedAdjust>
-                    </div>
-                )}
+                                    </Link>,
+
+                                    <Link to="/profile/">
+                                        {this.props.auth.avatarUrl === "" ? (
+                                            <MaterialIcon
+                                                hasRipple
+                                                key="itemProfile"
+                                                icon="account_circle"
+                                            />
+                                        ) : (
+                                                <img style={{
+                                                    "height": "100%",
+                                                    "borderRadius": "50%",
+                                                }} src={this.props.auth.avatarUrl} />
+                                            )}
+                                    </Link>
+                                ]}
+                            />
+                            <TopAppBarFixedAdjust>
+                                <Switch>
+                                    <Route
+                                        path="/home/"
+                                        component={UserAppPageContainer}
+                                    />
+                                    <Route
+                                        path="/com-form/:uuid?/"
+                                        component={AddComPageContainer}
+                                    />
+                                    <Route
+                                        path="/com-app/:uuid/"
+                                        component={UserComAppPageContainer}
+                                    />
+                                    <Route
+                                        path="/com-app/"
+                                        component={UserComAppPageContainer}
+                                    />
+                                    <Route
+                                        path="/profile/"
+                                        component={UserProfilePageContainer}
+                                    />
+                                    {/** add more private page routes here */}
+                                </Switch>
+                            </TopAppBarFixedAdjust>
+                        </div>
+                    )}
             </div>
         );
     }
