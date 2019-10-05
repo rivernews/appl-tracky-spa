@@ -44,17 +44,22 @@ export const RequestedLogoutAuth = (): IRequestedLogoutAuthAction => {
 
 export const SuccessLoginAuth = (userName: string, expireDateTime: string, apiToken: string, avatarUrl: string, isLocal: boolean): ISuccessAuthAction => {
     process.env.NODE_ENV === 'development' && console.log("action username:", userName);
+
+    const userData = {
+        requestStatus: RequestStatus.SUCCESS,
+        isLogin: true,
+        isLocal: isLocal ? true : false,
+        userName,
+        expireDateTime,
+        apiToken,
+        avatarUrl
+    };
+
+    sessionStorage.setItem('userData', JSON.stringify(userData));
+
     return {
         type: AuthActionNames.SUCCESS_AUTH,
-        payload: {
-            requestStatus: RequestStatus.SUCCESS,
-            isLogin: true,
-            isLocal: isLocal ? true : false,
-            userName,
-            expireDateTime,
-            apiToken,
-            avatarUrl
-        }
+        payload: userData
     };
 };
 

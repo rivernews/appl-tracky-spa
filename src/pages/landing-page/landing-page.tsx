@@ -61,7 +61,7 @@ class LandingPage extends Component<ILandingPageProps> {
         // request com & app list (dispatch)
         // this.props.listApplication();
         // this.props.listCompany();
-        this.props.history.push("/login/");
+        this.props.history.push("/local-login/");
     }
 
     render() {

@@ -42,13 +42,13 @@ class PageRoutes extends Component<IPageRoutesProps> {
             <div className="PageRoutesContainer">
                 {(
                     this.props.location.pathname === "/" ||
-                    this.props.location.pathname === "/login/"
+                    this.props.location.pathname === "/local-login/"
                     // add more public page routres here
                     // ...
                 ) ? (
                     <Switch>
                         <Route path="/" exact component={LandingPageContainer} />
-                        <Route path="/login/" exact component={LocalLoginPageContainer} />
+                        <Route path="/local-login/" exact component={LocalLoginPageContainer} />
                         {
                             /** add more public page routes here */
                             // ...
