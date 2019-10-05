@@ -77,7 +77,7 @@ class ApplicationStatusComponent extends Component<
                     <span>Status: {applicationStatus.text}</span>
                     <IconButton
                         onClick={() => {
-                            console.log("application status component: edit button clicked.")
+                            process.env.NODE_ENV === 'development' && console.log("application status component: edit button clicked.")
                             this.setState({isFormOpened: true});
                         }}
                     >

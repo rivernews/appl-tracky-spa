@@ -109,7 +109,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
             finalCallback?: Function,
             absoluteUrl?: string,
         ): IObjectAction<TObjectSchema> => {
-            console.log(`action:fired, trigger, ${crudKeyword}`);
+            process.env.NODE_ENV === 'development' && console.log(`action:fired, trigger, ${crudKeyword}`);
             return {
                 type:
                     ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
@@ -203,7 +203,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
         const sagaHandler = function*(
             triggerAction: IObjectAction<TObjectSchema>
         ) {
-            console.log(`Saga: action intercepted; aync=trigger, crud=${crudKeyword}, obj=${objectName}; ready to call api`);
+            process.env.NODE_ENV === 'development' && console.log(`Saga: action intercepted; aync=trigger, crud=${crudKeyword}, obj=${objectName}; ready to call api`);
             const formData = triggerAction.payload.formData;
             const absoluteUrl = triggerAction.absoluteUrl;
 
@@ -227,7 +227,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     }
                 );
 
-                console.log("Saga: res from server", jsonResponse);
+                process.env.NODE_ENV === 'development' && console.log("Saga: res from server", jsonResponse);
 
                 if (jsonResponse.status && jsonResponse.status >= 400) {
                     console.error("Server error, see message in res.");
@@ -236,7 +236,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
                 // if there is .next in res, then it's paginated data and we should perform a next request to next page data
                 if(jsonResponse.next) {
-                    console.log("Saga: res contains next url, so we will also trigger list request for next=", jsonResponse.next);
+                    process.env.NODE_ENV === 'development' && console.log("Saga: res contains next url, so we will also trigger list request for next=", jsonResponse.next);
                     yield put(ObjectRestApiRedux[CrudType.LIST][RequestStatus.TRIGGERED].action(
                         undefined, undefined, undefined, undefined, jsonResponse.next
                     ));
@@ -250,7 +250,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         ].action(jsonResponse, formData)
                     );
                 } else {
-                    console.log("Saga: ready to dispatch success action")
+                    process.env.NODE_ENV === 'development' && console.log("Saga: ready to dispatch success action")
                     yield put(
                         ObjectRestApiRedux[crudKeyword][
                             RequestStatus.SUCCESS
@@ -283,7 +283,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
         ObjectRestApiRedux[crudKeyword][
             RequestStatus.TRIGGERED
         ].saga = function*() {
-            console.log(`Saga: action intercepted; async=trigger, crud=${crudKeyword}, obj=${objectName}`);
+            process.env.NODE_ENV === 'development' && console.log(`Saga: action intercepted; async=trigger, crud=${crudKeyword}, obj=${objectName}`);
             
             // queue style 
             const objectTriggerActionChannel = yield actionChannel(
@@ -343,10 +343,10 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                 for (let object of resObjectList) {
                     newObjects[object.uuid] = object;
                 }
-                console.log("Reducer: crud=list, action=", objectAction)
-                console.log("initialState=", initialState)
-                console.log("beforestore=", objectStore)
-                console.log("newlistobjects=", newObjects)
+                process.env.NODE_ENV === 'development' && console.log("Reducer: crud=list, action=", objectAction)
+                process.env.NODE_ENV === 'development' && console.log("initialState=", initialState)
+                process.env.NODE_ENV === 'development' && console.log("beforestore=", objectStore)
+                process.env.NODE_ENV === 'development' && console.log("newlistobjects=", newObjects)
 
                 const afterStore: IObjectStore<TObjectSchema> = {
                     collection: {
@@ -355,7 +355,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     },
                     requestStatus: objectAction.payload.requestStatus
                 };
-                console.log("afterstore=", afterStore)
+                process.env.NODE_ENV === 'development' && console.log("afterstore=", afterStore)
 
                 return afterStore;
             }
@@ -376,15 +376,15 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
             // DELETE
             else if (objectAction.crudType === CrudType.DELETE) {
                 let targetDeleteObject = <TObject<TObjectSchema>>objectAction.triggerFormData;
-                console.log("Reducer: delete, targetobj=", targetDeleteObject)
+                process.env.NODE_ENV === 'development' && console.log("Reducer: delete, targetobj=", targetDeleteObject)
 
-                console.log("Reducer: delete, beforestore=", objectStore)
+                process.env.NODE_ENV === 'development' && console.log("Reducer: delete, beforestore=", objectStore)
                 
                 const afterStore = {
                     collection: omit(objectStore.collection, [targetDeleteObject.uuid]),
                     requestStatus: objectAction.payload.requestStatus
                 }
-                console.log("Reducer: delete, afterstore", afterStore)
+                process.env.NODE_ENV === 'development' && console.log("Reducer: delete, afterstore", afterStore)
 
                 return afterStore;
             }

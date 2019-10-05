@@ -92,7 +92,7 @@ class Authentication {
     }
 
     serverLogout = async () => {
-        console.log("server logout...");
+        process.env.NODE_ENV === 'development' && console.log("server logout...");
         // no server-side invalidate implement at this point (a common case for JWT, however)
         this.state.userEmail = "";
         this.state.userFirstName = ""

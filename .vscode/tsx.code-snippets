@@ -10,7 +10,7 @@
 	// 	"scope": "javascript,typescript",
 	// 	"prefix": "log",
 	// 	"body": [
-	// 		"console.log('$1');",
+	// 		"process.env.NODE_ENV === 'development' && console.log('$1');",
 	// 		"$2"
 	// 	],
 	// 	"description": "Log output to console"

@@ -27,13 +27,13 @@ function* authLoginSagaHandler(
     requestedLoginAuthAction: IRequestedLoginAuthAction
 ) {
     // RequestAuth action triggered & injecting side effects here...
-    console.log("auth saga: initialize");
+    process.env.NODE_ENV === 'development' && console.log("auth saga: initialize");
     const { socialAuthToken } = requestedLoginAuthAction.payload;
-    console.log("auth saga: request fired");
+    process.env.NODE_ENV === 'development' && console.log("auth saga: request fired");
     try {
         // TODO: define interface typing for api response
         const jsonResponse = yield call(AuthenticationService.serverLogin, socialAuthToken);
-        console.log("auth saga: server login using code from social button. server jsonRes=", jsonResponse);
+        process.env.NODE_ENV === 'development' && console.log("auth saga: server login using code from social button. server jsonRes=", jsonResponse);
         AuthenticationService.apiCallToken = jsonResponse.token;
         yield put(SuccessLoginAuth(
             jsonResponse.email, "", 
@@ -62,7 +62,7 @@ function* authLogoutSagaHandler(
     requestedLogoutAuthAction: IRequestedLogoutAuthAction
 ) {
     // RequestAuth action triggered & injecting side effects here...
-    console.log("auth logout saga: fired");
+    process.env.NODE_ENV === 'development' && console.log("auth logout saga: fired");
     try {
         yield call(AuthenticationService.serverLogout);
 
@@ -72,7 +72,7 @@ function* authLogoutSagaHandler(
         return;
     }
 
-    console.log("auth logout saga: navigating");
+    process.env.NODE_ENV === 'development' && console.log("auth logout saga: navigating");
     yield put(SuccessLogoutAuth());
     // yield put(push("/"));
 

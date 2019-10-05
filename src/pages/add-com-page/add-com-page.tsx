@@ -41,7 +41,7 @@ class AddComPage extends Component<IAddComPageProps> {
         const company: Company | undefined = (this.props.match.params.uuid && this.props.company.collection[this.props.match.params.uuid])
             ? this.props.company.collection[this.props.match.params.uuid]
             : undefined;
-        console.log(
+        process.env.NODE_ENV === 'development' && console.log(
             "com form page: params is",
             this.props.match.params.uuid,
             "company is",
@@ -53,12 +53,12 @@ class AddComPage extends Component<IAddComPageProps> {
                 <CompanyFormComponentContainer
                     company={company}
                     onSubmitSuccess={() => {
-                        console.log("com form page: onSubmitSuccess");
+                        process.env.NODE_ENV === 'development' && console.log("com form page: onSubmitSuccess");
                         if (this.props.company.lastChangedObjectID) {
                             let newCompany = this.props.company.collection[
                                 this.props.company.lastChangedObjectID
                             ];
-                            console.log("new company:", newCompany);
+                            process.env.NODE_ENV === 'development' && console.log("new company:", newCompany);
                             this.props.history.push(
                                 `/com-app/${newCompany.uuid}/`
                             );

@@ -38,14 +38,14 @@ class SocialAuthButton extends Component<
     };
 
     onSocialLoginSuccess = (googleOauthResponse: any) => {
-        console.log("Google Oauth2 res:", googleOauthResponse);
+        process.env.NODE_ENV === 'development' && console.log("Google Oauth2 res:", googleOauthResponse);
         this.setState(
             {
                 code: googleOauthResponse.code
             },
             () => {
                 // this.apiLogin();
-                console.log("social button: request auth...");
+                process.env.NODE_ENV === 'development' && console.log("social button: request auth...");
                 this.props.requestedLoginAuth(this.state.code);
             }
         );
@@ -56,7 +56,7 @@ class SocialAuthButton extends Component<
     };
 
     onSocialLogoutSuccess = () => {
-        console.log("Social logout success, now our web app logout");
+        process.env.NODE_ENV === 'development' && console.log("Social logout success, now our web app logout");
         this.props.requestedLogoutAuth();
     };
 

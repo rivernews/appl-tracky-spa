@@ -38,7 +38,7 @@ export const LoginForm = (props: ILoginFormProps) => {
         { setSubmitting }: { setSubmitting: Function }
     ) => {
         setSubmitting(false);
-        console.log("values =", values);
+        process.env.NODE_ENV === 'development' && console.log("values =", values);
 
         try {
             // post to get login token
@@ -53,7 +53,7 @@ export const LoginForm = (props: ILoginFormProps) => {
             });
 
             if (!res.ok) {
-                console.log("INFO: server res =", res);
+                process.env.NODE_ENV === 'development' && console.log("INFO: server res =", res);
                 throw Error(res.statusText)
             }
 

@@ -93,14 +93,14 @@ export class FormFactory<DataModel> extends Component<
         }
 
         this.validationSchema = this.props.validationSchema || this.props.model.schema;
-        console.log("this.validationSchema =", this.validationSchema);
+        process.env.NODE_ENV === 'development' && console.log("this.validationSchema =", this.validationSchema);
     }
 
     onSubmit = (
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => {
-        console.log("submit values =", values); setSubmitting(false);
+        process.env.NODE_ENV === 'development' && console.log("submit values =", values); setSubmitting(false);
 
         setSubmitting(true);
         let instanceData: any = {};
@@ -122,15 +122,15 @@ export class FormFactory<DataModel> extends Component<
                 ...instanceData,
                 ...this.props.enforcedInstanceData
             })
-            console.log("instanceData =", instanceData);
-            console.log("instance =", instance);
+            process.env.NODE_ENV === 'development' && console.log("instanceData =", instanceData);
+            process.env.NODE_ENV === 'development' && console.log("instance =", instance);
 
             // dispatch API request
             if (!instance.uuid) {
-                console.log("ready to send create instance");
+                process.env.NODE_ENV === 'development' && console.log("ready to send create instance");
                 this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
             } else {
-                console.log("ready to send update instance");
+                process.env.NODE_ENV === 'development' && console.log("ready to send update instance");
                 this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
             }
         }
@@ -139,9 +139,9 @@ export class FormFactory<DataModel> extends Component<
             this.props.onSubmit(values, { setSubmitting });
         }
         else {
-            console.log("this.props.initialInstance =", this.props.initialInstance);
-            console.log("this.props.onSubmit =", this.props.onSubmit);
-            console.log("this.props.model =", this.props.model);
+            process.env.NODE_ENV === 'development' && console.log("this.props.initialInstance =", this.props.initialInstance);
+            process.env.NODE_ENV === 'development' && console.log("this.props.onSubmit =", this.props.onSubmit);
+            process.env.NODE_ENV === 'development' && console.log("this.props.model =", this.props.model);
             alert("Something is wrong with the form...!")
             throw Error("ERROR: form factory props not properly configured. See above props.")
         }

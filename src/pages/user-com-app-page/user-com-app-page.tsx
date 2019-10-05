@@ -59,7 +59,7 @@ class UserComAppPage extends Component<
 
     componentDidMount() {
         let companyUuid = this.props.match.params.uuid;
-        console.log("mount, got uuid from route?", companyUuid);
+        process.env.NODE_ENV === 'development' && console.log("mount, got uuid from route?", companyUuid);
         if (
             this.props.company.collection &&
             companyUuid in this.props.company.collection

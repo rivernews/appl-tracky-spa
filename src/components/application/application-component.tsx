@@ -97,7 +97,7 @@ export class ApplicationComponent extends Component<
                     ) : (
                         <ApplicationFormComponentContainer
                             onCancel={event => {
-                                console.log("onCancel clicked");
+                                process.env.NODE_ENV === 'development' && console.log("onCancel clicked");
                                 this.setState({
                                     isFormOpened: false
                                 });

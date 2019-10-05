@@ -45,7 +45,7 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             rootStateChecked = rootState;
         }
 
-        console.log("beforeRootStore", rootState);
+        process.env.NODE_ENV === 'development' && console.log("beforeRootStore", rootState);
 
         const afterStore  = { 
             ...rootState,
@@ -57,7 +57,7 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             // add new reducer here
             // ...
         }
-        console.log("afterRootStore", afterStore);
+        process.env.NODE_ENV === 'development' && console.log("afterRootStore", afterStore);
 
         return afterStore;
     }

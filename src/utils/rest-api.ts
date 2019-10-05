@@ -106,7 +106,7 @@ export class RestApi {
     };
 
     post = <Schema>({ data, objectName, endpointUrl }: IRequestParams<Schema>) => {
-        console.log(`restapi:post fired`);
+        process.env.NODE_ENV === 'development' && console.log(`restapi:post fired`);
         return fetch(
             this.getRelativeUrl({
                 endpointUrl,
@@ -172,13 +172,13 @@ export class RestApi {
                 url = `${this.state.apiBaseUrl}${objectName}/`;
             }
         }
-        console.log(`restapi: url: ${url}, objname=${objectName}`);
+        process.env.NODE_ENV === 'development' && console.log(`restapi: url: ${url}, objname=${objectName}`);
         return url;
     };
 
     private setApiAuthHeaders = (): RequestInit => {
 
-        console.log("api: set header: got credentials?", AuthenticationService.apiCallToken);
+        process.env.NODE_ENV === 'development' && console.log("api: set header: got credentials?", AuthenticationService.apiCallToken);
         return {
             mode: "cors",
             credentials: AuthenticationService.apiCallToken ? "include" : "omit",
