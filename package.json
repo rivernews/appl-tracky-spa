@@ -40,7 +40,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build && cp build/index.html build/404.html && cp src/CNAME build/CNAME ",
-    "deploy": "gh-pages -d build && echo 'https://rivernews.github.io/appl-tracky-spa'"
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
