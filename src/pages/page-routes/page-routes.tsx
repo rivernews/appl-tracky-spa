@@ -101,6 +101,11 @@ class PageRoutes extends Component<IPageRoutesProps> {
 
                                 <LinearProgress
                                     indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
+                                    
+                                    // mdc's progress bar bug workaround
+                                    // when press back button, avoid showing dotted buffer animation
+                                    buffer={1}
+                                    bufferingDots={true}
                                 />
 
                                 <Switch>
