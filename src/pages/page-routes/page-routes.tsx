@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { IRootState } from "../../store/types";
 import { IUpdateAuthState } from "../../store/auth/types";
 
+import { RequestStatus } from "../../utils/rest-api";
+
 /** Routing & Pages */
 import {
     Route,
@@ -25,9 +27,13 @@ import { UserProfilePageContainer } from "../user-profile-page/user-profile-page
 /** MDC React */
 import TopAppBar, { TopAppBarFixedAdjust } from "@material/react-top-app-bar";
 import "@material/react-top-app-bar/dist/top-app-bar.css";
-// import '@material/react-material-icon/dist/material-icon.css';
+
+import LinearProgress from '@material/react-linear-progress';
+import '@material/react-linear-progress/dist/linear-progress.css';
+
+import '@material/react-material-icon/dist/material-icon.css';
 import MaterialIcon from "@material/react-material-icon";
-// style
+
 import "@material/react-ripple/dist/ripple.css";
 
 // import {withRipple} from '@material/react-ripple';
@@ -90,7 +96,13 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                     </Link>
                                 ]}
                             />
+
                             <TopAppBarFixedAdjust>
+
+                                <LinearProgress
+                                    indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
+                                />
+
                                 <Switch>
                                     <Route
                                         path="/home/"

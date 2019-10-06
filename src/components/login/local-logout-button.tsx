@@ -1,3 +1,5 @@
+import React from "react";
+
 /** Components */
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";

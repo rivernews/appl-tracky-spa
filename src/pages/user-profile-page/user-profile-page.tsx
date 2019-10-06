@@ -4,8 +4,8 @@ import React, { Component, Dispatch } from "react";
 import { AnyAction } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "../../store/types";
-import { IUpdateAuthState, RequestedLoginMode } from "../../store/auth/types";
-import { RequestedLoginAuth, RequestedLogoutAuth } from "../../store/auth/actions";
+import { IUpdateAuthState } from "../../store/auth/types";
+import { RequestedLogoutAuth } from "../../store/auth/actions";
 
 /** Routes & pages */
 import { UserInfo } from "../../components/user-info/user-info";

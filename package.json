@@ -8,6 +8,7 @@
     "@ckeditor/ckeditor5-react": "^1.1.3",
     "@material/react-button": "^0.10.0",
     "@material/react-icon-button": "^0.11.0",
+    "@material/react-linear-progress": "^0.15.0",
     "@material/react-material-icon": "^0.10.0",
     "@material/react-ripple": "^0.10.0",
     "@material/react-text-field": "^0.11.0",
