@@ -14,31 +14,12 @@ import {
 } from "../../store/data-model/application";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 
-/** Components */
-import { SocialAuthButtonContainer } from "../../components/social-auth/social-auth-button";
-// form
-import {
-    FormFactory,
-    FormActionButtonProps,
-    IFormFactoryProps,
-    ActionButtonType
-} from "../../components/form-factory/form-factory";
-import { FormInputFieldMeta } from "../../components/form-factory/form-input-field/form-input-field-meta";
-import { InputFieldType } from "../../components/form-factory/form-base-field/form-base-field-meta";
-import { ErrorMessage, FormikValues, FormikErrors } from "formik";
-    import { LoginForm } from "../../components/social-auth/login-form";
-// api
-import { AuthenticationService } from "../../utils/authentication";
-import { RestApiService } from "../../utils/rest-api";
-import MaterialIcon from "@material/react-material-icon";
+import { LoginForm } from "../../components/social-auth/login-form";
 // mdc react button
 import "@material/react-button/dist/button.css";
-import Button from "@material/react-button";
-/** Components */
+
 
 interface ILocalLoginPageProps extends RouteComponentProps {
-
-
     /** redux */
     auth: IUpdateAuthState;
     registerLocalLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;

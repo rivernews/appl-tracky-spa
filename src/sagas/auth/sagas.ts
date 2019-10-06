@@ -30,10 +30,41 @@ function* authLoginSagaHandler(
     process.env.NODE_ENV === 'development' && console.log("auth saga: initialize");
     const { socialAuthToken } = requestedLoginAuthAction.payload;
     process.env.NODE_ENV === 'development' && console.log("auth saga: request fired");
+
+    // Try to fetch auth state from localStorage, if token not provided
+    if (socialAuthToken === '') {
+        // restore auth state
+        const sessionAuthState = sessionStorage.getItem('authState') ? JSON.parse(sessionStorage.getItem('authState') || '{}') : {};
+        
+        if (sessionAuthState.isLogin) {
+            AuthenticationService.apiCallToken = sessionAuthState.apiToken;
+
+            yield put(SuccessLoginAuth(
+                sessionAuthState.userName, "",
+                sessionAuthState.apiToken,
+                sessionAuthState.avatarUrl,
+                false
+            ));
+            
+            // initial fetch user data
+            yield put(ApplicationActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Application({})))
+            yield put(CompanyActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({})))
+            yield put(ApplicationStatusActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new ApplicationStatus({})))
+
+            return;
+        }
+        
+        // localStorage auth state cannot be used for login
+        yield put(SuccessLogoutAuth());
+        sessionStorage.removeItem('authState');
+        return;
+    }
+    
     try {
         // TODO: define interface typing for api response
         const jsonResponse = yield call(AuthenticationService.serverLogin, socialAuthToken);
         process.env.NODE_ENV === 'development' && console.log("auth saga: server login using code from social button. server jsonRes=", jsonResponse);
+        
         AuthenticationService.apiCallToken = jsonResponse.token;
         yield put(SuccessLoginAuth(
             jsonResponse.email, "", 
@@ -41,7 +72,6 @@ function* authLoginSagaHandler(
             jsonResponse.avatar_url,
             false // is not local login, is social login
         ));
-        // yield put(push("/home/"));
 
         // initial fetch user data
         yield put(ApplicationActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Application({})))

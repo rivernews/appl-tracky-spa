@@ -1,9 +1,11 @@
 /** React core */
-import React, { Component } from "react";
+import React, { Component, Dispatch } from "react";
 
 /** Redux */
+import { AnyAction } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "./store/types";
+import { RequestedLoginAuth } from "./store/auth/actions";
 
 /** Routes & pages */
 import { PageRoutesContainer } from "./pages/page-routes/page-routes";
@@ -11,10 +13,15 @@ import { PageRoutesContainer } from "./pages/page-routes/page-routes";
 /** Locals */
 import "./App.css";
 
-interface IAppProps {}
+
+interface IAppProps {
+    retrieveLoginAuth: () => void;
+}
 
 class App extends Component<IAppProps> {
-    componentDidMount() {}
+    componentDidMount() {
+        this.props.retrieveLoginAuth();
+    }
 
     render() {
         return (
@@ -26,7 +33,18 @@ class App extends Component<IAppProps> {
 }
 
 const mapStateToProps = (store: IRootState) => {
-    return {};
+    return {
+    };
 };
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => { 
+    return {
+        retrieveLoginAuth: () => {
+            dispatch(
+                RequestedLoginAuth("")
+            );
+        },
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
