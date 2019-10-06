@@ -78,6 +78,8 @@ class SocialAuthButton extends Component<
                         onClickWhenIsLocal={this.onSocialLogoutSuccess}
                         onSuccess={this.onSocialLogoutSuccess}
                         
+                        // TODO: logout - ideally no need to wait for request status, just interrupt existing requests
+                        // However, we'll have to cancel those ongoing sagas for data fetching
                         disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
                     />
                 )}
