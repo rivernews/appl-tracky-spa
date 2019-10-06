@@ -17,7 +17,11 @@ const history = createBrowserHistory({
     basename: (process.env.NODE_ENV === 'development') ?  
     ``
     :
-    `/appl-tracky-spa`
+    // since we use custom domain which has root dir of /
+    // we no longer need a base subpath
+    // the subpath is originally used for github page
+    ``
+    // `/appl-tracky-spa`
 });
 
 const preloadedState = {
