@@ -1,28 +1,51 @@
-import React, { Component } from "react";
+import React, { Component, Dispatch } from "react";
 
 /** redux */
+import { AnyAction } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "../../store/types";
-import { IUpdateAuthState } from "../../store/auth/types";
+import { IUpdateAuthState, RequestedLoginMode } from "../../store/auth/types";
+import { RequestedLoginAuth, RequestedLogoutAuth } from "../../store/auth/actions";
 
 /** Routes & pages */
 import { UserInfo } from "../../components/user-info/user-info";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 /** Components */
-import { SocialAuthButtonContainer } from "../../components/social-auth/social-auth-button";
+import { SocialAuthButtonContainer } from "../../components/login/social-auth-button";
+import { LocalLogoutButton } from "../../components/login/local-logout-button";
+
 
 interface IUserProfilePageProps extends RouteComponentProps {
+    /** redux store state */
     auth: IUpdateAuthState;
+
+    /** action dispatcher */
+    requestedLogoutAuth: () => void;
 }
 
 class UserProfilePage extends Component<IUserProfilePageProps, any> {
+    localLogoutButton = () => {
+        this.props.requestedLogoutAuth();
+    }
+
     render() {
         return (
             <div>
                 <h1>My Profile</h1>
+                <div>
+                    isLocal = {JSON.stringify(this.props.auth.isLocal)}
+                </div>
                 <UserInfo auth={this.props.auth} />
-                <SocialAuthButtonContainer />
+                {
+                    !this.props.auth.isLocal ? (
+                        <SocialAuthButtonContainer />
+                    ) : (
+                        <LocalLogoutButton 
+                            onClick={this.localLogoutButton}
+                        />
+                    )
+                }
             </div>
         );
     }
@@ -34,4 +57,14 @@ const mapStateToProps = (store: IRootState) => {
     };
 };
 
-export const UserProfilePageContainer = withRouter(connect(mapStateToProps)(UserProfilePage));
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => { 
+    return {
+        requestedLogoutAuth: () => {
+            dispatch(
+                RequestedLogoutAuth()
+            );
+        },
+    }
+}
+
+export const UserProfilePageContainer = withRouter(connect(mapStateToProps, mapDispatchToProps)(UserProfilePage));

@@ -5,54 +5,39 @@ import { withRouter, RouteComponentProps, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { Dispatch, AnyAction } from "redux";
 import { IRootState } from "../../store/types";
-import { IUpdateAuthState } from "../../store/auth/types";
-import { SuccessLoginAuth } from "../../store/auth/actions";
-import { CompanyActions, Company } from "../../store/data-model/company";
-import { ApplicationStatus, ApplicationStatusActions } from "../../store/data-model/application-status";
-import {
-    ApplicationActions,
-    Application
-} from "../../store/data-model/application";
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { IUpdateAuthState, RequestedLoginMode } from "../../store/auth/types";
+import { RequestedLoginAuth } from "../../store/auth/actions";
+import { FormikValues } from "formik";
 
-import { LoginForm } from "../../components/social-auth/login-form";
+/** Components */
+import { LoginForm } from "../../components/login/local-login-form";
 // mdc react button
 import "@material/react-button/dist/button.css";
 
 
-
 interface ILocalLoginPageProps extends RouteComponentProps {
-    /** redux */
+    /** redux state */
     auth: IUpdateAuthState;
-    registerLocalLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
-    listApplication: () => void
-    listCompany: () => void
-    listApplicationStatus: () => void
+
+    /** dispatch action */
+    requestedLoginAuth: (username: string, password: string) => void;
 }
 
 class LocalLoginPage extends Component<ILocalLoginPageProps> {
-
     onLoginFormCancel = () => {
         this.props.history.push("/");
     }
 
-    onLoginSuccess = () => {
-        // request com & app list (dispatch)
-        this.props.listApplication();
-        this.props.listCompany();
-        this.props.listApplicationStatus();
+    onLoginFormSubmit = (values: FormikValues) => {
+        this.props.requestedLoginAuth(values.username, values.password);
     }
 
     render() {
         return (
             <div className="LocalLoginPage">
-                {/** redirect logged in user to private routes */
-                this.props.auth.isLogin && <Redirect to="/home/" />}
-
                 <h1>Login Portal for Staff</h1>
                 <LoginForm 
-                    registerLoginSuccess={this.props.registerLocalLoginSuccess}
-                    onLoginSuccess={this.onLoginSuccess}
+                    onSubmit={this.onLoginFormSubmit}
                     onCancel={this.onLoginFormCancel}
                 />
             </div>
@@ -67,26 +52,13 @@ const mapStateToProps = (store: IRootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
     // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
-        registerLocalLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) =>
-            dispatch(SuccessLoginAuth(userName, "", apiToken, avatarUrl, true)),
-        listApplication: () =>
+        requestedLoginAuth: (username: string, password: string) => {
             dispatch(
-                ApplicationActions[CrudType.LIST][
-                    RequestStatus.TRIGGERED
-                ].action(new Application({}))
-            ),
-        listCompany: () =>
-            dispatch(
-                CompanyActions[CrudType.LIST][
-                    RequestStatus.TRIGGERED
-                ].action(new Company({}))
-            ),
-        listApplicationStatus: () =>
-            dispatch(
-                ApplicationStatusActions[CrudType.LIST][
-                    RequestStatus.TRIGGERED
-                ].action(new ApplicationStatus({}))
-            )
+                RequestedLoginAuth(RequestedLoginMode.LOCAL, {
+                    username, password
+                })
+            );
+        },
     }
 };
 

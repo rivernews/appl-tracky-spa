@@ -5,7 +5,7 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "../../store/types";
-import { IUpdateAuthAction, IRequestedLoginAuthAction, TAuthActions, IUpdateAuthState } from "../../store/auth/types";
+import { IUpdateAuthAction, IRequestedLoginAuthAction, TAuthActions, IUpdateAuthState, RequestedLoginMode } from "../../store/auth/types";
 import { UpdateAuth, RequestedLoginAuth, RequestedLogoutAuth } from "../../store/auth/actions";
 
 /** rest api */
@@ -96,7 +96,9 @@ function mapDispatchToProps(dispatch: Dispatch<TAuthActions>) {
     return {
         requestedLoginAuth: (socialAuthToken: string) => {
             dispatch(
-                RequestedLoginAuth(socialAuthToken)
+                RequestedLoginAuth(RequestedLoginMode.SOCIAL_AUTH, {
+                    socialAuthToken
+                })
             );
         },
         requestedLogoutAuth: () => {

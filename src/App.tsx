@@ -6,6 +6,7 @@ import { AnyAction } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "./store/types";
 import { RequestedLoginAuth } from "./store/auth/actions";
+import { RequestedLoginMode } from "./store/auth/types";
 
 /** Routes & pages */
 import { PageRoutesContainer } from "./pages/page-routes/page-routes";
@@ -41,7 +42,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
     return {
         retrieveLoginAuth: () => {
             dispatch(
-                RequestedLoginAuth("")
+                RequestedLoginAuth(RequestedLoginMode.PREFILL)
             );
         },
     }

@@ -10,9 +10,10 @@ import { FormActionButtonProps, ActionButtonType, FormFactory } from "../form-fa
 import * as Yup from 'yup';
 
 interface ILoginFormProps {
-    registerLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
-    onLoginSuccess: () => void
+    // registerLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
+    // onLoginSuccess: () => void
     onCancel: () => void
+    onSubmit: (values: FormikValues) => void
 }
 
 export const LoginForm = (props: ILoginFormProps) => {
@@ -40,35 +41,37 @@ export const LoginForm = (props: ILoginFormProps) => {
         setSubmitting(false);
         process.env.NODE_ENV === 'development' && console.log("values =", values);
 
-        try {
-            // post to get login token
-            const res = await fetch(`${RestApiService.state.apiBaseUrl}${AuthenticationService.state.apiLocalLoginUrl}`, {
-                method: "POST",
-                mode: "cors",
-                credentials: "omit",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(values)
-            });
+        props.onSubmit(values);
 
-            if (!res.ok) {
-                process.env.NODE_ENV === 'development' && console.log("INFO: server res =", res);
-                throw Error(res.statusText)
-            }
+        // try {
+        //     // // post to get login token
+        //     // const res = await fetch(`${RestApiService.state.apiBaseUrl}${AuthenticationService.state.apiLocalLoginUrl}`, {
+        //     //     method: "POST",
+        //     //     mode: "cors",
+        //     //     credentials: "omit",
+        //     //     headers: {
+        //     //         "Content-Type": "application/json"
+        //     //     },
+        //     //     body: JSON.stringify(values)
+        //     // });
 
-            const parsedJsonResponse = await res.json();
-            // set login token
-            AuthenticationService.apiCallToken = parsedJsonResponse.token;
-            // set redux auth store isLogin state --- have to write action and reducer.
-            props.registerLoginSuccess(values.username, parsedJsonResponse.token, parsedJsonResponse.avatar_url);
-            props.onLoginSuccess();
-        }
-        catch (err) {
-            alert("Oops! Wrong username or password.");
-            console.error("ERROR: login failed. See error message:");
-            console.error(err);
-        }
+        //     // if (!res.ok) {
+        //     //     process.env.NODE_ENV === 'development' && console.log("INFO: server res =", res);
+        //     //     throw Error(res.statusText)
+        //     // }
+
+        //     // const parsedJsonResponse = await res.json();
+        //     // // set login token
+        //     // AuthenticationService.apiCallToken = parsedJsonResponse.token;
+        //     // // set redux auth store isLogin state --- have to write action and reducer.
+        //     // props.registerLoginSuccess(values.username, parsedJsonResponse.token, parsedJsonResponse.avatar_url);
+        //     // props.onLoginSuccess();
+        // }
+        // catch (err) {
+        //     alert("Oops! Wrong username or password.");
+        //     console.error("ERROR: login failed. See error message:");
+        //     console.error(err);
+        // }
     };
 
     // validation

@@ -18,10 +18,15 @@ export interface IUpdateAuthState {
     avatarUrl: string
 }
 
+export enum RequestedLoginMode {
+    PREFILL = "prefill",
+    SOCIAL_AUTH = "social_auth",
+    LOCAL = "local"
+}
+
 // async partial store types
 export interface IRequestedLoginAuthState {
     requestStatus: RequestStatus
-    socialAuthToken: string
 }
 
 export interface IRequestedLogoutAuthState {
@@ -71,8 +76,16 @@ export interface IUpdateAuthAction extends Action<AuthActionNames.UPDATE_AUTH> {
     payload: IUpdateAuthState;
 }
 
+export interface RequestedLoginAuthActionParams {
+    username?: string,
+    password?: string,
+    socialAuthToken?: string
+}
+
 export interface IRequestedLoginAuthAction extends Action<AuthActionNames.REQUESTED_LOGIN_AUTH> {
     type: typeof AuthActionNames.REQUESTED_LOGIN_AUTH;
+    loginMode: RequestedLoginMode;
+    params?: RequestedLoginAuthActionParams;
     payload: IRequestedLoginAuthState;
 }
 

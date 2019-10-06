@@ -1,17 +1,16 @@
-import { ActionCreator } from "redux";
-
 import {
     /** state types */
     IUpdateAuthState,
-    IRequestedLoginAuthState,
+    RequestedLoginMode,
     /** action types */
     IUpdateAuthAction,
     IRequestedLoginAuthAction,
+    RequestedLoginAuthActionParams,
     IRequestedLogoutAuthAction,
     ISuccessAuthAction,
     IFailureAuthAction,
     /** action names */
-    AuthActionNames
+    AuthActionNames,
 } from "./types";
 
 import { RequestStatus } from "../../utils/rest-api";
@@ -23,12 +22,13 @@ export const UpdateAuth = (newAuthState: IUpdateAuthState): IUpdateAuthAction =>
     };
 };
 
-export const RequestedLoginAuth = (socialAuthToken: string): IRequestedLoginAuthAction => {
+export const RequestedLoginAuth = (loginMode: RequestedLoginMode, params?: RequestedLoginAuthActionParams): IRequestedLoginAuthAction => {
     return {
         type: AuthActionNames.REQUESTED_LOGIN_AUTH,
+        loginMode,
+        params,
         payload: {
             requestStatus: RequestStatus.REQUESTING,
-            socialAuthToken
         }
     };
 };
