@@ -9,9 +9,6 @@ import {
 
 import { RequestStatus } from "../../utils/rest-api";
 
-// let sessionAuthState = sessionStorage.getItem('authState') ? JSON.parse(sessionStorage.getItem('authState') || '{}') : {};
-
-// const initialAuthState: IUpdateAuthState = (sessionAuthState.requestStatus) ?sessionAuthState : { // check if sessionAuthState is empty {} or indeed has state content
 const initialAuthState: IUpdateAuthState = {
     requestStatus: RequestStatus.SUCCESS, // initial status just set to SUCCESS
     isLogin: false,
