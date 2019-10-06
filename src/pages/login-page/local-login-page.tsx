@@ -8,6 +8,7 @@ import { IRootState } from "../../store/types";
 import { IUpdateAuthState } from "../../store/auth/types";
 import { SuccessLoginAuth } from "../../store/auth/actions";
 import { CompanyActions, Company } from "../../store/data-model/company";
+import { ApplicationStatus, ApplicationStatusActions } from "../../store/data-model/application-status";
 import {
     ApplicationActions,
     Application
@@ -19,12 +20,14 @@ import { LoginForm } from "../../components/social-auth/login-form";
 import "@material/react-button/dist/button.css";
 
 
+
 interface ILocalLoginPageProps extends RouteComponentProps {
     /** redux */
     auth: IUpdateAuthState;
     registerLocalLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
     listApplication: () => void
     listCompany: () => void
+    listApplicationStatus: () => void
 }
 
 class LocalLoginPage extends Component<ILocalLoginPageProps> {
@@ -37,6 +40,7 @@ class LocalLoginPage extends Component<ILocalLoginPageProps> {
         // request com & app list (dispatch)
         this.props.listApplication();
         this.props.listCompany();
+        this.props.listApplicationStatus();
     }
 
     render() {
@@ -76,6 +80,12 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
                 CompanyActions[CrudType.LIST][
                     RequestStatus.TRIGGERED
                 ].action(new Company({}))
+            ),
+        listApplicationStatus: () =>
+            dispatch(
+                ApplicationStatusActions[CrudType.LIST][
+                    RequestStatus.TRIGGERED
+                ].action(new ApplicationStatus({}))
             )
     }
 };
