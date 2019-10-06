@@ -24,7 +24,7 @@ export class ApplicationStatus extends BaseModel {
         application = "",
         // applicationstatuslink_set = [],
         applicationstatuslink_set = [],
-        date = ApplicationStatus.utcNowDateString(),
+        date = ApplicationStatus.localeNowDateString(),
         order = 0,
         ...args
     }: IApplicationStatusProps & IBaseModelProps) {
@@ -39,16 +39,19 @@ export class ApplicationStatus extends BaseModel {
     static schema(){
         return Yup.object<ApplicationStatus>().shape({
             text: Yup.string().required("Give a quick one or two words for the status").max(50, "No more than 50 characters"),
-            date: Yup.string().matches(/\d{4}-0{0,1}\d{1}-\d{2}/),
+
+            // date: Yup.string().matches(/[01]\d{1}[-/][0123]\d{1}[-/]\d{4}/), // TODO: not working, always invalid, figure out why
+            date: Yup.string().length(10), // workaround
+            
             order: Yup.number()
         });
     }
 
-    static utcNowDateString() {
+    static localeNowDateString() {
         const now = new Date();
-        const utcNow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() ));
-        const utcNowTimeString = utcNow.toISOString().split("T")[0]
-        return utcNowTimeString;
+        const localeNow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getDate() ));
+        const localeNowTimeString = localeNow.toISOString().split("T")[0]
+        return localeNowTimeString;
     }
 }
 
