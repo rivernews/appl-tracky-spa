@@ -24,6 +24,12 @@ Details about backend web (static) server, and other DevOps stuff, please refer 
 
 By Sketch.app!
 
+## System Design
+
+### Redux
+
+![Redux process](docs/img/dev-plan/redux-process.png)
+
 ## UI Mockups & Component Structure
 
 Special credit to [The React + Redux Container Pattern](https://www.thegreatcodeadventure.com/the-react-plus-redux-container-pattern/) by Sophie DeBenedetto, the react component diagrams below are inspired by this post.
