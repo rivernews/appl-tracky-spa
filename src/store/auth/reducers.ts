@@ -28,7 +28,7 @@ export const authReducer: Reducer<IUpdateAuthState> = (authStore = initialAuthSt
     const authAction = action as TAuthActions;
 
     if (authAction.type === AuthActionNames.SUCCESS_AUTH) {
-        sessionStorage.setItem('authState', JSON.stringify(authAction.payload));
+        localStorage.setItem('authState', JSON.stringify(authAction.payload));
     }
 
     return {

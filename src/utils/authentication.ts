@@ -59,8 +59,8 @@ class Authentication {
         // prefill login
         if (loginMode === RequestedLoginMode.PREFILL) {
             // restore session login data
-            const sessionAuthState = sessionStorage.getItem("authState")
-                ? JSON.parse(sessionStorage.getItem("authState") || "{}")
+            const sessionAuthState = localStorage.getItem("authState")
+                ? JSON.parse(localStorage.getItem("authState") || "{}")
                 : {};
 
             if (sessionAuthState.isLogin) {
