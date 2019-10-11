@@ -49,7 +49,7 @@ class UserAppPage extends Component<IUserAppPageProps> {
     }
 
     onCompanyClick = (uuid: string) => {
-        setTimeout(() => this.props.history.push(`/com-app/${uuid}/`), 100);
+        setTimeout(() => this.props.history.push(`/com-app/${uuid}/`), 10);
     }
 
     render() {

@@ -23,6 +23,11 @@ import { UserAppPageContainer } from "../user-app-page/user-app-page";
 import { AddComPageContainer } from "../add-com-page/add-com-page";
 import { UserComAppPageContainer } from "../user-com-app-page/user-com-app-page";
 import { UserProfilePageContainer } from "../user-profile-page/user-profile-page";
+// transition effects
+import {
+    TransitionGroup,
+    CSSTransition
+} from "react-transition-group";
 
 /** MDC React */
 import TopAppBar, { TopAppBarFixedAdjust } from "@material/react-top-app-bar";
@@ -35,8 +40,9 @@ import '@material/react-material-icon/dist/material-icon.css';
 import MaterialIcon from "@material/react-material-icon";
 
 import "@material/react-ripple/dist/ripple.css";
-
 // import {withRipple} from '@material/react-ripple';
+
+import "./page-routes.css"
 
 interface IPageRoutesProps extends RouteComponentProps {
     auth: IUpdateAuthState;
@@ -45,7 +51,7 @@ interface IPageRoutesProps extends RouteComponentProps {
 class PageRoutes extends Component<IPageRoutesProps> {
     render() {
         return (
-            <div className="PageRoutesContainer">
+            <div className={`PageRoutesContainer`}>
                 {(
                     this.props.location.pathname === "/" ||
                     this.props.location.pathname === "/local-login/"
@@ -101,36 +107,44 @@ class PageRoutes extends Component<IPageRoutesProps> {
 
                                 <LinearProgress
                                     indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
-                                    
+
                                     // mdc's progress bar bug workaround
                                     // when press back button, avoid showing dotted buffer animation
                                     buffer={1}
                                     bufferingDots={true}
                                 />
 
-                                <Switch>
-                                    <Route
-                                        path="/home/"
-                                        component={UserAppPageContainer}
-                                    />
-                                    <Route
-                                        path="/com-form/:uuid?/"
-                                        component={AddComPageContainer}
-                                    />
-                                    <Route
-                                        path="/com-app/:uuid/"
-                                        component={UserComAppPageContainer}
-                                    />
-                                    <Route
-                                        path="/com-app/"
-                                        component={UserComAppPageContainer}
-                                    />
-                                    <Route
-                                        path="/profile/"
-                                        component={UserProfilePageContainer}
-                                    />
-                                    {/** add more private page routes here */}
-                                </Switch>
+                                <TransitionGroup>
+                                    <CSSTransition
+                                        key={this.props.location.key}
+                                        classNames="page"
+                                        timeout={400}
+                                    >
+                                        <Switch location={this.props.location}>
+                                             <Route
+                                                path="/home/"
+                                                component={UserAppPageContainer}
+                                            />
+                                            <Route
+                                                path="/com-form/:uuid?/"
+                                                component={AddComPageContainer}
+                                            />
+                                            <Route
+                                                path="/com-app/:uuid/"
+                                                component={UserComAppPageContainer}
+                                            />
+                                            <Route
+                                                path="/com-app/"
+                                                component={UserComAppPageContainer}
+                                            />
+                                            <Route
+                                                path="/profile/"
+                                                component={UserProfilePageContainer}
+                                            />
+                                            {/** add more private page routes here */}
+                                        </Switch>
+                                    </CSSTransition>
+                                </TransitionGroup>
                             </TopAppBarFixedAdjust>
                         </div>
                     )}

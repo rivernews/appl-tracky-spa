@@ -82,7 +82,8 @@ class UserComAppPage extends Component<
             <div className="UserCompanyPage">
                 <Button
                     onClick={clickEvent => {
-                        this.props.history.push("/");
+                        // this.props.history.push("/");
+                        this.props.history.goBack();
                     }}
                 >
                     Back
