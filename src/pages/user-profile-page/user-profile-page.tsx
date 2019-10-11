@@ -12,6 +12,8 @@ import { UserInfo } from "../../components/user-info/user-info";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 /** Components */
+import "./user-profile-page.css"
+
 import { SocialAuthButtonContainer } from "../../components/login/social-auth-button";
 import { LocalLogoutButton } from "../../components/login/local-logout-button";
 
@@ -31,7 +33,7 @@ class UserProfilePage extends Component<IUserProfilePageProps, any> {
 
     render() {
         return (
-            <div>
+            <div className="UserProfilePage">
                 <h1>My Profile</h1>
                 <div>
                     isLocal = {JSON.stringify(this.props.auth.isLocal)}

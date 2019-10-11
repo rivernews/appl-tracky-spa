@@ -18,6 +18,8 @@ import { Address } from "../../store/data-model/address";
 import { Link } from "../../store/data-model/link";
 
 /** Components */
+import "./add-com-page.css"
+
 //mdc-react icon
 import MaterialIcon from "@material/react-material-icon";
 // mdc-react button

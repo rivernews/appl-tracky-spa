@@ -20,6 +20,8 @@ import {
 } from "../../store/data-model/application";
 
 /** Components */
+import "./user-com-app-page.css";
+
 import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
@@ -77,7 +79,7 @@ class UserComAppPage extends Component<
         }
 
         return (
-            <div className="user-com-app-page-content">
+            <div className="UserCompanyPage">
                 <Button
                     onClick={clickEvent => {
                         this.props.history.push("/");
