@@ -13,6 +13,7 @@ import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
+// font awesome
 
 
 const styles = {
@@ -46,10 +47,10 @@ class LandingPage extends Component<ILandingPageProps> {
                     onClick={this.onStaffLoginClick}
                     unelevated
                     icon={
-                        <MaterialIcon hasRipple icon="warning" />
+                        <MaterialIcon hasRipple icon="account_circle" />
                     }
                 >
-                    Staff Only
+                    Sign in
                 </Button>
 
                 <hr />

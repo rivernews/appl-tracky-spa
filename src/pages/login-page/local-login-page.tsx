@@ -35,7 +35,10 @@ class LocalLoginPage extends Component<ILocalLoginPageProps> {
     render() {
         return (
             <div className="LocalLoginPage">
-                <h1>Login Portal for Staff</h1>
+                <h1>Login Portal for local sign in</h1>
+                <div>
+                    If you just want to try it out, you can use guest account (username: guest, password: appltracky).
+                </div>
                 <LoginForm 
                     onSubmit={this.onLoginFormSubmit}
                     onCancel={this.onLoginFormCancel}

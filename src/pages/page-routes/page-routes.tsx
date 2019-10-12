@@ -87,7 +87,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                     </Link>,
 
                                     <Link to="/profile/">
-                                        {this.props.auth.avatarUrl === "" ? (
+                                        {!this.props.auth.avatarUrl ? (
                                             <MaterialIcon
                                                 hasRipple
                                                 key="itemProfile"
