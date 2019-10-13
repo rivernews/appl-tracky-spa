@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import { AuthenticationService } from "../../utils/authentication";
+
 /** Components */
 import { GoogleLogout } from "react-google-login";
 // mdc react icon
@@ -7,6 +9,7 @@ import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
+
 
 interface ISocialAuthLogoutButtonProps {
     isLocal: boolean
@@ -26,6 +29,7 @@ export class SocialAuthLogoutButton extends Component<
         return (
             <div className="UserAuthButton">
                 <GoogleLogout
+                    clientId={AuthenticationService.state.clientID}
                     render={(renderProps: any) => (
                         <Button
                             onClick={(this.props.isLocal) ? this.props.onClickWhenIsLocal : renderProps.onClick}

@@ -30,7 +30,13 @@ import {
 } from "react-transition-group";
 
 /** MDC React */
-import TopAppBar, { TopAppBarFixedAdjust } from "@material/react-top-app-bar";
+import TopAppBar, {
+    TopAppBarFixedAdjust,
+    TopAppBarIcon,
+    TopAppBarRow,
+    TopAppBarSection,
+    TopAppBarTitle,
+} from '@material/react-top-app-bar';
 import "@material/react-top-app-bar/dist/top-app-bar.css";
 
 import LinearProgress from '@material/react-linear-progress';
@@ -42,13 +48,18 @@ import MaterialIcon from "@material/react-material-icon";
 import "@material/react-ripple/dist/ripple.css";
 // import {withRipple} from '@material/react-ripple';
 
-import "./page-routes.css"
+import "./page-routes.css";
+import styles from "./page-routes.module.css";
 
 interface IPageRoutesProps extends RouteComponentProps {
     auth: IUpdateAuthState;
 }
 
 class PageRoutes extends Component<IPageRoutesProps> {
+    goHome = () => {
+        this.props.location.pathname === '/home/' ? this.props.history.replace('/home/') : this.props.history.push('/home/');
+    }
+
     render() {
         return (
             <div className={`PageRoutesContainer`}>
@@ -75,7 +86,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                             {/** protect private routes */
                                 !this.props.auth.isLogin && <Redirect to="/" />}
 
-                            <TopAppBar
+                            {/* <TopAppBar
 
                                 title="Appl Tracky"
                                 actionItems={[
@@ -102,18 +113,55 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                             )}
                                     </Link>
                                 ]}
-                            />
+                            /> */}
+                            <TopAppBar>
+                                <TopAppBarRow>
+                                    <TopAppBarSection align="start">
+                                        {/* <TopAppBarIcon>
+                                            <MaterialIcon hasRipple icon='menu' />
+                                        </TopAppBarIcon> */}
+                                        <TopAppBarTitle className={styles.topAppBarTitle} onClick={this.goHome}>Appl Tracky</TopAppBarTitle>
+                                    </TopAppBarSection>
+                                    <TopAppBarSection align='end' role='toolbar'>
+                                        <TopAppBarIcon navIcon tabIndex={0}>
+                                            <Link to="/home/">
+                                                <MaterialIcon
+                                                    hasRipple
+                                                    key="itemHome"
+                                                    icon="home"
+                                                />
+                                            </Link>
+                                        </TopAppBarIcon>
+                                        <TopAppBarIcon navIcon tabIndex={1}>
+                                            <Link to="/profile/">
+                                                {!this.props.auth.avatarUrl ? (
+                                                    <MaterialIcon
+                                                        hasRipple
+                                                        key="itemProfile"
+                                                        icon="account_circle"
+                                                    />
+                                                ) : (
+                                                        <img style={{
+                                                            "height": "100%",
+                                                            "borderRadius": "50%",
+                                                        }} src={this.props.auth.avatarUrl} />
+                                                    )}
+                                            </Link>
+                                        </TopAppBarIcon>
+                                    </TopAppBarSection>
+                                </TopAppBarRow>
+                            </TopAppBar>
 
                             <TopAppBarFixedAdjust>
 
-                                {/* <LinearProgress
+                                <LinearProgress
                                     indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
 
                                     // mdc's progress bar bug workaround
                                     // when press back button, avoid showing dotted buffer animation
                                     buffer={1}
                                     bufferingDots={true}
-                                /> */}
+                                />
 
                                 <TransitionGroup>
                                     <CSSTransition
@@ -122,7 +170,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                         timeout={400}
                                     >
                                         <Switch location={this.props.location}>
-                                             <Route
+                                            <Route
                                                 path="/home/"
                                                 component={UserAppPageContainer}
                                             />
