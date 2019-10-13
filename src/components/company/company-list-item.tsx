@@ -22,7 +22,7 @@ const CompanyListItem = (props: ICompanyListItemProps) => {
 
     return (<Card className="companyCard" onClick={onClick}>
     <CardPrimaryContent className="companyCardContent">
-        <h1>{props.company ? props.company.name : <Skeleton />}</h1>
+        <h1>{props.company ? props.company.name : <Skeleton duration={1.1} width={`50vmin`} />}</h1>
         <List nonInteractive>
             {
                 props.applications ? props.applications.map((application: Application) => (
@@ -30,7 +30,11 @@ const CompanyListItem = (props: ICompanyListItemProps) => {
                         <ListItemText primaryText={application.position_title} />
                     </ListItem>
                 )) : (
-                    <Skeleton count={2} />
+                    <div className="skeletonGroup">
+                        <div><Skeleton duration={1.1} width="40vmin" /></div>
+                        <div><Skeleton duration={1.1} width="60vmin" /></div>
+                        <div><Skeleton duration={1.1} width="50vmin" /></div>
+                    </div>
                 )
             }
         </List>

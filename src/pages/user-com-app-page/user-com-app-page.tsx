@@ -18,10 +18,9 @@ import {
     Application,
     ApplicationActions
 } from "../../store/data-model/application";
+import { ApplicationStatus } from "../../store/data-model/application-status";
 
 /** Components */
-import "./user-com-app-page.css";
-
 import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
@@ -31,6 +30,9 @@ import Button from "@material/react-button";
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
 import { ApplicationComponentController } from "../../components/application/application-component";
+import { CompanyComponent } from "../../components/company/company-component";
+
+import styles from "./user-com-app-page.module.css";
 
 interface IUserComAppPageParams {
     uuid: string;
@@ -38,48 +40,57 @@ interface IUserComAppPageParams {
 
 interface IUserComAppPageProps
     extends RouteComponentProps<IUserComAppPageParams> {
-    company: IObjectStore<Company>;
+    companyStore: IObjectStore<Company>;
+    applicationStore: IObjectStore<Application>;
+    applicationStatusStore: IObjectStore<ApplicationStatus>;
+
     createApplication: (
         applicationFormData: Application,
         callback?: Function
     ) => void;
 }
 
-interface IUserComAppPageState {
-    companyUuid: string;
-    company: Company;
-}
+// interface IUserComAppPageState {
+//     companyUuid: string;
+//     company: Company;
+// }
 
 class UserComAppPage extends Component<
-    IUserComAppPageProps,
-    IUserComAppPageState
-> {
-    readonly state: IUserComAppPageState = {
-        companyUuid: "",
-        company: new Company({})
-    };
+    IUserComAppPageProps
+    // IUserComAppPageState
+    > {
+    // readonly state: IUserComAppPageState = {
+    //     companyUuid: "",
+    //     company: new Company({})
+    // };
 
     componentDidMount() {
         let companyUuid = this.props.match.params.uuid;
         process.env.NODE_ENV === 'development' && console.log("mount, got uuid from route?", companyUuid);
-        if (
-            this.props.company.collection &&
-            companyUuid in this.props.company.collection
-        ) {
-            this.setState({
-                companyUuid,
-                company: new Company(this.props.company.collection[companyUuid])
-            });
-        }
+        // if (
+        //     this.props.company.collection &&
+        //     companyUuid in this.props.company.collection
+        // ) {
+        //     this.setState({
+        //         companyUuid,
+        //         company: new Company(this.props.company.collection[companyUuid])
+        //     });
+        // }
     }
 
     renderAll() {
-        if (!this.state.company.uuid) {
+        if (!this.props.match.params.uuid) {
             return;
         }
 
+        const company = this.props.companyStore.collection[this.props.match.params.uuid];
+        const applications = Object.values(this.props.applicationStore.collection).filter(
+            application =>
+                application.user_company === company.uuid
+        );
+
         return (
-            <div className="UserCompanyPage">
+            <div className={styles.UserCompanyPage}>
                 <Button
                     onClick={clickEvent => {
                         // this.props.history.push("/");
@@ -88,39 +99,68 @@ class UserComAppPage extends Component<
                 >
                     Back
                 </Button>
-                <h1>{this.state.company.name}</h1>
-                
-                {/* application form controller - always create form */}
-                <ApplicationComponentController 
-                    company={this.state.company}
-                    isOnlyForm
+
+                <CompanyComponent
+                    company={company}
+                    onDeleteIconClicked={() => { }}
+                    onEditIconClicked={() => {
+                        this.props.history.push(`/com-form/${company.uuid}/`);
+                    }}
                 />
 
-                <br />
+                <h2>Your Applications</h2>
+                {/* add application button - application form controller - always create form */}
+                <div>
+                    <ApplicationComponentController
+                        company={company}
+                        isOnlyForm
+                    />
+                </div>
 
                 {/* application list */}
-                {this.state.company.uuid && (
+                {/* {company.uuid && (
                     <CompanyApplicationComponentContainer
-                        company={this.state.company}
+                        company={company}
                         isShowApplicationStatuses
                     />
-                )}
+                )} */}
+                {applications.map(application => {
+                    const applicationStatusList = Object.values(
+                        this.props.applicationStatusStore
+                            .collection
+                    ).filter(
+                        applicationStatus =>
+                            applicationStatus.application ===
+                            application.uuid
+                    );
+                    return (
+                        <ApplicationComponentController
+                            key={application.uuid}
+                            application={application}
+                            company={company}
+                            applicationStatusList={applicationStatusList}
+                            isShowApplicationStatuses
+                        />
+                    )
+                })}
+
             </div>
         );
     }
 
+    // handle invalid company uuid given in url
     render() {
         return (
-            <div className="UserComAppPage">
-                {this.state.companyUuid &&
-                this.props.company.collection &&
-                this.state.companyUuid in this.props.company.collection ? (
-                    this.renderAll()
-                ) : this.state.companyUuid ? (
-                    <h1>No company found. Uuid={this.state.companyUuid}</h1>
-                ) : (
-                    <h1>Company uuid not specified</h1>
-                )}
+            <div className="UserComAppPageContainer">
+                {this.props.match.params.uuid &&
+                    this.props.companyStore.collection &&
+                    this.props.match.params.uuid in this.props.companyStore.collection ? (
+                        this.renderAll()
+                    ) : this.props.match.params.uuid ? (
+                        <h1>No company found. Uuid={this.props.match.params.uuid}</h1>
+                    ) : (
+                            <h1>Company uuid not specified</h1>
+                        )}
             </div>
         );
     }
@@ -129,7 +169,9 @@ class UserComAppPage extends Component<
 const mapStateToProps = (store: IRootState) => {
     return {
         // prop: store.prop
-        company: store.company,
+        companyStore: store.company,
+        applicationStore: store.application,
+        applicationStatusStore: store.applicationStatus
     };
 };
 

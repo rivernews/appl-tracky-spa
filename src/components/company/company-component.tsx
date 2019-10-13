@@ -10,6 +10,8 @@ import MaterialIcon from "@material/react-material-icon";
 import '@material/react-icon-button/dist/icon-button.css';
 import IconButton from '@material/react-icon-button';
 
+import styles from './company-component.module.css';
+
 interface ICompanyComponentProps {
     company: Company;
     onDeleteIconClicked?: (event: any) => void
@@ -21,25 +23,29 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
         const company = this.props.company;
         return (
             <div className="CompanyComponent">
-                <p>
-                    <Link to={`/com-app/${company.uuid}/`}>
-                        {company.name}
-                    </Link>
+                <div className={styles.companyTitleContainer}>
+                    <h1>{company.name}</h1>
+                    <IconButton isLink target="_blank" href={company.home_page.url && company.home_page.url.includes('//') ? company.home_page.url : `//${company.home_page.url}`}>
+                        <MaterialIcon hasRipple icon="launch" />
+                    </IconButton>
+
+                    {/* company actions */}
                     <IconButton onClick={this.props.onEditIconClicked}>
                         <MaterialIcon hasRipple icon="edit" />
                     </IconButton>
                     <IconButton onClick={this.props.onDeleteIconClicked}>
                         <MaterialIcon hasRipple icon="delete" />
                     </IconButton>
+                </div>
+                <div className={styles.companyTitleCaption}>{company.hq_location.place_name || ""}{company.hq_location.full_address}</div>
 
-                    <br />
-
+                {/* <p>
                     {(company.hq_location.full_address) && <span>
                         <strong>{company.hq_location.place_name || "Location"}:</strong> {company.hq_location.full_address}
                     </span>}
 
                     <br />
-                    
+
                     {(company.home_page.url) && <span>
                         <strong>Company Website: </strong>
                         {(company.home_page.url) && <a target="_blank" href={
@@ -50,9 +56,9 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                             {company.home_page.text || "Link"}
                         </a>}
                     </span>}
-                    
+
                     <br />
-                </p>
+                </p> */}
             </div>
         );
     }

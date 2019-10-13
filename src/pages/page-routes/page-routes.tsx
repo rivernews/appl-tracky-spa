@@ -71,7 +71,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                 ) ? (
                         <div className="PublicRoutesContainer">
                             {/** direct user to home pagae (internal) if logged in */
-                                this.props.auth.isLogin && <Redirect to="/home/" />}
+                            this.props.auth.isLogin && <Redirect to="/home/" />}
                             <Switch>
                                 <Route path="/" exact component={LandingPageContainer} />
                                 <Route path="/local-login/" exact component={LocalLoginPageContainer} />
@@ -86,34 +86,6 @@ class PageRoutes extends Component<IPageRoutesProps> {
                             {/** protect private routes */
                                 !this.props.auth.isLogin && <Redirect to="/" />}
 
-                            {/* <TopAppBar
-
-                                title="Appl Tracky"
-                                actionItems={[
-                                    <Link to="/home/">
-                                        <MaterialIcon
-                                            hasRipple
-                                            key="itemHome"
-                                            icon="home"
-                                        />
-                                    </Link>,
-
-                                    <Link to="/profile/">
-                                        {!this.props.auth.avatarUrl ? (
-                                            <MaterialIcon
-                                                hasRipple
-                                                key="itemProfile"
-                                                icon="account_circle"
-                                            />
-                                        ) : (
-                                                <img style={{
-                                                    "height": "100%",
-                                                    "borderRadius": "50%",
-                                                }} src={this.props.auth.avatarUrl} />
-                                            )}
-                                    </Link>
-                                ]}
-                            /> */}
                             <TopAppBar>
                                 <TopAppBarRow>
                                     <TopAppBarSection align="start">

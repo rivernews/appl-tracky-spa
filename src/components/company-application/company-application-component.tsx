@@ -46,13 +46,13 @@ class CompanyApplicationComponent extends Component<
     render() {
         return (
             <div className="CompanyApplicationContainer">
-                <CompanyComponent
+                {/* <CompanyComponent
                     company={this.props.company}
                     onDeleteIconClicked={this.onDeleteClick}
                     onEditIconClicked={() => {
                         this.props.history.push(`/com-form/${this.props.company.uuid}/`);
                     }}
-                />
+                /> */}
                 {Object.values(this.props.applicationStore.collection)
                     .filter(
                         application =>

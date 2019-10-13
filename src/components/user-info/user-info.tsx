@@ -18,9 +18,6 @@ export class UserInfo extends Component<UserInfoProps, any> {
                         "undefine"}
                 </div>
                 <div>User Name: {this.props.auth.userName || "(empty)"}</div>
-                <div>
-                    Token (for API): {this.props.auth.apiToken || "(empty)"}
-                </div>
             </div>
         );
     }

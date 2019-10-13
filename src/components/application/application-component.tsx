@@ -26,10 +26,14 @@ import Button from "@material/react-button";
 import IconButton from "@material/react-icon-button";
 import { ApplicationStatusComponentContainer } from "../application-status/application-status-component";
 import { ApplicationFormComponentContainer } from "./application-form-component";
+import Card, { CardPrimaryContent } from "@material/react-card";
+import List, { ListItem, ListItemText } from "@material/react-list";
 /** CKeditor */
 import CKEditor from '@ckeditor/ckeditor5-react';
 import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
 // import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+
+import styles from './application-component.module.css';
 
 /** Types */
 interface IApplicationComponentProps {
@@ -58,7 +62,7 @@ interface IApplicationComponentState {
 export class ApplicationComponent extends Component<
     IApplicationComponentProps,
     IApplicationComponentState
-> {
+    > {
     state = {
         isFormOpened: false
     };
@@ -69,11 +73,11 @@ export class ApplicationComponent extends Component<
                 {this.state.isFormOpened || this.props.isOnlyForm
                     ? this.renderApplicationFormController()
                     : this.props.application &&
-                      Array.isArray(this.props.applicationStatusList) &&
-                      this.renderApplicationDisplay(
-                          this.props.application,
-                          this.props.applicationStatusList
-                      )}
+                    Array.isArray(this.props.applicationStatusList) &&
+                    this.renderApplicationDisplay(
+                        this.props.application,
+                        this.props.applicationStatusList
+                    )}
             </div>
         );
     }
@@ -95,22 +99,22 @@ export class ApplicationComponent extends Component<
                             Add Application
                         </Button>
                     ) : (
-                        <ApplicationFormComponentContainer
-                            onCancel={event => {
-                                process.env.NODE_ENV === 'development' && console.log("onCancel clicked");
-                                this.setState({
-                                    isFormOpened: false
-                                });
-                            }}
-                            onSubmitSuccess={() =>
-                                this.setState({
-                                    isFormOpened: false
-                                })
-                            }
-                            company={this.props.company}
-                            application={this.props.application}
-                        />
-                    )}
+                            <ApplicationFormComponentContainer
+                                onCancel={event => {
+                                    process.env.NODE_ENV === 'development' && console.log("onCancel clicked");
+                                    this.setState({
+                                        isFormOpened: false
+                                    });
+                                }}
+                                onSubmitSuccess={() =>
+                                    this.setState({
+                                        isFormOpened: false
+                                    })
+                                }
+                                company={this.props.company}
+                                application={this.props.application}
+                            />
+                        )}
                 </div>
             )
         );
@@ -122,98 +126,82 @@ export class ApplicationComponent extends Component<
     ) => {
         return (
             <div className="application-component-display">
-                {/* application display view */}
-                <h3>Application</h3>
-                <p>
-                    <span>
-                        <strong>Position:</strong> {application.position_title}
-                    </span>
+                <div className={styles.applicationCard}>
+                    <div className={styles.applicationCardContent}>
+                        {/* application display view */}
+                        <h3>{application.position_title}
+                            <IconButton isLink target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
+                                application.job_description_page.url :
+                                `//${application.job_description_page.url}`}
+                            >
+                                <MaterialIcon hasRipple icon="launch" />
+                            </IconButton>
+                            <IconButton isLink target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
+                                application.job_source.url :
+                                `//${application.job_source.url}`}
+                            >
+                                <MaterialIcon hasRipple icon="language" />
+                            </IconButton>
 
-                    <IconButton
-                        onClick={() => {
-                            this.setState({
-                                isFormOpened: true // open form and close display
-                            });
-                        }}
-                    >
-                        <MaterialIcon hasRipple icon="edit" />
-                    </IconButton>
-                    <IconButton
-                        onClick={() =>
-                            this.props.deleteApplication(application)
-                        }
-                    >
-                        <MaterialIcon hasRipple icon="delete" />
-                    </IconButton>
-                    <br />
-                    <span>Application UUID: {application.uuid}</span>
-                    <br />
-                    {application.job_description_page.url && (
-                        <span>
-                            <strong>JD Page: </strong>
-                            <a
-                                target="_blank"
-                                href={
-                                    application.job_description_page.url && application.job_description_page.url.includes("//") ?
-                                    application.job_description_page.url :
-                                    `//${application.job_description_page.url}`
+                            {/* application actions */}
+                            <IconButton
+                                onClick={() => {
+                                    this.setState({
+                                        isFormOpened: true // open form and close display
+                                    });
+                                }}
+                            >
+                                <MaterialIcon hasRipple icon="edit" />
+                            </IconButton>
+                            <IconButton
+                                onClick={() =>
+                                    this.props.deleteApplication(application)
                                 }
                             >
-                                {application.job_description_page.text || "Link"}
-                            </a>
-                        </span> 
-                    )}
+                                <MaterialIcon hasRipple icon="delete" />
+                            </IconButton>
+                        </h3>
 
-                    <br />
-                    {application.job_source.url && (
-                        <span>
-                            <strong>Job Source: </strong>
-                            <a target="_blank" href={
-                                (application.job_source.url && application.job_source.url.includes("//")) ?
-                                application.job_source.url :
-                                `//${application.job_source.url}`
-                            }>
-                                {application.job_source.text || "Link"}
-                            </a>
-                        </span>
-                    )}
-                </p>
+                        <div className="applicationNotesRichText">
+                            {application.notes ? (
+                                <CKEditor
+                                    editor={BalloonEditor}
+                                    disabled={true}
+                                    data={application.notes}
+                                />
 
-                <div>
-                    <div><strong>Notes</strong></div>
-                    {application.notes ? (
-                        <CKEditor 
-                            editor={BalloonEditor}
-                            disabled={true}
-                            data={application.notes}
-                        />
-                        
-                    ) : (
-                        <p>
-                            No notes yet.
-                        </p>
-                    )}
+                            ) : (
+                                    <p>
+                                        No notes yet.
+                            </p>
+                                )}
+                        </div>
+
+                        {/* application statuses list */}
+                        <div className="statusContainer">
+                            <div><strong>Status</strong></div>
+                            {this.props.isShowApplicationStatuses &&
+                                applicationStatusList.map(status => {
+                                    return (
+                                        <ApplicationStatusComponentContainer
+                                            key={status.uuid}
+                                            applicationStatus={status}
+                                            application={application}
+                                        />
+                                    );
+                                })}
+
+                            {/* application status form controller */}
+                            {this.props.isShowApplicationStatuses && (
+                                <ApplicationStatusComponentContainer
+                                    application={application}
+                                    isOnlyForm
+                                />
+                            )}
+                        </div>
+                    </div>
                 </div>
 
-                {/* application statuses list */}
-                {this.props.isShowApplicationStatuses &&
-                    applicationStatusList.map(status => {
-                        return (
-                            <ApplicationStatusComponentContainer
-                                key={status.uuid}
-                                applicationStatus={status}
-                                application={application}
-                            />
-                        );
-                    })}
-
-                {/* application status form controller */}
-                {this.props.isShowApplicationStatuses && (
-                    <ApplicationStatusComponentContainer
-                        application={application}
-                        isOnlyForm
-                    />
-                )}
             </div>
         );
     };

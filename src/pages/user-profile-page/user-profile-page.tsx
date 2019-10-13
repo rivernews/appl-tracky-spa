@@ -34,7 +34,7 @@ class UserProfilePage extends Component<IUserProfilePageProps, any> {
     render() {
         return (
             <div className="UserProfilePage">
-                <h1>My Profile</h1>
+                <h1>{this.props.auth.userName}'s profile</h1>
                 <div>
                     isLocal = {JSON.stringify(this.props.auth.isLocal)}
                 </div>
