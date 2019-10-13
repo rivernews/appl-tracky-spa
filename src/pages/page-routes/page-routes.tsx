@@ -76,6 +76,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                 !this.props.auth.isLogin && <Redirect to="/" />}
 
                             <TopAppBar
+
                                 title="Appl Tracky"
                                 actionItems={[
                                     <Link to="/home/">
@@ -105,14 +106,14 @@ class PageRoutes extends Component<IPageRoutesProps> {
 
                             <TopAppBarFixedAdjust>
 
-                                <LinearProgress
+                                {/* <LinearProgress
                                     indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
 
                                     // mdc's progress bar bug workaround
                                     // when press back button, avoid showing dotted buffer animation
                                     buffer={1}
                                     bufferingDots={true}
-                                />
+                                /> */}
 
                                 <TransitionGroup>
                                     <CSSTransition

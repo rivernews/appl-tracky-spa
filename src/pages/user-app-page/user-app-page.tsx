@@ -37,6 +37,8 @@ import '@material/react-card/dist/card.css';
 
 // objects
 import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
+import { CompanyListItem } from "../../components/company/company-list-item";
+import { RequestStatus } from "../../utils/rest-api";
 
 interface IUserAppPageProps extends RouteComponentProps {
     company: IObjectStore<Company>
@@ -64,25 +66,21 @@ class UserAppPage extends Component<IUserAppPageProps> {
                 />
                 <br></br>
                 {
-                    (this.props.company.collection !== {}) && Object.values(this.props.company.collection).map((company) => {
+                    // (this.props.company.collection !== {}) 
+                    this.props.company.requestStatus !== RequestStatus.REQUESTING ? Object.values(this.props.company.collection).map((company) => {
                         return (
-                            <Card key={company.uuid} className="companyCard" onClick={() => this.onCompanyClick(company.uuid)}>
-                                <CardPrimaryContent className="companyCardContent">
-                                    <h1>{company.name}</h1>
-                                    <List nonInteractive>
-                                        {/*  <CompanyApplicationComponentContainer key={company.uuid} company={company} /> */}
-                                        {
-                                            Object.values(this.props.application.collection).filter(application => application.user_company === company.uuid).map((application: Application) => (
-                                                <ListItem key={application.uuid}>
-                                                    <ListItemText primaryText={application.position_title} />
-                                                </ListItem>
-                                            ))
-                                        }
-                                    </List>
-                                </CardPrimaryContent>
-                            </Card>
+                            <CompanyListItem
+                                key={company.uuid}
+                                company={company}
+                                applications={
+                                    Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid)
+                                }
+                                onClick={this.onCompanyClick}
+                            />
                         )
-                    })
+                    }) : Array.from(Array(5)).map((_, index) => (
+                        <CompanyListItem key={index} />
+                    ))
                 }
             </div>
         )
