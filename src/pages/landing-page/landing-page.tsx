@@ -13,17 +13,31 @@ import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
-// font awesome
 
+import {
+    Body1,
+    Body2,
+    // Button,
+    Caption,
+    Headline1,
+    Headline2,
+    Headline3,
+    Headline4,
+    Headline5,
+    Headline6,
+    Overline,
+    Subtitle1,
+    Subtitle2,
+} from '@material/react-typography';
+import '@material/react-typography/dist/typography.css';
 
-const styles = {
-    backgroundColor: "purple",
-    color: "white"
-};
+import styles from './landing-page.module.css';
+
 
 interface ILandingPageProps extends RouteComponentProps {
     auth: IUpdateAuthState;
 }
+
 
 class LandingPage extends Component<ILandingPageProps> {
     formFactoryProps: any;
@@ -38,33 +52,51 @@ class LandingPage extends Component<ILandingPageProps> {
 
     render() {
         return (
-            <div className="LandingPage" style={styles}>
-                <h1>Appl Tracky</h1>
+            <div className={styles.LandingPage} >
+                <div className={styles.primaryPageContent}>
+                    <div className={styles.headlineContent}>
+                        <Headline1 className={styles.headlineText}>Appl Tracky</Headline1>
+                        <Body1 className={styles.headlineSubText}>Got crazy using speadsheet to keep track of your application progress? Try out Appl Tracky to ease your workflow!</Body1>
+                        <Body1>
+                            Whether it is application for job, school program, scholarship or whatever process that lets you wait from a couple weeks to months, Appl Tracky has you covered. Keep track of every steps in the process, insert links, put down notes to get you more organized and prepared!
+                        </Body1>
+                    </div>
 
-                <SocialAuthButtonContainer />
+                    <div className={styles.loginActionsContainer}>
+                        <Headline4>Social media login / sign up</Headline4>
+                        <SocialAuthButtonContainer />
+                        <Body1>
+                            Just want to try things out and don't want to sign up yet? No problem, here's a guest account you can use - username: guest, password: appltracky
+                        </Body1>
+                        <Button
+                            onClick={this.onStaffLoginClick}
+                            unelevated
+                            icon={
+                                <MaterialIcon hasRipple icon="account_circle" />
+                            }
+                        >
+                            Sign in
+                    </Button>
+                    </div>
 
-                <Button
-                    onClick={this.onStaffLoginClick}
-                    unelevated
-                    icon={
-                        <MaterialIcon hasRipple icon="account_circle" />
-                    }
-                >
-                    Sign in
+                    <div className={styles.divider} />
+
+                    <div className={styles.sideNoteContent}>
+                        <Subtitle1>
+                            Take a look at the React code, that fuels and powers all the goodies!
+                        </Subtitle1>
+                        <Button
+                            href="https://github.com/rivernews/appl-tracky-spa"
+                            target="_blank"
+                            unelevated
+                            icon={
+                                <MaterialIcon hasRipple icon="code" />
+                            }
+                        >
+                            Github Repository
                 </Button>
-
-                <hr />
-                
-                <Button
-                    href="https://github.com/rivernews/appl-tracky-spa"
-                    target="_blank"
-                    unelevated
-                    icon={
-                        <MaterialIcon hasRipple icon="code" />
-                    }
-                >
-                    Github Repository
-                </Button>
+                    </div>
+                </div>
             </div>
         );
     }
