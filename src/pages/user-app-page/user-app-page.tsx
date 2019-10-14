@@ -97,12 +97,12 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
         return (
             <div className="UserAppPage">
                 <div className={styles.userAppPageHeader}>
-                    <h1>Companies You Apply</h1>
+                    <h1>Organizations You Apply</h1>
                     <Button
                         onClick={() => { this.props.history.push("/com-form/") }}
                         unelevated
                         icon={<MaterialIcon hasRipple icon="add" />}
-                        children="Add Company"
+                        children="Add Organization"
                     />
                     <TextField
                         className={styles.searchField}

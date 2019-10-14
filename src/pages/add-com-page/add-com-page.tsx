@@ -51,7 +51,7 @@ class AddComPage extends Component<IAddComPageProps> {
         );
         return (
             <div className="AddComPage">
-                <h1>{!company ? "Add a Company" : `Update Company`}</h1>
+                <h1>{!company ? "Add an Organization" : `Update Organization`}</h1>
                 <CompanyFormComponentContainer
                     company={company}
                     onSubmitSuccess={() => {
