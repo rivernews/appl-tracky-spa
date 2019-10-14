@@ -100,7 +100,7 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
         return (
             <div className="UserAppPage">
                 <div className={styles.userAppPageHeader}>
-                    <h1>Organizations You Apply</h1>
+                    <h1>Organizations You're Applying</h1>
                     <Button
                         onClick={() => { this.props.history.push("/com-form/") }}
                         unelevated
