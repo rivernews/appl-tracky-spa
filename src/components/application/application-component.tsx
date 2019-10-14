@@ -39,6 +39,8 @@ import styles from './application-component.module.css';
 interface IApplicationComponentProps {
     application?: Application;
 
+    disableApplicationActionButtons?: boolean
+
     /** application form */
     company?: Company;
 
@@ -130,25 +132,26 @@ export class ApplicationComponent extends Component<
                     <div className={styles.applicationCardContent}>
                         {/* application display view */}
                         <h3>{application.position_title}
-                            <IconButton 
-                            disabled={application.job_description_page.url == "#"} 
-                            isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
-                                application.job_description_page.url :
-                                `//${application.job_description_page.url}`}
+                            <IconButton
+                                disabled={application.job_description_page.url == "#"}
+                                isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
+                                    application.job_description_page.url :
+                                    `//${application.job_description_page.url}`}
                             >
                                 <MaterialIcon hasRipple icon="launch" />
                             </IconButton>
-                            <IconButton 
-                                disabled={application.job_source.url == "#"} 
+                            <IconButton
+                                disabled={application.job_source.url == "#"}
                                 isLink={application.job_source.url != "#"} target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
-                                application.job_source.url :
-                                `//${application.job_source.url}`}
+                                    application.job_source.url :
+                                    `//${application.job_source.url}`}
                             >
                                 <MaterialIcon hasRipple icon="language" />
                             </IconButton>
 
                             {/* application actions */}
                             <IconButton
+                                disabled={this.props.disableApplicationActionButtons}
                                 onClick={() => {
                                     this.setState({
                                         isFormOpened: true // open form and close display
@@ -158,6 +161,7 @@ export class ApplicationComponent extends Component<
                                 <MaterialIcon hasRipple icon="edit" />
                             </IconButton>
                             <IconButton
+                                disabled={this.props.disableApplicationActionButtons}
                                 onClick={() =>
                                     this.props.deleteApplication(application)
                                 }
@@ -212,7 +216,6 @@ export class ApplicationComponent extends Component<
 }
 
 const mapStateToProps = (store: IRootState) => ({
-
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {

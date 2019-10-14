@@ -25,7 +25,7 @@ interface ILocalLoginPageProps extends RouteComponentProps {
 
 class LocalLoginPage extends Component<ILocalLoginPageProps> {
     onLoginFormCancel = () => {
-        this.props.history.push("/");
+        this.props.history.goBack();
     }
 
     onLoginFormSubmit = (values: FormikValues) => {

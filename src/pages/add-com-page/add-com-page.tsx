@@ -56,13 +56,19 @@ class AddComPage extends Component<IAddComPageProps> {
                     company={company}
                     onSubmitSuccess={() => {
                         process.env.NODE_ENV === 'development' && console.log("com form page: onSubmitSuccess");
+                        
                         if (this.props.company.lastChangedObjectID) {
                             let newCompany = this.props.company.collection[
                                 this.props.company.lastChangedObjectID
                             ];
                             process.env.NODE_ENV === 'development' && console.log("new company:", newCompany);
-                            this.props.history.push(
-                                `/com-app/${newCompany.uuid}/`
+
+                            company ? (
+                                // case: update company, let user be able to go back to update form
+                                this.props.history.push(`/com-app/${newCompany.uuid}/`)
+                            ) : (
+                                // case: create company, don't let user go back to form. If attempt to update company, user should click on edit; if attempt to create another company, should go to /home/ to do so
+                                this.props.history.replace(`/com-app/${newCompany.uuid}/`)
                             );
                         } else {
                             console.error("store has no lastChangedObjectID");

@@ -16,13 +16,13 @@ interface ICompanyComponentProps {
     company: Company;
     onDeleteIconClicked?: (event: any) => void
     onEditIconClicked?: (event: any) => void
+    actionButtonsDisabled?: boolean
 }
 
 export class CompanyComponent extends Component<ICompanyComponentProps> {
     render() {
         const company = this.props.company;
-        // alert(`com url = ${company.home_page.url}`);
-        console.log(`\n\n\n\n\n${company.home_page.url}, bool? ${company.home_page.url === "#"}`);
+
         return (
             <div className="CompanyComponent">
                 <div className={styles.companyTitleContainer}>
@@ -36,10 +36,10 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                     </IconButton>
 
                     {/* company actions */}
-                    <IconButton onClick={this.props.onEditIconClicked}>
+                    <IconButton disabled={this.props.actionButtonsDisabled} onClick={this.props.onEditIconClicked}>
                         <MaterialIcon hasRipple icon="edit" />
                     </IconButton>
-                    <IconButton onClick={this.props.onDeleteIconClicked}>
+                    <IconButton disabled={this.props.actionButtonsDisabled} onClick={this.props.onDeleteIconClicked}>
                         <MaterialIcon hasRipple icon="delete" />
                     </IconButton>
                 </div>

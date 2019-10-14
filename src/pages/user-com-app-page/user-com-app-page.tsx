@@ -21,7 +21,7 @@ import {
 import { ApplicationStatus } from "../../store/data-model/application-status";
 
 /** Components */
-import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
+// import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
 // mdc react button
@@ -109,6 +109,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
                     company={company}
                     onDeleteIconClicked={this.onCompanyDelete}
                     onEditIconClicked={this.onCompanyEdit}
+                    actionButtonsDisabled={this.props.companyStore.requestStatus === RequestStatus.REQUESTING}
                 />
 
                 <h2>Your Applications</h2>
@@ -143,6 +144,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
                             company={company}
                             applicationStatusList={applicationStatusList}
                             isShowApplicationStatuses
+                            disableApplicationActionButtons={this.props.applicationStore.requestStatus === RequestStatus.REQUESTING}
                         />
                     )
                 })}

@@ -23,7 +23,7 @@ import "@material/react-text-field/dist/text-field.css";
 import TextField, { Input } from "@material/react-text-field";
 
 // objects
-import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
+// import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 import { CompanyListItem } from "../../components/company/company-list-item";
 import { RequestStatus } from "../../utils/rest-api";
 
