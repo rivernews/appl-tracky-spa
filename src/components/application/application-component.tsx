@@ -130,13 +130,17 @@ export class ApplicationComponent extends Component<
                     <div className={styles.applicationCardContent}>
                         {/* application display view */}
                         <h3>{application.position_title}
-                            <IconButton isLink target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
+                            <IconButton 
+                            disabled={application.job_description_page.url == "#"} 
+                            isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
                                 application.job_description_page.url :
                                 `//${application.job_description_page.url}`}
                             >
                                 <MaterialIcon hasRipple icon="launch" />
                             </IconButton>
-                            <IconButton isLink target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
+                            <IconButton 
+                                disabled={application.job_source.url == "#"} 
+                                isLink={application.job_source.url != "#"} target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
                                 application.job_source.url :
                                 `//${application.job_source.url}`}
                             >

@@ -21,11 +21,17 @@ interface ICompanyComponentProps {
 export class CompanyComponent extends Component<ICompanyComponentProps> {
     render() {
         const company = this.props.company;
+        // alert(`com url = ${company.home_page.url}`);
+        console.log(`\n\n\n\n\n${company.home_page.url}, bool? ${company.home_page.url === "#"}`);
         return (
             <div className="CompanyComponent">
                 <div className={styles.companyTitleContainer}>
                     <h1>{company.name}</h1>
-                    <IconButton isLink target="_blank" href={company.home_page.url && company.home_page.url.includes('//') ? company.home_page.url : `//${company.home_page.url}`}>
+                    <IconButton
+                        disabled={company.home_page.url == "#"}
+                        isLink={company.home_page.url != "#"} // isLink=true will make `disabled` useless, a bug
+                        target="_blank" 
+                        href={company.home_page.url && company.home_page.url.includes('//') ? company.home_page.url : `//${company.home_page.url}`}>
                         <MaterialIcon hasRipple icon="launch" />
                     </IconButton>
 

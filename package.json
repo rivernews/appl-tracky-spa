@@ -11,7 +11,7 @@
     "@fortawesome/react-fontawesome": "^0.1.6",
     "@material/react-button": "^0.10.0",
     "@material/react-card": "^0.15.0",
-    "@material/react-icon-button": "^0.11.0",
+    "@material/react-icon-button": "^0.15.0",
     "@material/react-linear-progress": "^0.15.0",
     "@material/react-list": "^0.15.0",
     "@material/react-material-icon": "^0.10.0",
