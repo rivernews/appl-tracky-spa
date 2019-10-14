@@ -1,0 +1,14 @@
+.userAppPageHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.searchField {
+    margin-top: 3vmin;
+    width: 70vmin;
+}
+
+.userAppPageContent {
+
+}

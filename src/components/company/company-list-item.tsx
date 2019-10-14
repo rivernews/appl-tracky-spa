@@ -6,7 +6,10 @@ import { Application } from "../../store/data-model/application";
 
 /** Components */
 import Card, { CardPrimaryContent } from "@material/react-card";
+import '@material/react-card/dist/card.css';
 import List, { ListItem, ListItemText } from "@material/react-list";
+import '@material/react-list/dist/list.css';
+
 import Skeleton from 'react-loading-skeleton';
 
 interface ICompanyListItemProps {

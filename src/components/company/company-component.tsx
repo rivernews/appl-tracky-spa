@@ -44,27 +44,6 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                     </IconButton>
                 </div>
                 <div className={styles.companyTitleCaption}>{company.hq_location.place_name || ""}{company.hq_location.full_address}</div>
-
-                {/* <p>
-                    {(company.hq_location.full_address) && <span>
-                        <strong>{company.hq_location.place_name || "Location"}:</strong> {company.hq_location.full_address}
-                    </span>}
-
-                    <br />
-
-                    {(company.home_page.url) && <span>
-                        <strong>Company Website: </strong>
-                        {(company.home_page.url) && <a target="_blank" href={
-                            (company.home_page.url && company.home_page.url.includes("//")) ?
-                                company.home_page.url :
-                                `//${company.home_page.url}`
-                        }>
-                            {company.home_page.text || "Link"}
-                        </a>}
-                    </span>}
-
-                    <br />
-                </p> */}
             </div>
         );
     }

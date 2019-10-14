@@ -44,7 +44,7 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
         this.formFieldPropsList = [
             new FormInputFieldMeta({
                 fieldName: "name",
-                label: "Company Name*"
+                label: "Organization Name*"
             }),
 
             new FormAddressFieldMeta({
@@ -54,7 +54,7 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
 
             new FormLinkFieldMeta({
                 fieldName: "home_page",
-                label: "Company Website"
+                label: "Organization Website"
             }),
         ];
 

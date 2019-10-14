@@ -12,7 +12,7 @@ import {
     IObjectStore,
     IObjectAction
 } from "../../store/rest-api-redux-factory";
-import { Company } from "../../store/data-model/company";
+import { Company, CompanyActions } from "../../store/data-model/company";
 import { Link } from "../../store/data-model/link";
 import {
     Application,
@@ -48,34 +48,39 @@ interface IUserComAppPageProps
         applicationFormData: Application,
         callback?: Function
     ) => void;
+
+    deleteCompany: (companyToDelete: Company, callback?: Function) => void;
+    updateCompany: (companyToUpdate: Company, callback?: Function) => void;
 }
 
-// interface IUserComAppPageState {
-//     companyUuid: string;
-//     company: Company;
-// }
 
-class UserComAppPage extends Component<
-    IUserComAppPageProps
-    // IUserComAppPageState
-    > {
-    // readonly state: IUserComAppPageState = {
-    //     companyUuid: "",
-    //     company: new Company({})
-    // };
-
+class UserComAppPage extends Component<IUserComAppPageProps> {
     componentDidMount() {
         let companyUuid = this.props.match.params.uuid;
         process.env.NODE_ENV === 'development' && console.log("mount, got uuid from route?", companyUuid);
-        // if (
-        //     this.props.company.collection &&
-        //     companyUuid in this.props.company.collection
-        // ) {
-        //     this.setState({
-        //         companyUuid,
-        //         company: new Company(this.props.company.collection[companyUuid])
-        //     });
-        // }
+    }
+
+    goBackToCompanyListPage = () => {
+        this.props.history.replace('/home/');
+    }
+
+    onCompanyDelete = () => {
+        if (this.props.match.params.uuid) {
+            const company = this.props.companyStore.collection[this.props.match.params.uuid];
+            this.props.deleteCompany(company, this.goBackToCompanyListPage);
+            return;
+        }
+
+        console.error("Attempted to delete but company obj has no uuid");
+    }
+
+    onCompanyEdit = () => {
+        if (this.props.match.params.uuid) {
+            const company = this.props.companyStore.collection[this.props.match.params.uuid];
+            this.props.history.push(`/com-form/${company.uuid}/`);
+        }
+        
+        console.error("Attempted to edit but no company uuid provided");
     }
 
     renderAll() {
@@ -102,10 +107,8 @@ class UserComAppPage extends Component<
 
                 <CompanyComponent
                     company={company}
-                    onDeleteIconClicked={() => { }}
-                    onEditIconClicked={() => {
-                        this.props.history.push(`/com-form/${company.uuid}/`);
-                    }}
+                    onDeleteIconClicked={this.onCompanyDelete}
+                    onEditIconClicked={this.onCompanyEdit}
                 />
 
                 <h2>Your Applications</h2>
@@ -186,6 +189,21 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
                 ApplicationActions[CrudType.CREATE][
                     RequestStatus.TRIGGERED
                 ].action(applicationFormData, callback)
+            )
+        ,
+        deleteCompany: (companyToDelete: Company, callback?: Function) =>
+            dispatch(
+                CompanyActions[CrudType.DELETE][RequestStatus.TRIGGERED].action(
+                    companyToDelete,
+                    callback
+                )
+            ),
+        updateCompany: (companyToUpdate: Company, callback?: Function) =>
+            dispatch(
+                CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
+                    companyToUpdate,
+                    callback
+                )
             )
     };
 };
