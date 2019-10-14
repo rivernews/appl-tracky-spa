@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
+import { Utilities } from "../../utils/utilities";
+
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
@@ -55,14 +57,15 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
     }
 
     searchFieldTextIsEmpty = () => {
-        return this.state.searchText.trim() === '';
+        return Utilities.normalizeText(this.state.searchText) === '';
     }
 
     filterCompanyByName = (name: string) => {
+        const filteringName = Utilities.normalizeText(name);
         const allCompanies = Object.values(this.props.company.collection);
 
         this.setState({
-            filteredCompanyList: allCompanies.filter((company: Company) => company.name.toLowerCase().includes(name)),
+            filteredCompanyList: allCompanies.filter((company: Company) => Utilities.normalizeText(company.name).includes(filteringName)),
 
             // always switch on filering mode when filtering is triggered
             isFiltering: true
