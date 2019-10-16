@@ -32,6 +32,7 @@ export class FormInputField extends Component<IFormInputFieldProps> {
                             <Input
                                 type={this.props.type || InputFieldType.TEXT}
                                 inputType="input"
+                                autoFocus={this.props.autoFocus}
                                 {...field}
                             />
                         </TextField>
