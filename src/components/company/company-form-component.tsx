@@ -44,7 +44,8 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
         this.formFieldPropsList = [
             new FormInputFieldMeta({
                 fieldName: "name",
-                label: "Organization Name*"
+                label: "Organization Name*",
+                autoFocus: true
             }),
 
             new FormAddressFieldMeta({

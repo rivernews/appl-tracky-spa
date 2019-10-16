@@ -61,7 +61,8 @@ class ApplicationFormComponent extends Component<
         this.formFieldPropsList = [
             new FormInputFieldMeta({
                 fieldName: "position_title",
-                label: "Position Title*"
+                label: "Position Title*",
+                autoFocus: true
             }),
             new FormLinkFieldMeta({
                 fieldName: "job_description_page",

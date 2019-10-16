@@ -64,6 +64,7 @@ class ApplicationStatusFormComponent extends Component<
             new FormInputFieldMeta({
                 fieldName: "text",
                 label: "Status*",
+                autoFocus: true
             }),
             new FormInputFieldMeta({
                 fieldName: "date",
