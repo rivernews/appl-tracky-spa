@@ -2,9 +2,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    text-align: center;
     
     padding-top: 10vmin;
     padding-bottom: 15vmin;
+
+background: linear-gradient(40deg,rgba(247,235,255,1) 0%, rgba(225,166,246,1) 100%);
 }
 
 .primaryPageContent {
@@ -19,7 +23,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
 }
 
 .headlineText {

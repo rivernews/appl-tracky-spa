@@ -63,10 +63,12 @@ class LandingPage extends Component<ILandingPageProps> {
                     </div>
 
                     <div className={styles.loginActionsContainer}>
-                        <Headline4>Social media login / sign up</Headline4>
+                        <Headline4>Sign up & login now to get organized!</Headline4>
                         <SocialAuthButtonContainer />
                         <Body1>
-                            Just want to try things out and don't want to sign up yet? No problem, here's a guest account you can use - username: guest, password: appltracky
+                            Just want to try things out and don't want to sign up yet? No problem, here's a guest account you can use: 
+                            <div>🦄 username: guest</div>
+                            <div>🦄 password: appltracky</div>
                         </Body1>
                         <Button
                             onClick={this.onStaffLoginClick}
@@ -83,7 +85,7 @@ class LandingPage extends Component<ILandingPageProps> {
 
                     <div className={styles.sideNoteContent}>
                         <Subtitle1>
-                            Take a look at the React code, that fuels and powers all the goodies!
+                            Take a look at the React code - which fuels and powers all the goodies!
                         </Subtitle1>
                         <Button
                             href="https://github.com/rivernews/appl-tracky-spa"

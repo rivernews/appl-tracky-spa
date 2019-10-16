@@ -26,7 +26,7 @@ By Sketch.app!
 
 ## System Design
 
-### Redux
+### Redux asynchronous action dispatching flow
 
 ![Redux process](docs/img/dev-plan/redux-process.png)
 

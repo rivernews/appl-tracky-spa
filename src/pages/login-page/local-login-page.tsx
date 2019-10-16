@@ -37,9 +37,16 @@ class LocalLoginPage extends Component<ILocalLoginPageProps> {
             <div className="LocalLoginPage">
                 <h1>Login Portal for local sign in</h1>
                 <div>
-                    If you just want to try it out, you can use guest account (username: guest, password: appltracky).
+                    If you just want to try it out, you can use guest account:
+                    <div>
+                        username: guest
+                    </div>
+                    <div>
+                        password: appltracky
+                    </div>
                 </div>
-                <LoginForm 
+
+                <LoginForm
                     onSubmit={this.onLoginFormSubmit}
                     onCancel={this.onLoginFormCancel}
                 />
