@@ -10,8 +10,6 @@ import { FormActionButtonProps, ActionButtonType, FormFactory } from "../form-fa
 import * as Yup from 'yup';
 
 interface ILoginFormProps {
-    // registerLoginSuccess: (userName: string, apiToken: string, avatarUrl: string) => void;
-    // onLoginSuccess: () => void
     onCancel: () => void
     onSubmit: (values: FormikValues, setSubmitting: Function) => void
 }

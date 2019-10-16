@@ -85,7 +85,7 @@ class LandingPage extends Component<ILandingPageProps> {
 
                     <div className={styles.sideNoteContent}>
                         <Subtitle1>
-                            Take a look at the React code - which fuels and powers all the goodies!
+                            Take a look at the React code that fuels and powers all the goodies!
                         </Subtitle1>
                         <Button
                             href="https://github.com/rivernews/appl-tracky-spa"
