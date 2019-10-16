@@ -56,17 +56,17 @@ class LandingPage extends Component<ILandingPageProps> {
                 <div className={styles.primaryPageContent}>
                     <div className={styles.headlineContent}>
                         <Headline1 className={styles.headlineText}>Appl Tracky</Headline1>
-                        <Body1 className={styles.headlineSubText}>Got crazy using speadsheet to keep track of your application progress? Try out Appl Tracky to ease your workflow!</Body1>
+                        <Headline4 className={styles.headlineSubText}>Got crazy using speadsheet to keep track of your application progress? Try out Appl Tracky to ease your workflow!</Headline4>
                         <Body1>
                             Whether it is application for job, school program, scholarship or whatever process that lets you wait from a couple weeks to months, Appl Tracky has you covered. Keep track of every steps in the process, insert links, put down notes to get you more organized and prepared!
                         </Body1>
                     </div>
 
                     <div className={styles.loginActionsContainer}>
-                        <Headline4>Sign up & login now to get organized!</Headline4>
+                        <Headline4>Sign up & login now to get organized</Headline4>
                         <SocialAuthButtonContainer />
                         <Body1>
-                            Just want to try things out and don't want to sign up yet? No problem, here's a guest account you can use: 
+                            Just want to try things out and don't want to sign up yet? No problem, here's a guest account you can use:
                             <div>🦄 username: guest</div>
                             <div>🦄 password: appltracky</div>
                         </Body1>

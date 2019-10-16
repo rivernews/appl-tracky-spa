@@ -32,6 +32,7 @@ function* authLoginSagaHandler(
     const {
         loginMode, 
         params={},
+        onCompleteCallback
     } = requestedLoginAuthAction;
     
     try {
@@ -61,8 +62,9 @@ function* authLoginSagaHandler(
     } catch (error) {
         console.warn(`auth saga error: ${JSON.stringify(error)}`);
         yield put(FailureAuth(error));
-        return;
     }
+
+    onCompleteCallback && onCompleteCallback();
 }
 
 export function* authLoginSaga() {

@@ -20,7 +20,7 @@ interface ILocalLoginPageProps extends RouteComponentProps {
     auth: IUpdateAuthState;
 
     /** dispatch action */
-    requestedLoginAuth: (username: string, password: string) => void;
+    requestedLoginAuth: (username: string, password: string, onCompleteCallback: () => void) => void;
 }
 
 class LocalLoginPage extends Component<ILocalLoginPageProps> {
@@ -28,8 +28,10 @@ class LocalLoginPage extends Component<ILocalLoginPageProps> {
         this.props.history.goBack();
     }
 
-    onLoginFormSubmit = (values: FormikValues) => {
-        this.props.requestedLoginAuth(values.username, values.password);
+    onLoginFormSubmit = (values: FormikValues, setSubmitting: Function) => {
+        this.props.requestedLoginAuth(values.username, values.password, () => {
+            setSubmitting(false);
+        });
     }
 
     render() {
@@ -62,11 +64,11 @@ const mapStateToProps = (store: IRootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
     // actionName: (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
-        requestedLoginAuth: (username: string, password: string) => {
+        requestedLoginAuth: (username: string, password: string, onCompleteCallback: () => void) => {
             dispatch(
                 RequestedLoginAuth(RequestedLoginMode.LOCAL, {
                     username, password
-                })
+                }, onCompleteCallback)
             );
         },
     }

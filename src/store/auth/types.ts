@@ -87,6 +87,7 @@ export interface IRequestedLoginAuthAction extends Action<AuthActionNames.REQUES
     loginMode: RequestedLoginMode;
     params?: RequestedLoginAuthActionParams;
     payload: IRequestedLoginAuthState;
+    onCompleteCallback?: () => void
 }
 
 export interface IRequestedLogoutAuthAction extends Action<AuthActionNames.REQUESTED_LOGOUT_AUTH> {
