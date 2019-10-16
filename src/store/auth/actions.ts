@@ -22,14 +22,15 @@ export const UpdateAuth = (newAuthState: IUpdateAuthState): IUpdateAuthAction =>
     };
 };
 
-export const RequestedLoginAuth = (loginMode: RequestedLoginMode, params?: RequestedLoginAuthActionParams): IRequestedLoginAuthAction => {
+export const RequestedLoginAuth = (loginMode: RequestedLoginMode, params?: RequestedLoginAuthActionParams, onCompleteCallback?: () => void): IRequestedLoginAuthAction => {
     return {
         type: AuthActionNames.REQUESTED_LOGIN_AUTH,
         loginMode,
         params,
         payload: {
             requestStatus: RequestStatus.REQUESTING,
-        }
+        },
+        onCompleteCallback
     };
 };
 
