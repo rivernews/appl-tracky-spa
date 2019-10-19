@@ -83,21 +83,21 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
         console.error("Attempted to edit but no company uuid provided");
     }
 
-    renderAll() {
+    renderPage() {
         if (!this.props.match.params.uuid) {
             return;
         }
 
         const company = this.props.companyStore.collection[this.props.match.params.uuid];
-        const applications = Object.values(this.props.applicationStore.collection).filter(
+        const applications = company ? Object.values(this.props.applicationStore.collection).filter(
             application =>
                 application.user_company === company.uuid
-        );
+        ) : [];
 
         return (
             <div className={styles.UserCompanyPage}>
                 <Button
-                    onClick={clickEvent => {
+                    onClick={_ => {
                         // this.props.history.push("/");
                         this.props.history.goBack();
                     }}
@@ -153,19 +153,31 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
         );
     }
 
+    renderController() {
+        if (!this.props.match.params.uuid) {
+            return <h1>Company uuid not specified</h1>
+        }
+
+        if (this.props.companyStore.requestStatus === RequestStatus.REQUESTING) {
+            return this.renderPage();
+        }
+
+        if (!this.props.companyStore.collection) {
+            return <h1>You don't have any company yet</h1>
+        }
+
+        if (!(this.props.match.params.uuid in this.props.companyStore.collection)) {
+            return <h1>Company not found</h1>
+        }
+
+        return this.renderPage();
+    }
+
     // handle invalid company uuid given in url
     render() {
         return (
             <div className="UserComAppPageContainer">
-                {this.props.match.params.uuid &&
-                    this.props.companyStore.collection &&
-                    this.props.match.params.uuid in this.props.companyStore.collection ? (
-                        this.renderAll()
-                    ) : this.props.match.params.uuid ? (
-                        <h1>No company found. Uuid={this.props.match.params.uuid}</h1>
-                    ) : (
-                            <h1>Company uuid not specified</h1>
-                        )}
+                {this.renderController()}
             </div>
         );
     }

@@ -51,27 +51,56 @@ import "@material/react-ripple/dist/ripple.css";
 import "./page-routes.css";
 import styles from "./page-routes.module.css";
 
-interface IPageRoutesProps extends RouteComponentProps {
+
+const publicPageSet = new Set([
+    "/",
+    "/local-login/",
+    // add more public page routres here
+    // ...
+]);
+
+
+interface IPageRoutesRouterParams {
+    next?: string;
+}
+
+
+interface IPageRoutesProps extends RouteComponentProps<IPageRoutesRouterParams> {
     auth: IUpdateAuthState;
 }
+
 
 class PageRoutes extends Component<IPageRoutesProps> {
     goHome = () => {
         this.props.location.pathname === '/home/' ? this.props.history.replace('/home/') : this.props.history.push('/home/');
     }
 
+    goInternal = (): string => {
+        if (!this.props.location.search) {
+            return "/home/";
+        }
+
+        const query = new URLSearchParams(this.props.location.search);
+        const nextUrl = query.get("next");
+        if (!nextUrl) {
+            return "";
+        }
+
+        return nextUrl;
+    }
+ 
+    isCurrentPublicPage = () => {
+        return publicPageSet.has(this.props.location.pathname);
+    }
+
     render() {
         return (
             <div className={`PageRoutesContainer`}>
-                {(
-                    this.props.location.pathname === "/" ||
-                    this.props.location.pathname === "/local-login/"
-                    // add more public page routres here
-                    // ...
-                ) ? (
+                {this.isCurrentPublicPage() ? (
                         <div className="PublicRoutesContainer">
-                            {/** direct user to home pagae (internal) if logged in */
-                            this.props.auth.isLogin && <Redirect to="/home/" />}
+                            {/** direct user to internal page if logged in */
+                            this.props.auth.isLogin && <Redirect to={this.goInternal()} />}
+
                             <Switch>
                                 <Route path="/" exact component={LandingPageContainer} />
                                 <Route path="/local-login/" exact component={LocalLoginPageContainer} />
@@ -83,8 +112,8 @@ class PageRoutes extends Component<IPageRoutesProps> {
                         </div>
                     ) : (
                         <div className="PrivateRoutesContainer">
-                            {/** protect private routes */
-                                !this.props.auth.isLogin && <Redirect to="/" />}
+                            {/** protect private routes, but let people come back the internal page they want to access after they login */
+                                !this.props.auth.isLogin && <Redirect to={`/?next=${this.props.location.pathname}`} />}
 
                             <TopAppBar>
                                 <TopAppBarRow>
