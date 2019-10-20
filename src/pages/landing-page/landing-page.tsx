@@ -67,9 +67,9 @@ class LandingPage extends Component<ILandingPageProps> {
                         <SocialAuthButtonContainer />
                         <Body1>
                             Just want to try things out and don't want to sign up yet? No problem, here's a guest account you can use:
-                            <div>🦄 username: guest</div>
-                            <div>🦄 password: appltracky</div>
                         </Body1>
+                        <div>🦄 username: guest</div>
+                        <div>🦄 password: appltracky</div>
                         <Button
                             onClick={this.onStaffLoginClick}
                             unelevated
