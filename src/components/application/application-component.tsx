@@ -7,7 +7,7 @@ import {
     ApplicationActions
 } from "../../store/data-model/application";
 import { IRootState } from "../../store/types";
-import { IObjectAction } from "../../store/rest-api-redux-factory";
+import { IObjectAction, IObjectStore } from "../../store/rest-api-redux-factory";
 import { Dispatch } from "redux";
 
 /** data model */
@@ -28,10 +28,15 @@ import { ApplicationStatusComponentContainer } from "../application-status/appli
 import { ApplicationFormComponentContainer } from "./application-form-component";
 import Card, { CardPrimaryContent } from "@material/react-card";
 import List, { ListItem, ListItemText } from "@material/react-list";
+import {
+    Headline6,
+} from '@material/react-typography';
 /** CKeditor */
 import CKEditor from '@ckeditor/ckeditor5-react';
 import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
 // import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+
+import Skeleton from 'react-loading-skeleton';
 
 import styles from './application-component.module.css';
 
@@ -47,9 +52,10 @@ interface IApplicationComponentProps {
     isOnlyForm?: boolean;
 
     applicationStatusList?: Array<ApplicationStatus>;
-    isShowApplicationStatuses?: boolean;
 
     /** redux */
+    applicationStatusStore: IObjectStore<ApplicationStatus>;
+
     deleteApplication: (
         applicationToDelete: Application,
         callback?: Function
@@ -70,12 +76,13 @@ export class ApplicationComponent extends Component<
     };
 
     render() {
+        // console.log(`\n\n\n\n(Application) app=${JSON.stringify(this.props.application)}\n\nstatus=${JSON.stringify(this.props.applicationStatusList)}`);
+
         return (
             <div className="application-component">
                 {this.state.isFormOpened || this.props.isOnlyForm
                     ? this.renderApplicationFormController()
-                    : this.props.application &&
-                    Array.isArray(this.props.applicationStatusList) &&
+                    :
                     this.renderApplicationDisplay(
                         this.props.application,
                         this.props.applicationStatusList
@@ -86,21 +93,25 @@ export class ApplicationComponent extends Component<
 
     renderApplicationFormController = () => {
         return (
-            this.props.company && ( // application create or udpate must have company associate with it.
+            ( // application create or udpate must have company associate with it.
                 <div className="application-form-controller">
-                    {!this.state.isFormOpened ? (
-                        <Button
-                            onClick={clickEvent => {
-                                this.setState({
-                                    isFormOpened: true
-                                });
-                            }}
-                            unelevated
-                            icon={<MaterialIcon hasRipple icon="add" />}
-                        >
-                            Add Application
+                    {(
+                        !this.state.isFormOpened ||
+                        !this.props.company // company may still be in requesting state, when attempt to render form
+                    ) ? (
+                            <Button
+                                disabled={!this.props.company}
+                                onClick={clickEvent => {
+                                    this.setState({
+                                        isFormOpened: true
+                                    });
+                                }}
+                                unelevated
+                                icon={<MaterialIcon hasRipple icon="add" />}
+                            >
+                                Add Application
                         </Button>
-                    ) : (
+                        ) : (
                             <ApplicationFormComponentContainer
                                 onCancel={event => {
                                     process.env.NODE_ENV === 'development' && console.log("onCancel clicked");
@@ -123,55 +134,94 @@ export class ApplicationComponent extends Component<
     };
 
     renderApplicationDisplay = (
-        application: Application,
-        applicationStatusList: Array<ApplicationStatus>
+        application?: Application,
+        applicationStatusList: Array<ApplicationStatus> = []
     ) => {
+        console.log(`\n\n\n\n(Application) app=${JSON.stringify(application)}\n\nstatus=${JSON.stringify(applicationStatusList)}`);
+
         return (
             <div className="application-component-display">
                 <div className={styles.applicationCard}>
                     <div className={styles.applicationCardContent}>
                         {/* application display view */}
-                        <h3>{application.position_title}
-                            <IconButton
-                                disabled={application.job_description_page.url == "#"}
-                                isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
-                                    application.job_description_page.url :
-                                    `//${application.job_description_page.url}`}
-                            >
-                                <MaterialIcon hasRipple icon="launch" />
-                            </IconButton>
-                            <IconButton
-                                disabled={application.job_source.url == "#"}
-                                isLink={application.job_source.url != "#"} target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
-                                    application.job_source.url :
-                                    `//${application.job_source.url}`}
-                            >
-                                <MaterialIcon hasRipple icon="language" />
-                            </IconButton>
+                        <h3>{application ? application.position_title : <Skeleton />}
+
+                            {/* external link icon */}
+                            {
+                                application ? (
+                                    <IconButton
+                                        disabled={application.job_description_page.url == "#"}
+                                        isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
+                                            application.job_description_page.url :
+                                            `//${application.job_description_page.url}`}
+                                    >
+                                        <MaterialIcon hasRipple icon="launch" />
+                                    </IconButton>
+                                ) : (
+                                        <IconButton disabled>
+                                            <MaterialIcon hasRipple icon="launch" />
+                                        </IconButton>
+                                    )
+                            }
+
+                            {/* external link icon */}
+                            {
+                                application ? (
+                                    <IconButton
+                                        disabled={application.job_source.url == "#"}
+                                        isLink={application.job_source.url != "#"} target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
+                                            application.job_source.url :
+                                            `//${application.job_source.url}`}
+                                    >
+                                        <MaterialIcon hasRipple icon="language" />
+                                    </IconButton>
+                                ) : (
+                                        <IconButton disabled>
+                                            <MaterialIcon hasRipple icon="language" />
+                                        </IconButton>
+                                    )
+                            }
 
                             {/* application actions */}
-                            <IconButton
-                                disabled={this.props.disableApplicationActionButtons}
-                                onClick={() => {
-                                    this.setState({
-                                        isFormOpened: true // open form and close display
-                                    });
-                                }}
-                            >
-                                <MaterialIcon hasRipple icon="edit" />
-                            </IconButton>
-                            <IconButton
-                                disabled={this.props.disableApplicationActionButtons}
-                                onClick={() =>
-                                    this.props.deleteApplication(application)
-                                }
-                            >
-                                <MaterialIcon hasRipple icon="delete" />
-                            </IconButton>
+                            {
+                                application ? (
+                                    <IconButton
+                                        disabled={this.props.disableApplicationActionButtons}
+                                        onClick={() => {
+                                            this.setState({
+                                                isFormOpened: true // open form and close display
+                                            });
+                                        }}
+                                    >
+                                        <MaterialIcon hasRipple icon="edit" />
+                                    </IconButton>
+                                ) : (
+                                        <IconButton disabled>
+                                            <MaterialIcon hasRipple icon="edit" />
+                                        </IconButton>
+                                    )
+                            }
+
+                            {
+                                application ? (
+                                    <IconButton
+                                        disabled={this.props.disableApplicationActionButtons}
+                                        onClick={() =>
+                                            this.props.deleteApplication(application)
+                                        }
+                                    >
+                                        <MaterialIcon hasRipple icon="delete" />
+                                    </IconButton>
+                                ) : (
+                                        <IconButton disabled>
+                                            <MaterialIcon hasRipple icon="delete" />
+                                        </IconButton>
+                                    )
+                            }
                         </h3>
 
                         <div className="applicationNotesRichText">
-                            {application.notes ? (
+                            {application ? (application.notes ? (
                                 <CKEditor
                                     editor={BalloonEditor}
                                     disabled={true}
@@ -182,30 +232,46 @@ export class ApplicationComponent extends Component<
                                     <p>
                                         No notes yet.
                             </p>
+                                )) : (
+                                    <div>
+                                        <div><Skeleton width="70vmin" /></div>
+                                        <div><Skeleton width="30vmin" /></div>
+                                        <div><Skeleton width="50vmin" /></div>
+                                    </div>
                                 )}
                         </div>
 
                         {/* application statuses list */}
                         <div className="statusContainer">
-                            <div><strong>Status</strong></div>
-                            {this.props.isShowApplicationStatuses &&
-                                applicationStatusList.map(status => {
-                                    return (
-                                        <ApplicationStatusComponentContainer
-                                            key={status.uuid}
-                                            applicationStatus={status}
-                                            application={application}
-                                        />
-                                    );
-                                })}
+                            <Headline6>Status</Headline6>
+
+                            {
+                                (this.props.applicationStatusStore.requestStatus === RequestStatus.REQUESTING) && (
+                                    <ApplicationStatusComponentContainer />
+                                )
+                            }
+
+                            {
+                                application && (
+                                    applicationStatusList.map(applicationStatus => {
+                                        return (
+                                            <ApplicationStatusComponentContainer
+                                                key={applicationStatus.uuid}
+                                                applicationStatus={applicationStatus}
+                                                application={application}
+                                            />
+                                        );
+                                    })
+                                )
+                            }
 
                             {/* application status form controller */}
-                            {this.props.isShowApplicationStatuses && (
+                            {
                                 <ApplicationStatusComponentContainer
                                     application={application}
                                     isOnlyForm
                                 />
-                            )}
+                            }
                         </div>
                     </div>
                 </div>
@@ -216,6 +282,7 @@ export class ApplicationComponent extends Component<
 }
 
 const mapStateToProps = (store: IRootState) => ({
+    applicationStatusStore: store.applicationStatus
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {

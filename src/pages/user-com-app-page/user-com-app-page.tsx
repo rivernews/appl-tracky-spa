@@ -79,7 +79,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
             const company = this.props.companyStore.collection[this.props.match.params.uuid];
             this.props.history.push(`/com-form/${company.uuid}/`);
         }
-        
+
         console.error("Attempted to edit but no company uuid provided");
     }
 
@@ -98,8 +98,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
             <div className={styles.UserCompanyPage}>
                 <Button
                     onClick={_ => {
-                        // this.props.history.push("/");
-                        this.props.history.goBack();
+                        this.props.history.length > 1 ? this.props.history.goBack()  : this.props.history.push('/home/');
                     }}
                 >
                     Back
@@ -128,26 +127,29 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
                         isShowApplicationStatuses
                     />
                 )} */}
-                {applications.map(application => {
-                    const applicationStatusList = Object.values(
-                        this.props.applicationStatusStore
-                            .collection
-                    ).filter(
-                        applicationStatus =>
-                            applicationStatus.application ===
-                            application.uuid
-                    );
+                {company ? applications.map(application => {
+                    const applicationStatusList = application ? Object.values(
+                            this.props.applicationStatusStore
+                                .collection
+                        ).filter(
+                            applicationStatus =>
+                                applicationStatus.application ===
+                                application.uuid
+                        ) : [];
                     return (
                         <ApplicationComponentController
                             key={application.uuid}
                             application={application}
                             company={company}
                             applicationStatusList={applicationStatusList}
-                            isShowApplicationStatuses
                             disableApplicationActionButtons={this.props.applicationStore.requestStatus === RequestStatus.REQUESTING}
                         />
                     )
-                })}
+                }) : (
+                    <ApplicationComponentController 
+                        disableApplicationActionButtons
+                    />
+                )}
 
             </div>
         );
