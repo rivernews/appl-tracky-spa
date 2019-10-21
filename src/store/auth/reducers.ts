@@ -28,7 +28,7 @@ export const authReducer: Reducer<IUpdateAuthState> = (authStore = initialAuthSt
     const authAction = action as TAuthActions;
 
     if (authAction.type === AuthActionNames.SUCCESS_AUTH) {
-        localStorage.setItem('applyTracky__authState', JSON.stringify(authAction.payload));
+        localStorage.setItem(process.env.NODE_ENV === 'development' ? 'dev__applyTracky__authState' : 'applyTracky__authState', JSON.stringify(authAction.payload));
     }
 
     return {
