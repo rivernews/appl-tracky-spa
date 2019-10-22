@@ -59,8 +59,8 @@ class Authentication {
         // prefill login
         if (loginMode === RequestedLoginMode.PREFILL) {
             // restore session login data
-            const sessionAuthState = localStorage.getItem("applyTracky__authState")
-                ? JSON.parse(localStorage.getItem("applyTracky__authState") || "{}")
+            const sessionAuthState = localStorage.getItem(`${(process.env.NODE_ENV === "development") ? "dev__" : ""}applyTracky__authState`)
+                ? JSON.parse(localStorage.getItem(`${(process.env.NODE_ENV === "development") ? "dev__" : ""}applyTracky__authState`) || "{}")
                 : {};
 
             if (sessionAuthState.isLogin) {
