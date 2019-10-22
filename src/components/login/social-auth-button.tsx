@@ -72,14 +72,11 @@ class SocialAuthButton extends Component<
                     />
                 ) : (
                     <SocialAuthLogoutButton
-                        isLocal={this.props.auth.isLocal}
-
-                        onClickWhenIsLocal={this.onSocialLogoutSuccess}
                         onSuccess={this.onSocialLogoutSuccess}
-                        
+                        onClick={this.onSocialLogoutSuccess}
                         // TODO: logout - ideally no need to wait for request status, just interrupt existing requests
                         // However, we'll have to cancel those ongoing sagas for data fetching
-                        disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
+                        // disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
                     />
                 )}
             </div>

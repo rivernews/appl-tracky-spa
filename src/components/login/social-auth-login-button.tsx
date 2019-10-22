@@ -66,6 +66,8 @@ export class SocialAuthLoginButton extends Component<
                     clientId={this.props.clientID}
                     responseType="code"
                     redirectUri={this.props.redirectUri || "postmessage"}
+                    // cookiePolicy={'single_host_origin'}
+                    // hostedDomain="https://appl-tracky.shaungc.com"
                 />
             </div>
         );
