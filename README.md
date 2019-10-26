@@ -16,7 +16,7 @@ This is the main page for front end, also the primary public-facing page for the
 
 For more details about backend API server, please refer to the backend repo.
 
-### **DevOps Infrastructure ([Repo, share w/ back end repo](https://github.com/rivernews/appl-tracky-api)):** Nginx (web server), AWS (host), Docker (virtualize), Terraform (provisioning)
+### **DevOps Infrastructure ([Repo](https://github.com/rivernews/iriversland2-kubernetes)):** Nginx (web server), ~~AWS~~ Kubernetes (host), Docker (virtualize), Terraform (provisioning)
 
 Details about backend web (static) server, and other DevOps stuff, please refer to backend repo.
 
