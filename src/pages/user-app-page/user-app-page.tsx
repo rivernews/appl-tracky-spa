@@ -24,6 +24,14 @@ import Button from "@material/react-button";
 import "@material/react-text-field/dist/text-field.css";
 import TextField, { Input } from "@material/react-text-field";
 
+// react-mdc tab
+import '@material/react-tab-bar/dist/tab-bar.css';
+import '@material/react-tab-scroller/dist/tab-scroller.css';
+import '@material/react-tab/dist/tab.css';
+import '@material/react-tab-indicator/dist/tab-indicator.css';
+import Tab from '@material/react-tab';
+import TabBar from '@material/react-tab-bar';
+
 // objects
 // import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 import { CompanyListItem } from "../../components/company/company-list-item";
@@ -43,13 +51,15 @@ interface IUserAppPageState {
     searchText: string
     isFiltering: boolean
     filteredCompanyList: Array<Company>
+    activeTabIndex: number
 }
 
 class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
     state = {
         searchText: '',
         isFiltering: false,
-        filteredCompanyList: []
+        filteredCompanyList: [],
+        activeTabIndex: 0
     };
 
     onCompanyClick = (uuid: string) => {
@@ -90,8 +100,10 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
     }
 
     onSearchFieldClear = () => {
-        this.setState({searchText: '', isFiltering: false});
+        this.setState({ searchText: '', isFiltering: false });
     }
+
+    handleActiveTabIndexUpdate = (activeTabIndex: number) => this.setState({ activeTabIndex });
 
     render() {
         const allCompanies = Object.values(this.props.company.collection);
@@ -99,6 +111,18 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
 
         return (
             <div className="UserAppPage">
+                <TabBar
+                    activeIndex={this.state.activeTabIndex}
+                    handleActiveIndexUpdate={this.handleActiveTabIndexUpdate}
+                >
+                    <Tab>
+                        <span className='mdc-tab__text-label'>One</span>
+                    </Tab>
+                    <Tab>
+                        <span className='mdc-tab__text-label'>Two</span>
+                    </Tab>
+                </TabBar>
+
                 <div className={styles.userAppPageHeader}>
                     <h1>Organizations You're Applying</h1>
                     <Button
@@ -127,16 +151,17 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                 <div className={styles.userAppPageContent}>
                     {
                         displayingCompanies.map(
-                            (company, index) => 
-                            <CompanyListItem 
-                                key={company ? company.uuid : index}
-                                company={company}
-                                applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
-                                onClick={company ? this.onCompanyClick : undefined}
-                            />
+                            (company, index) =>
+                                <CompanyListItem
+                                    key={company ? company.uuid : index}
+                                    company={company}
+                                    applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
+                                    onClick={company ? this.onCompanyClick : undefined}
+                                />
                         )
                     }
                 </div>
+
             </div>
         )
     }
