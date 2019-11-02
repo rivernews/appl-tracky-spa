@@ -16,9 +16,10 @@ import {
 // input field
 import { IFormRichTextFieldProps } from "./form-rich-text-field-meta";
 // ckeditor
-import CKEditor from '@ckeditor/ckeditor5-react';
-import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
-// import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+// import CKEditor from '@ckeditor/ckeditor5-react';
+import CKEditor from '@shaungc/custom-ckeditor5-react';
+// import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
+import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
 
 export class FormRichTextField extends Component<IFormRichTextFieldProps> {
     render() {
@@ -36,6 +37,10 @@ export class FormRichTextField extends Component<IFormRichTextFieldProps> {
                                 onChange={ ( event: any, editor: any ) => {
                                     form.setFieldValue(field.name, editor.getData());
                                 } }
+                                onKeydown={
+                                    (event: any, editor: any) => {
+                                        process.env.NODE_ENV === "development" && console.log(event, editor);
+                                }
                             />
                         </div>
                     )}}

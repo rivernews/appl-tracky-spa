@@ -32,9 +32,10 @@ import {
     Headline6,
 } from '@material/react-typography';
 /** CKeditor */
-import CKEditor from '@ckeditor/ckeditor5-react';
-import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
-// import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+// import CKEditor from '@ckeditor/ckeditor5-react';
+import CKEditor from '@shaungc/custom-ckeditor5-react';
+// import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
+import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
 
 import Skeleton from 'react-loading-skeleton';
 
