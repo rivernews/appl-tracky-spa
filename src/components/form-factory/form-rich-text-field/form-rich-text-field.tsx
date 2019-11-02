@@ -29,21 +29,23 @@ export class FormRichTextField extends Component<IFormRichTextFieldProps> {
                     name={this.props.fieldName}
                     render={({ field, form }: FieldProps<number | string>) => {
                         return (
-                        <div className="RichTextFieldInput">
-                            <div><strong>{this.props.label}</strong></div>
-                            <CKEditor
-                                editor={BalloonEditor}
-                                data={field.value}
-                                onChange={ ( event: any, editor: any ) => {
-                                    form.setFieldValue(field.name, editor.getData());
-                                } }
-                                onKeydown={
-                                    (event: any, editor: any) => {
-                                        process.env.NODE_ENV === "development" && console.log(event, editor);
-                                }
-                            />
-                        </div>
-                    )}}
+                            <div className="RichTextFieldInput">
+                                <div><strong>{this.props.label}</strong></div>
+                                <CKEditor
+                                    editor={BalloonEditor}
+                                    data={field.value}
+                                    onChange={(event: any, editor: any) => {
+                                        form.setFieldValue(field.name, editor.getData());
+                                    }}
+                                    onKeydown={
+                                        (event: any, editor: any) => {
+                                            process.env.NODE_ENV === "development" && console.log(event, editor);
+                                        }
+                                    }
+                                />
+                            </div>
+                        )
+                    }}
                 />
                 <ErrorMessage name={this.props.fieldName} />
             </div>
