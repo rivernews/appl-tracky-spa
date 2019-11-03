@@ -21,6 +21,7 @@ import CKEditor from '@shaungc/custom-ckeditor5-react';
 // import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
 import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
 
+
 export class FormRichTextField extends Component<IFormRichTextFieldProps> {
     render() {
         return (
@@ -29,8 +30,8 @@ export class FormRichTextField extends Component<IFormRichTextFieldProps> {
                     name={this.props.fieldName}
                     render={({ field, form }: FieldProps<number | string>) => {
                         return (
-                            <div className="RichTextFieldInput">
-                                <div><strong>{this.props.label}</strong></div>
+                            <>
+                                <h4>{this.props.label}</h4>
                                 <CKEditor
                                     editor={BalloonEditor}
                                     data={field.value}
@@ -39,7 +40,7 @@ export class FormRichTextField extends Component<IFormRichTextFieldProps> {
                                     }}
                                     onSaveKeystroke={this.props.onSaveKeystroke}
                                 />
-                            </div>
+                            </>
                         )
                     }}
                 />
