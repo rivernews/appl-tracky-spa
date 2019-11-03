@@ -17,6 +17,9 @@ import {
 import { IFormInputFieldProps } from "./form-input-field-meta";
 import { InputFieldType } from "../form-base-field/form-base-field-meta";
 
+import styles from "./form-input-field.module.css";
+
+
 export class FormInputField extends Component<IFormInputFieldProps> {
     render() {
         return (
@@ -25,6 +28,7 @@ export class FormInputField extends Component<IFormInputFieldProps> {
                     name={this.props.fieldName}
                     render={({ field, form }: FieldProps<number | string>) => (
                         <TextField
+                            className={styles.TextField}
                             label={this.props.label}
                             onTrailingIconSelect={this.props.onTrailingIconSelect}
                             trailingIcon={this.props.onTrailingIconSelect && <MaterialIcon role="button" icon="clear" />}

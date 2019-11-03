@@ -45,8 +45,8 @@ export const LoginForm = (props: ILoginFormProps) => {
 
     // validation
     const loginFormInitialValues = {
-        username: "",
-        password: ""
+        username: "guest",
+        password: "appltracky"
     }
     type ILoginFormShape = typeof loginFormInitialValues;
     const validationSchema: Yup.Schema<ILoginFormShape> = Yup.object<ILoginFormShape>().shape({
