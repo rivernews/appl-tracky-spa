@@ -205,7 +205,7 @@ export class ApplicationComponent extends Component<
                             <IconButton
                                 disabled={this.props.disableApplicationActionButtons}
                                 onClick={() =>
-                                    this.props.deleteApplication(application)
+                                    confirm(`Are you sure you want to delete ${application.position_title}?`) && this.props.deleteApplication(application)
                                 }
                             >
                                 <MaterialIcon hasRipple icon="delete" />

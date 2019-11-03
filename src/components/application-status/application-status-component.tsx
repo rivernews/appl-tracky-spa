@@ -97,7 +97,7 @@ class ApplicationStatusComponent extends Component<
                     applicationStatus ? (
                         <IconButton
                             onClick={() =>
-                                this.props.deleteApplicationStatus(
+                                confirm(`Are you sure you want to delete this status? ${applicationStatus.text}`) && this.props.deleteApplicationStatus(
                                     applicationStatus
                                 )
                             }

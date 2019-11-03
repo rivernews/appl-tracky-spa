@@ -9,7 +9,7 @@
     transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.ck.ck-content.ck-editor__editable.ck-rounded-corners {
+.ck.ck-content.ck-editor__editable.ck-rounded-corners[contenteditable] {
     border-radius: 5px;
 }
 
@@ -23,7 +23,7 @@
 
 /* when read only and focused */
 .ck.ck-content.ck-editor__editable.ck-read-only.ck-focused {
-
+    box-shadow: none;
 }
 
 /* editing */
