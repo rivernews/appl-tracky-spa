@@ -6,6 +6,7 @@ import { FormRichTextField } from "./form-rich-text-field";
 
 // API for caller to new props for input field
 export interface IFormRichTextFieldProps extends IFormBaseFieldProps {
+    onSaveKeystroke?: () => void
 }
 
 // for defining meta
