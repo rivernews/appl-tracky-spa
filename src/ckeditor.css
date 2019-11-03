@@ -1,0 +1,41 @@
+:root {
+    --theme-color: #6200ee
+}
+
+.ck.ck-content {
+    margin-bottom: 20px;
+    transition-property: border;
+    transition-duration: 0.4s;
+    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.ck.ck-content.ck-editor__editable.ck-rounded-corners {
+    border-radius: 5px;
+}
+
+
+/* when read only */
+.ck.ck-content.ck-editor__editable.ck-read-only {
+    border: transparent 2px solid;
+    outline: none;
+    box-shadow: none;
+}
+
+/* when read only and focused */
+.ck.ck-content.ck-editor__editable.ck-read-only.ck-focused {
+
+}
+
+/* editing */
+.ck.ck-content.ck-editor__editable:not(.ck-read-only) {
+    border: transparent 2px solid;
+    outline: none;
+    box-shadow: none;
+    
+    background-color: whitesmoke;
+}
+
+/* when editing and focused */
+.ck.ck-content.ck-editor__editable:not(.ck-read-only).ck-focused {
+    border: var(--theme-color) 2px solid;
+}
