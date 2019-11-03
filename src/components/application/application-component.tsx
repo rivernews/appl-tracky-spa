@@ -77,60 +77,61 @@ export class ApplicationComponent extends Component<
     };
 
     render() {
-        // console.log(`\n\n\n\n(Application) app=${JSON.stringify(this.props.application)}\n\nstatus=${JSON.stringify(this.props.applicationStatusList)}`);
+        if (!this.state.isFormOpened && this.props.isOnlyForm) {  // company may still be in requesting state, when attempt to render form
+            return (
+                <Button
+                    disabled={!this.props.company}
+                    onClick={clickEvent => {
+                        this.setState({
+                            isFormOpened: true
+                        });
+                    }}
+                    unelevated
+                    icon={<MaterialIcon hasRipple icon="add" />}
+                >
+                    Add Application
+                </Button>
+            )
+        }
 
         return (
-            <div className="application-component">
-                {this.state.isFormOpened || this.props.isOnlyForm
-                    ? this.renderApplicationFormController()
-                    :
-                    this.renderApplicationDisplay(
-                        this.props.application,
-                        this.props.applicationStatusList
-                    )}
+            <div className={styles.applicationCard}>
+                <div className={styles.applicationCardContent}>
+                    {(!this.state.isFormOpened && !this.props.isOnlyForm) ? (
+                        this.renderApplicationDisplay(
+                            this.props.application,
+                            this.props.applicationStatusList
+                        )
+                    ) : (
+                            this.renderApplicationFormController()
+                        )}
+                </div>
             </div>
-        );
+
+        )
     }
 
     renderApplicationFormController = () => {
-        return (
-            ( // application create or udpate must have company associate with it.
-                <div className="application-form-controller">
-                    {(
-                        !this.state.isFormOpened ||
-                        !this.props.company // company may still be in requesting state, when attempt to render form
-                    ) ? (
-                            <Button
-                                disabled={!this.props.company}
-                                onClick={clickEvent => {
-                                    this.setState({
-                                        isFormOpened: true
-                                    });
-                                }}
-                                unelevated
-                                icon={<MaterialIcon hasRipple icon="add" />}
-                            >
-                                Add Application
-                        </Button>
-                        ) : (
-                            <ApplicationFormComponentContainer
-                                onCancel={event => {
-                                    process.env.NODE_ENV === 'development' && console.log("onCancel clicked");
-                                    this.setState({
-                                        isFormOpened: false
-                                    });
-                                }}
-                                onSubmitSuccess={() =>
-                                    this.setState({
-                                        isFormOpened: false
-                                    })
-                                }
-                                company={this.props.company}
-                                application={this.props.application}
-                            />
-                        )}
-                </div>
-            )
+        return this.props.company && (
+            // application create or udpate must have company associate with it.
+            <div className="application-form-controller">
+                <h2>New Application</h2>
+                <ApplicationFormComponentContainer
+                    onCancel={event => {
+                        process.env.NODE_ENV === 'development' && console.log("onCancel clicked");
+                        this.setState({
+                            isFormOpened: false
+                        });
+                    }}
+                    onSubmitSuccess={() =>
+                        this.setState({
+                            isFormOpened: false
+                        })
+                    }
+                    company={this.props.company}
+                    application={this.props.application}
+                />
+            </div>
         );
     };
 
@@ -138,145 +139,138 @@ export class ApplicationComponent extends Component<
         application?: Application,
         applicationStatusList: Array<ApplicationStatus> = []
     ) => {
-        console.log(`\n\n\n\n(Application) app=${JSON.stringify(application)}\n\nstatus=${JSON.stringify(applicationStatusList)}`);
 
         return (
             <div className="application-component-display">
-                <div className={styles.applicationCard}>
-                    <div className={styles.applicationCardContent}>
-                        {/* application display view */}
-                        <h3>{application ? application.position_title : <Skeleton />}
+                {/* application display view */}
+                <h3>{application ? application.position_title : <Skeleton />}
+                    {/* external link icon */}
+                    {
+                        application ? (
+                            <IconButton
+                                disabled={application.job_description_page.url == "#"}
+                                isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
+                                    application.job_description_page.url :
+                                    `//${application.job_description_page.url}`}
+                            >
+                                <MaterialIcon hasRipple icon="launch" />
+                            </IconButton>
+                        ) : (
+                                <IconButton disabled>
+                                    <MaterialIcon hasRipple icon="launch" />
+                                </IconButton>
+                            )
+                    }
 
-                            {/* external link icon */}
-                            {
-                                application ? (
-                                    <IconButton
-                                        disabled={application.job_description_page.url == "#"}
-                                        isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
-                                            application.job_description_page.url :
-                                            `//${application.job_description_page.url}`}
-                                    >
-                                        <MaterialIcon hasRipple icon="launch" />
-                                    </IconButton>
-                                ) : (
-                                        <IconButton disabled>
-                                            <MaterialIcon hasRipple icon="launch" />
-                                        </IconButton>
-                                    )
-                            }
+                    {/* external link icon */}
+                    {
+                        application ? (
+                            <IconButton
+                                disabled={application.job_source.url == "#"}
+                                isLink={application.job_source.url != "#"} target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
+                                    application.job_source.url :
+                                    `//${application.job_source.url}`}
+                            >
+                                <MaterialIcon hasRipple icon="language" />
+                            </IconButton>
+                        ) : (
+                                <IconButton disabled>
+                                    <MaterialIcon hasRipple icon="language" />
+                                </IconButton>
+                            )
+                    }
 
-                            {/* external link icon */}
-                            {
-                                application ? (
-                                    <IconButton
-                                        disabled={application.job_source.url == "#"}
-                                        isLink={application.job_source.url != "#"} target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
-                                            application.job_source.url :
-                                            `//${application.job_source.url}`}
-                                    >
-                                        <MaterialIcon hasRipple icon="language" />
-                                    </IconButton>
-                                ) : (
-                                        <IconButton disabled>
-                                            <MaterialIcon hasRipple icon="language" />
-                                        </IconButton>
-                                    )
-                            }
+                    {/* application actions */}
+                    {
+                        application ? (
+                            <IconButton
+                                disabled={this.props.disableApplicationActionButtons}
+                                onClick={() => {
+                                    this.setState({
+                                        isFormOpened: true // open form and close display
+                                    });
+                                }}
+                            >
+                                <MaterialIcon hasRipple icon="edit" />
+                            </IconButton>
+                        ) : (
+                                <IconButton disabled>
+                                    <MaterialIcon hasRipple icon="edit" />
+                                </IconButton>
+                            )
+                    }
 
-                            {/* application actions */}
-                            {
-                                application ? (
-                                    <IconButton
-                                        disabled={this.props.disableApplicationActionButtons}
-                                        onClick={() => {
-                                            this.setState({
-                                                isFormOpened: true // open form and close display
-                                            });
-                                        }}
-                                    >
-                                        <MaterialIcon hasRipple icon="edit" />
-                                    </IconButton>
-                                ) : (
-                                        <IconButton disabled>
-                                            <MaterialIcon hasRipple icon="edit" />
-                                        </IconButton>
-                                    )
-                            }
+                    {
+                        application ? (
+                            <IconButton
+                                disabled={this.props.disableApplicationActionButtons}
+                                onClick={() =>
+                                    this.props.deleteApplication(application)
+                                }
+                            >
+                                <MaterialIcon hasRipple icon="delete" />
+                            </IconButton>
+                        ) : (
+                                <IconButton disabled>
+                                    <MaterialIcon hasRipple icon="delete" />
+                                </IconButton>
+                            )
+                    }
+                </h3>
 
-                            {
-                                application ? (
-                                    <IconButton
-                                        disabled={this.props.disableApplicationActionButtons}
-                                        onClick={() =>
-                                            this.props.deleteApplication(application)
-                                        }
-                                    >
-                                        <MaterialIcon hasRipple icon="delete" />
-                                    </IconButton>
-                                ) : (
-                                        <IconButton disabled>
-                                            <MaterialIcon hasRipple icon="delete" />
-                                        </IconButton>
-                                    )
-                            }
-                        </h3>
+                <div className="applicationNotesRichText">
+                    {application ? (application.notes ? (
+                        <CKEditor
+                            editor={BalloonEditor}
+                            disabled={true}
+                            data={application.notes}
+                        />
 
-                        <div className="applicationNotesRichText">
-                            {application ? (application.notes ? (
-                                <CKEditor
-                                    editor={BalloonEditor}
-                                    disabled={true}
-                                    data={application.notes}
-                                />
-
-                            ) : (
-                                    <p>
-                                        No notes yet.
+                    ) : (
+                            <p>
+                                No notes yet.
                             </p>
-                                )) : (
-                                    <div>
-                                        <div><Skeleton width="70vmin" /></div>
-                                        <div><Skeleton width="30vmin" /></div>
-                                        <div><Skeleton width="50vmin" /></div>
-                                    </div>
-                                )}
-                        </div>
-
-                        {/* application statuses list */}
-                        <div className="statusContainer">
-                            <Headline6>Status</Headline6>
-
-                            {
-                                (this.props.applicationStatusStore.requestStatus === RequestStatus.REQUESTING) && (
-                                    <ApplicationStatusComponentContainer />
-                                )
-                            }
-
-                            {
-                                application && (
-                                    applicationStatusList.map(applicationStatus => {
-                                        return (
-                                            <ApplicationStatusComponentContainer
-                                                key={applicationStatus.uuid}
-                                                applicationStatus={applicationStatus}
-                                                application={application}
-                                            />
-                                        );
-                                    })
-                                )
-                            }
-
-                            {/* application status form controller */}
-                            {
-                                <ApplicationStatusComponentContainer
-                                    application={application}
-                                    isOnlyForm
-                                />
-                            }
-                        </div>
-                    </div>
+                        )) : (
+                            <div>
+                                <div><Skeleton width="70vmin" /></div>
+                                <div><Skeleton width="30vmin" /></div>
+                                <div><Skeleton width="50vmin" /></div>
+                            </div>
+                        )}
                 </div>
 
+                {/* application statuses list */}
+                <div className="statusContainer">
+                    <Headline6>Status</Headline6>
+
+                    {
+                        (this.props.applicationStatusStore.requestStatus === RequestStatus.REQUESTING) && (
+                            <ApplicationStatusComponentContainer />
+                        )
+                    }
+
+                    {
+                        application && (
+                            applicationStatusList.map(applicationStatus => {
+                                return (
+                                    <ApplicationStatusComponentContainer
+                                        key={applicationStatus.uuid}
+                                        applicationStatus={applicationStatus}
+                                        application={application}
+                                    />
+                                );
+                            })
+                        )
+                    }
+
+                    {/* application status form controller */}
+                    {
+                        <ApplicationStatusComponentContainer
+                            application={application}
+                            isOnlyForm
+                        />
+                    }
+                </div>
             </div>
         );
     };
