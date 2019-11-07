@@ -21,7 +21,8 @@ export class FormLinkFieldComponent extends Component<IFormLinkFieldComponentPro
 
         this.textInputFieldMeta = new FormInputFieldMeta({
             fieldName: `${this.props.fieldName}.text`,
-            label: "Description"
+            label: "Description",
+            autoFocus: true
         });
         this.urlInputFieldMeta = new FormInputFieldMeta({
             fieldName: `${this.props.fieldName}.url`,
