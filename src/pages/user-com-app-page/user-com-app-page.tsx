@@ -67,7 +67,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
     onCompanyDelete = () => {
         if (this.props.match.params.uuid) {
             const company = this.props.companyStore.collection[this.props.match.params.uuid];
-            this.props.deleteCompany(company, this.goBackToCompanyListPage);
+            confirm(`Are you sure you want to delete company ${company.name}?`) && this.props.deleteCompany(company, this.goBackToCompanyListPage);
             return;
         }
 

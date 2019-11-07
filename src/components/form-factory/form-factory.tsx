@@ -157,11 +157,8 @@ export class FormFactory<DataModel> extends Component<
                 >
                     {({
                         values,
-                        isSubmitting
-                    }: {
-                        values: FormikValues,
-                        touched: FormikTouched<FormikValues>,
-                        [props: string]: any
+                        isSubmitting,
+                        submitForm
                     }) => (
                             <Form>
                                 {this.props.formFieldPropsList.map((formFieldMeta: FormBaseFieldMeta, index: number) => (
@@ -169,6 +166,7 @@ export class FormFactory<DataModel> extends Component<
                                         key={index}
                                         {...formFieldMeta}
                                         formikValues={values}
+                                        onSaveKeystroke={submitForm}
                                     />
                                 ) )}
                                 {this.props.actionButtonPropsList.map(

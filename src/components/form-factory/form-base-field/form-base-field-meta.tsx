@@ -27,6 +27,7 @@ export interface IFormBaseFieldProps extends IFieldBaseMetaProps {
     model?: DataModelClass
     formikValues?: FormikValues // for form field to load data (e.g. initial value) at a specific position in formik's `values`
     // getInstanceDataFromFormikValues?: // when it's dynamic field, will use this to render dynamic fields
+    onSaveKeystroke?: () => void
 }
 
 // for the base meta class

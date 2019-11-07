@@ -16,9 +16,11 @@ import {
 // input field
 import { IFormRichTextFieldProps } from "./form-rich-text-field-meta";
 // ckeditor
-import CKEditor from '@ckeditor/ckeditor5-react';
-import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
-// import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+// import CKEditor from '@ckeditor/ckeditor5-react';
+import CKEditor from '@shaungc/custom-ckeditor5-react';
+// import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
+import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+
 
 export class FormRichTextField extends Component<IFormRichTextFieldProps> {
     render() {
@@ -28,17 +30,19 @@ export class FormRichTextField extends Component<IFormRichTextFieldProps> {
                     name={this.props.fieldName}
                     render={({ field, form }: FieldProps<number | string>) => {
                         return (
-                        <div className="RichTextFieldInput">
-                            <div><strong>{this.props.label}</strong></div>
-                            <CKEditor
-                                editor={BalloonEditor}
-                                data={field.value}
-                                onChange={ ( event: any, editor: any ) => {
-                                    form.setFieldValue(field.name, editor.getData());
-                                } }
-                            />
-                        </div>
-                    )}}
+                            <>
+                                <h4>{this.props.label}</h4>
+                                <CKEditor
+                                    editor={BalloonEditor}
+                                    data={field.value}
+                                    onChange={(event: any, editor: any) => {
+                                        form.setFieldValue(field.name, editor.getData());
+                                    }}
+                                    onSaveKeystroke={this.props.onSaveKeystroke}
+                                />
+                            </>
+                        )
+                    }}
                 />
                 <ErrorMessage name={this.props.fieldName} />
             </div>

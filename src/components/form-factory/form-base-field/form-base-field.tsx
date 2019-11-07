@@ -27,12 +27,12 @@ interface IFormBaseDyanmicFieldControllsProps {
 const FormBaseDynamicFieldControlls = (props: IFormBaseDyanmicFieldControllsProps) => {
 
     const deleteField = () => {
-        props.formikArrayHelpers.remove(props.index);
+        confirm(`Are you sure you want to delete this dynamic field?`) && props.formikArrayHelpers.remove(props.index);
     }
 
     return (
         <div className="FormBaseDynamicFieldControlls">
-            <IconButton onClick={deleteField}>
+            <IconButton type="button" onClick={deleteField}>
                 <MaterialIcon hasRipple icon="delete" />
             </IconButton>
         </div>

@@ -45,6 +45,10 @@ import '@material/react-linear-progress/dist/linear-progress.css';
 import '@material/react-material-icon/dist/material-icon.css';
 import MaterialIcon from "@material/react-material-icon";
 
+// font awesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGithub, faGithubAlt, faGithubSquare } from '@fortawesome/free-brands-svg-icons'
+
 import "@material/react-ripple/dist/ripple.css";
 // import {withRipple} from '@material/react-ripple';
 
@@ -88,7 +92,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
 
         return nextUrl;
     }
- 
+
     isCurrentPublicPage = () => {
         return publicPageSet.has(this.props.location.pathname);
     }
@@ -97,20 +101,20 @@ class PageRoutes extends Component<IPageRoutesProps> {
         return (
             <div className={`PageRoutesContainer`}>
                 {this.isCurrentPublicPage() ? (
-                        <div className="PublicRoutesContainer">
-                            {/** direct user to internal page if logged in */
+                    <div className="PublicRoutesContainer">
+                        {/** direct user to internal page if logged in */
                             this.props.auth.isLogin && <Redirect to={this.goInternal()} />}
 
-                            <Switch>
-                                <Route path="/" exact component={LandingPageContainer} />
-                                <Route path="/local-login/" exact component={LocalLoginPageContainer} />
-                                {
-                                    /** add more public page routes here */
-                                    // ...
-                                }
-                            </Switch>
-                        </div>
-                    ) : (
+                        <Switch>
+                            <Route path="/" exact component={LandingPageContainer} />
+                            <Route path="/local-login/" exact component={LocalLoginPageContainer} />
+                            {
+                                /** add more public page routes here */
+                                // ...
+                            }
+                        </Switch>
+                    </div>
+                ) : (
                         <div className="PrivateRoutesContainer">
                             {/** protect private routes, but let people come back the internal page they want to access after they login */
                                 !this.props.auth.isLogin && <Redirect to={`/?next=${this.props.location.pathname}`} />}
@@ -134,6 +138,11 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                             </Link>
                                         </TopAppBarIcon>
                                         <TopAppBarIcon navIcon tabIndex={1}>
+                                            <a target="_blank" href="//github.com/rivernews/appl-tracky-spa">
+                                                <FontAwesomeIcon icon={faGithub} size="lg" />
+                                            </a>
+                                        </TopAppBarIcon>
+                                        <TopAppBarIcon navIcon tabIndex={2}>
                                             <Link to="/profile/">
                                                 {!this.props.auth.avatarUrl ? (
                                                     <MaterialIcon

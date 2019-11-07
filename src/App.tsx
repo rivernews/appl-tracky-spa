@@ -13,6 +13,7 @@ import { PageRoutesContainer } from "./pages/page-routes/page-routes";
 
 /** Locals */
 import "./App.css";
+import "./ckeditor.css";
 
 
 interface IAppProps {
