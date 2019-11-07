@@ -115,7 +115,7 @@ export class ApplicationComponent extends Component<
         return this.props.company && (
             // application create or udpate must have company associate with it.
             <div className="application-form-controller">
-                <h2>New Application</h2>
+                <h2>{this.props.application ? "Edit Application" : "New Application"}</h2>
                 <ApplicationFormComponentContainer
                     onCancel={event => {
                         process.env.NODE_ENV === 'development' && console.log("onCancel clicked");
