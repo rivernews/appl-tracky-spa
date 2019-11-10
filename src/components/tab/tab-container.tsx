@@ -55,7 +55,7 @@ export class TabContainer extends Component<ITabContainerProps, ITabContainerSta
 
     render() {
         return (
-            <div className={styles.TabContainer}>
+            <>
                 <TabBar
                     className={styles.tabBar}
                     activeIndex={this.state.activeIndex}
@@ -69,27 +69,24 @@ export class TabContainer extends Component<ITabContainerProps, ITabContainerSta
                         ))
                     }
                 </TabBar>
-                <div className={styles.tabContents}>
-                    {this.props.children.map((child, index) => {
-                        return (
-                            <CSSTransition
-                                key={index}
-                                classNames={this.state.tabContentSlideDirection === SlideDirection.RIGHTWARD ?
-                                    { ...rightSlideStyles } :
-                                    { ...leftSlideStyles }}
-                                in={this.state.activeIndex === index}
-                                timeout={1000}
-                                unmountOnExit
-                            >
-                                <TabContent
-                                    {...child.props}
-                                />
-                            </CSSTransition>
-                        );
-                    })}
-                </div>
-
-            </div>
+                {this.props.children.map((child, index) => {
+                    return (
+                        <CSSTransition
+                            key={index}
+                            classNames={this.state.tabContentSlideDirection === SlideDirection.RIGHTWARD ?
+                                { ...rightSlideStyles } :
+                                { ...leftSlideStyles }}
+                            in={this.state.activeIndex === index}
+                            timeout={1000}
+                            unmountOnExit
+                        >
+                            <TabContent
+                                {...child.props}
+                            />
+                        </CSSTransition>
+                    );
+                })}
+            </>
         )
     }
 }

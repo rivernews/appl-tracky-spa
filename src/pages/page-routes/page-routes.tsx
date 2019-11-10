@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, memo } from "react";
 
 /** Redux */
 import { connect } from "react-redux";
@@ -56,12 +56,48 @@ import "./page-routes.css";
 import styles from "./page-routes.module.css";
 
 
+const routes: { [key: string]: { Component: any, protected: boolean } } = {
+    '/': { Component: LandingPageContainer, protected: false },
+    '/local-login/': { Component: LocalLoginPageContainer, protected: false },
+    '/home/': { Component: UserAppPageContainer, protected: true },
+    '/com-form/:uuid?/': { Component: AddComPageContainer, protected: true },
+    '/com-app/:uuid/': { Component: UserComAppPageContainer, protected: true },
+    '/com-app/': { Component: UserComAppPageContainer, protected: true },
+    '/profile/': { Component: UserProfilePageContainer, protected: true }
+}
+
 const publicPageSet = new Set([
     "/",
     "/local-login/",
     // add more public page routres here
     // ...
 ]);
+
+const InternalRouteComponents: React.FC = memo((props) => {
+    return (
+        <>
+            {Object.keys(routes).filter((path) => routes[path].protected).map((path) => (
+                <Route key={path} path={path}>
+                    {({ match }) => {
+                        const Component = routes[path].Component;
+                        console.log('\n\n\n\n\n', path, match);
+                        // if (match) alert(path);
+                        return (
+                            <CSSTransition
+                                in={match != null}
+                                classNames="page"
+                                timeout={5000}
+                                unmountOnExit
+                            >
+                                <Component />
+                            </CSSTransition>
+                        )
+                    }}
+                </Route>
+            ))}
+        </>
+    )
+})
 
 
 interface IPageRoutesRouterParams {
@@ -173,37 +209,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                     bufferingDots={true}
                                 /> */}
 
-                                <TransitionGroup>
-                                    <CSSTransition
-                                        key={this.props.location.key}
-                                        classNames="page"
-                                        timeout={400}
-                                    >
-                                        <Switch location={this.props.location}>
-                                            <Route
-                                                path="/home/"
-                                                component={UserAppPageContainer}
-                                            />
-                                            <Route
-                                                path="/com-form/:uuid?/"
-                                                component={AddComPageContainer}
-                                            />
-                                            <Route
-                                                path="/com-app/:uuid/"
-                                                component={UserComAppPageContainer}
-                                            />
-                                            <Route
-                                                path="/com-app/"
-                                                component={UserComAppPageContainer}
-                                            />
-                                            <Route
-                                                path="/profile/"
-                                                component={UserProfilePageContainer}
-                                            />
-                                            {/** add more private page routes here */}
-                                        </Switch>
-                                    </CSSTransition>
-                                </TransitionGroup>
+                                <InternalRouteComponents />
                             </TopAppBarFixedAdjust>
                         </div>
                     )}

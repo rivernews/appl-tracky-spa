@@ -136,13 +136,6 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                     <TabContent label="Real stuff">
                         <div className={styles.companyListHeader}>
                             <h1>Actively Applying</h1>
-                            <Button
-                                color="secondary"
-                                onClick={() => { this.props.history.push("/com-form/") }}
-                                unelevated
-                                icon={<MaterialIcon hasRipple icon="add" />}
-                                children="Add Organization"
-                            />
                             <TextField
                                 className={styles.searchField}
                                 label="Search Company Name"
@@ -177,12 +170,6 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                     <TabContent label="Two Test Test">
                         <div className={styles.companyListHeader}>
                             <h1>Another Tab</h1>
-                            <Button
-                                onClick={() => { this.props.history.push("/com-form/") }}
-                                unelevated
-                                icon={<MaterialIcon hasRipple icon="add" />}
-                                children="Add Organization"
-                            />
                             <TextField
                                 className={styles.searchField}
                                 label="Search Company Name"
@@ -217,12 +204,6 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                     <TabContent label="Three test">
                         <div className={styles.companyListHeader}>
                             <h1>Love it!</h1>
-                            <Button
-                                onClick={() => { this.props.history.push("/com-form/") }}
-                                unelevated
-                                icon={<MaterialIcon hasRipple icon="add" />}
-                                children="Add Organization"
-                            />
                             <TextField
                                 className={styles.searchField}
                                 label="Search Company Name"
