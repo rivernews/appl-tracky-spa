@@ -1,0 +1,18 @@
+.TabContainer {
+}
+
+.tabBar {
+    background-color: var(--mdc-theme-primary);
+    box-shadow: 0px 15px 15px -10px #a9a9a9;
+}
+
+.tabBar :global(.mdc-tab__text-label) {
+    color: var(--mdc-theme-on-primary);
+}
+
+.tabBar :global(.mdc-tab-indicator__content--underline) {
+    background-color: var(--mdc-theme-on-primary);
+}
+
+.tabContents {
+}

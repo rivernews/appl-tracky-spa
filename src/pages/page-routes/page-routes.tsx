@@ -99,7 +99,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
 
     render() {
         return (
-            <div className={`PageRoutesContainer`}>
+            <div className={styles.PageRoutesContainer}>
                 {this.isCurrentPublicPage() ? (
                     <div className="PublicRoutesContainer">
                         {/** direct user to internal page if logged in */
@@ -164,14 +164,14 @@ class PageRoutes extends Component<IPageRoutesProps> {
 
                             <TopAppBarFixedAdjust>
 
-                                <LinearProgress
+                                {/* <LinearProgress
                                     indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
 
                                     // mdc's progress bar bug workaround
                                     // when press back button, avoid showing dotted buffer animation
                                     buffer={1}
                                     bufferingDots={true}
-                                />
+                                /> */}
 
                                 <TransitionGroup>
                                     <CSSTransition

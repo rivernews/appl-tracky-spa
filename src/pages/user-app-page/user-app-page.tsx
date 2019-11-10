@@ -24,21 +24,32 @@ import Button from "@material/react-button";
 import "@material/react-text-field/dist/text-field.css";
 import TextField, { Input } from "@material/react-text-field";
 
-// react-mdc tab
-import '@material/react-tab-bar/dist/tab-bar.css';
-import '@material/react-tab-scroller/dist/tab-scroller.css';
-import '@material/react-tab/dist/tab.css';
-import '@material/react-tab-indicator/dist/tab-indicator.css';
-import Tab from '@material/react-tab';
-import TabBar from '@material/react-tab-bar';
+import { TabContainer } from "../../components/tab/tab-container";
+import { TabContent } from "../../components/tab/tab-content";
 
 // objects
 // import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 import { CompanyListItem } from "../../components/company/company-list-item";
 import { RequestStatus } from "../../utils/rest-api";
 
+import {
+    Body1,
+    Body2,
+    // Button,
+    Caption,
+    Headline1,
+    Headline2,
+    Headline3,
+    Headline4,
+    Headline5,
+    Headline6,
+    Overline,
+    Subtitle1,
+    Subtitle2,
+} from '@material/react-typography';
+import '@material/react-typography/dist/typography.css';
+
 // styling
-import "./user-app-page.css";
 import styles from "./user-app-page.module.css";
 
 
@@ -110,59 +121,141 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
         const displayingCompanies = this.props.company.requestStatus !== RequestStatus.REQUESTING ? this.state.isFiltering ? this.state.filteredCompanyList : allCompanies : Array.from(Array(5));
 
         return (
-            <div className="UserAppPage">
-                <TabBar
-                    activeIndex={this.state.activeTabIndex}
-                    handleActiveIndexUpdate={this.handleActiveTabIndexUpdate}
-                >
-                    <Tab>
-                        <span className='mdc-tab__text-label'>One</span>
-                    </Tab>
-                    <Tab>
-                        <span className='mdc-tab__text-label'>Two</span>
-                    </Tab>
-                </TabBar>
-
-                <div className={styles.userAppPageHeader}>
-                    <h1>Organizations You're Applying</h1>
+            <>
+                <div className={styles.UserAppPageHeader}>
+                    <Headline3>Your Organizations</Headline3>
                     <Button
+                        className="mdc-theme-secondary"
                         onClick={() => { this.props.history.push("/com-form/") }}
                         unelevated
                         icon={<MaterialIcon hasRipple icon="add" />}
                         children="Add Organization"
                     />
-                    <TextField
-                        className={styles.searchField}
-                        label="Search Company Name"
-                        outlined
-                        leadingIcon={<MaterialIcon role="button" icon="search" />}
-                        trailingIcon={this.state.searchText === '' ? undefined : <MaterialIcon role="button" icon="clear" />}
-                        onTrailingIconSelect={this.onSearchFieldClear}
-                    >
-                        <Input
-                            type={InputFieldType.TEXT}
-                            inputType="input"
-                            onKeyDown={this.onSearchFieldKeyDown}
-                            onChange={this.onSearchFieldChange}
-                            value={this.state.searchText}
-                        />
-                    </TextField>
                 </div>
-                <div className={styles.userAppPageContent}>
-                    {
-                        displayingCompanies.map(
-                            (company, index) =>
-                                <CompanyListItem
-                                    key={company ? company.uuid : index}
-                                    company={company}
-                                    applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
-                                    onClick={company ? this.onCompanyClick : undefined}
+                <TabContainer>
+                    <TabContent label="Real stuff">
+                        <div className={styles.companyListHeader}>
+                            <h1>Actively Applying</h1>
+                            <Button
+                                color="secondary"
+                                onClick={() => { this.props.history.push("/com-form/") }}
+                                unelevated
+                                icon={<MaterialIcon hasRipple icon="add" />}
+                                children="Add Organization"
+                            />
+                            <TextField
+                                className={styles.searchField}
+                                label="Search Company Name"
+                                outlined
+                                leadingIcon={<MaterialIcon role="button" icon="search" />}
+                                trailingIcon={this.state.searchText === '' ? undefined : <MaterialIcon role="button" icon="clear" />}
+                                onTrailingIconSelect={this.onSearchFieldClear}
+                            >
+                                <Input
+                                    type={InputFieldType.TEXT}
+                                    inputType="input"
+                                    onKeyDown={this.onSearchFieldKeyDown}
+                                    onChange={this.onSearchFieldChange}
+                                    value={this.state.searchText}
                                 />
-                        )
-                    }
-                </div>
-
-            </div>
+                            </TextField>
+                        </div>
+                        <div>
+                            {
+                                displayingCompanies.map(
+                                    (company, index) =>
+                                        <CompanyListItem
+                                            key={company ? company.uuid : index}
+                                            company={company}
+                                            applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
+                                            onClick={company ? this.onCompanyClick : undefined}
+                                        />
+                                )
+                            }
+                        </div>
+                    </TabContent>
+                    <TabContent label="Two Test Test">
+                        <div className={styles.companyListHeader}>
+                            <h1>Another Tab</h1>
+                            <Button
+                                onClick={() => { this.props.history.push("/com-form/") }}
+                                unelevated
+                                icon={<MaterialIcon hasRipple icon="add" />}
+                                children="Add Organization"
+                            />
+                            <TextField
+                                className={styles.searchField}
+                                label="Search Company Name"
+                                outlined
+                                leadingIcon={<MaterialIcon role="button" icon="search" />}
+                                trailingIcon={this.state.searchText === '' ? undefined : <MaterialIcon role="button" icon="clear" />}
+                                onTrailingIconSelect={this.onSearchFieldClear}
+                            >
+                                <Input
+                                    type={InputFieldType.TEXT}
+                                    inputType="input"
+                                    onKeyDown={this.onSearchFieldKeyDown}
+                                    onChange={this.onSearchFieldChange}
+                                    value={this.state.searchText}
+                                />
+                            </TextField>
+                        </div>
+                        <div>
+                            {
+                                displayingCompanies.map(
+                                    (company, index) =>
+                                        <CompanyListItem
+                                            key={company ? company.uuid : index}
+                                            company={company}
+                                            applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
+                                            onClick={company ? this.onCompanyClick : undefined}
+                                        />
+                                )
+                            }
+                        </div>
+                    </TabContent>
+                    <TabContent label="Three test">
+                        <div className={styles.companyListHeader}>
+                            <h1>Love it!</h1>
+                            <Button
+                                onClick={() => { this.props.history.push("/com-form/") }}
+                                unelevated
+                                icon={<MaterialIcon hasRipple icon="add" />}
+                                children="Add Organization"
+                            />
+                            <TextField
+                                className={styles.searchField}
+                                label="Search Company Name"
+                                outlined
+                                leadingIcon={<MaterialIcon role="button" icon="search" />}
+                                trailingIcon={this.state.searchText === '' ? undefined : <MaterialIcon role="button" icon="clear" />}
+                                onTrailingIconSelect={this.onSearchFieldClear}
+                            >
+                                <Input
+                                    type={InputFieldType.TEXT}
+                                    inputType="input"
+                                    onKeyDown={this.onSearchFieldKeyDown}
+                                    onChange={this.onSearchFieldChange}
+                                    value={this.state.searchText}
+                                />
+                            </TextField>
+                        </div>
+                        <div>
+                            {
+                                displayingCompanies.map(
+                                    (company, index) =>
+                                        <CompanyListItem
+                                            key={company ? company.uuid : index}
+                                            company={company}
+                                            applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
+                                            onClick={company ? this.onCompanyClick : undefined}
+                                        />
+                                )
+                            }
+                        </div>
+                    </TabContent>
+                </TabContainer>
+            </>
         )
     }
 }

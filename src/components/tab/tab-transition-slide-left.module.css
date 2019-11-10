@@ -1,0 +1,38 @@
+:root {
+    --transition-duration: 500ms;
+    --transition-func: cubic-bezier(0.165, 0.84, 0.44, 1);
+    --transition: transform var(--transition-func) var(--transition-duration), opacity var(--transition-func) var(--transition-duration);
+    --will-change: transform opacity;
+}
+
+.enter {
+    position: absolute;
+
+    transform: translate3d(100vw, 0, 0);
+    opacity: 0;
+}
+
+.enterActive, .enterDone {
+    position: absolute;
+
+    transform: translate3d(0, 0, 0);
+    transition: var(--transition);
+    will-change: var(--will-change);
+    opacity: 1;
+}
+
+.exit {
+    position: absolute;
+
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+}
+
+.exitActive, .exitDone {
+    position: absolute;
+
+    transform: translate3d(-100%, 0, 0);
+    will-change: var(--will-change);
+    transition: var(--transition);
+    opacity: 0;
+}

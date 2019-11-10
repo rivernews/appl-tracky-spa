@@ -1,19 +1,15 @@
-.UserAppPage {
-    margin: 4vmin 4vmin;
-}
-
-.companyCard.mdc-card {
+.companyCard {
     border-radius: 2vmin;
     box-shadow: 3px 5px 10px 1px rgba(130, 130, 130, .3);
     margin: 3vmin 0;
 }
-.companyCard.mdc-card:last-child {
+.companyCard:last-child {
     margin-bottom: 6vmin;
 }
-.companyCard.mdc-card:first-child {
+.companyCard:first-child {
     margin-top: 6vmin;
 }
 
-.companyCard.mdc-card .companyCardContent {
+.companyCardContent {
     padding: 1vmin 3vmin;
 }
