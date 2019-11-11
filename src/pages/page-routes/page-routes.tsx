@@ -66,13 +66,6 @@ const routes: { [key: string]: { Component: any, protected: boolean } } = {
     '/profile/': { Component: UserProfilePageContainer, protected: true }
 }
 
-const publicPageSet = new Set([
-    "/",
-    "/local-login/",
-    // add more public page routres here
-    // ...
-]);
-
 const InternalRouteComponents: React.FC = memo((props) => {
     return (
         <>
@@ -80,8 +73,6 @@ const InternalRouteComponents: React.FC = memo((props) => {
                 <Route key={path} path={path}>
                     {({ match }) => {
                         const Component = routes[path].Component;
-                        console.log('\n\n\n\n\n', path, match);
-                        // if (match) alert(path);
                         return (
                             <CSSTransition
                                 in={match != null}
@@ -130,7 +121,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
     }
 
     isCurrentPublicPage = () => {
-        return publicPageSet.has(this.props.location.pathname);
+        return (this.props.location.pathname in routes) && !routes[this.props.location.pathname].protected;
     }
 
     render() {

@@ -55,7 +55,7 @@ export class TabContainer extends Component<ITabContainerProps, ITabContainerSta
 
     render() {
         return (
-            <>
+            <div className={styles.TabContainer}>
                 <TabBar
                     className={styles.tabBar}
                     activeIndex={this.state.activeIndex}
@@ -86,7 +86,7 @@ export class TabContainer extends Component<ITabContainerProps, ITabContainerSta
                         </CSSTransition>
                     );
                 })}
-            </>
+            </div>
         )
     }
 }
