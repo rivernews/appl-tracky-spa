@@ -57,7 +57,7 @@ export class TabContainer extends Component<ITabContainerProps, ITabContainerSta
         return (
             <div>
                 <TabBar
-                    className={styles.tabBar}
+                    className={`${styles.tabBar}`}
                     activeIndex={this.state.activeIndex}
                     handleActiveIndexUpdate={this.handleActiveIndexUpdate}
                 >
