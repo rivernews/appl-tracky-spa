@@ -52,43 +52,16 @@ import { faGithub, faGithubAlt, faGithubSquare } from '@fortawesome/free-brands-
 import "@material/react-ripple/dist/ripple.css";
 // import {withRipple} from '@material/react-ripple';
 
-import "./page-routes.css";
+import pageTransitionStyles from  "./page-routes-transition.module.css";
 import styles from "./page-routes.module.css";
 
 
-const routes: { [key: string]: { Component: any, protected: boolean } } = {
-    '/': { Component: LandingPageContainer, protected: false },
-    '/local-login/': { Component: LocalLoginPageContainer, protected: false },
-    '/home/': { Component: UserAppPageContainer, protected: true },
-    '/com-form/:uuid?/': { Component: AddComPageContainer, protected: true },
-    '/com-app/:uuid/': { Component: UserComAppPageContainer, protected: true },
-    '/com-app/': { Component: UserComAppPageContainer, protected: true },
-    '/profile/': { Component: UserProfilePageContainer, protected: true }
-}
-
-const InternalRouteComponents: React.FC = memo((props) => {
-    return (
-        <>
-            {Object.keys(routes).filter((path) => routes[path].protected).map((path) => (
-                <Route key={path} path={path}>
-                    {({ match }) => {
-                        const Component = routes[path].Component;
-                        return (
-                            <CSSTransition
-                                in={match != null}
-                                classNames="page"
-                                timeout={5000}
-                                unmountOnExit
-                            >
-                                <Component />
-                            </CSSTransition>
-                        )
-                    }}
-                </Route>
-            ))}
-        </>
-    )
-})
+const publicPageSet = new Set([
+    "/",
+    "/local-login/",
+    // add more public page routres here
+    // ...
+]);
 
 
 interface IPageRoutesRouterParams {
@@ -121,12 +94,12 @@ class PageRoutes extends Component<IPageRoutesProps> {
     }
 
     isCurrentPublicPage = () => {
-        return (this.props.location.pathname in routes) && !routes[this.props.location.pathname].protected;
+        return publicPageSet.has(this.props.location.pathname);
     }
 
     render() {
         return (
-            <div className={styles.PageRoutesContainer}>
+            <div>
                 {this.isCurrentPublicPage() ? (
                     <div className="PublicRoutesContainer">
                         {/** direct user to internal page if logged in */
@@ -190,17 +163,37 @@ class PageRoutes extends Component<IPageRoutesProps> {
                             </TopAppBar>
 
                             <TopAppBarFixedAdjust>
-
-                                {/* <LinearProgress
-                                    indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
-
-                                    // mdc's progress bar bug workaround
-                                    // when press back button, avoid showing dotted buffer animation
-                                    buffer={1}
-                                    bufferingDots={true}
-                                /> */}
-
-                                <InternalRouteComponents />
+                                <TransitionGroup>
+                                    <CSSTransition
+                                        key={this.props.location.key}
+                                        classNames={{...pageTransitionStyles}}
+                                        timeout={500}
+                                    >
+                                        <Switch location={this.props.location}>
+                                            <Route
+                                                path="/home/"
+                                                component={UserAppPageContainer}
+                                            />
+                                            <Route
+                                                path="/com-form/:uuid?/"
+                                                component={AddComPageContainer}
+                                            />
+                                            <Route
+                                                path="/com-app/:uuid/"
+                                                component={UserComAppPageContainer}
+                                            />
+                                            <Route
+                                                path="/com-app/"
+                                                component={UserComAppPageContainer}
+                                            />
+                                            <Route
+                                                path="/profile/"
+                                                component={UserProfilePageContainer}
+                                            />
+                                            {/** add more private page routes here */}
+                                        </Switch>
+                                    </CSSTransition>
+                                </TransitionGroup>
                             </TopAppBarFixedAdjust>
                         </div>
                     )}

@@ -10,15 +10,18 @@
 
     transform: translate3d(100vw, 0, 0);
     opacity: 0;
+
+    will-change: var(--will-change);
 }
 
 .enterActive, .enterDone {
     position: absolute;
 
     transform: translate3d(0, 0, 0);
+    opacity: 1;
+
     transition: var(--transition);
     will-change: var(--will-change);
-    opacity: 1;
 }
 
 .exit {
@@ -32,7 +35,8 @@
     position: absolute;
 
     transform: translate3d(-100%, 0, 0);
+    opacity: 0;
+    
     will-change: var(--will-change);
     transition: var(--transition);
-    opacity: 0;
 }

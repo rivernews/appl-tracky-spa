@@ -56,7 +56,7 @@ interface IUserComAppPageProps
 
 class UserComAppPage extends Component<IUserComAppPageProps> {
     componentDidMount() {
-        let companyUuid = this.props.match.params.uuid;
+        const companyUuid = this.props.match.params.uuid;
         process.env.NODE_ENV === 'development' && console.log("mount, got uuid from route?", companyUuid);
     }
 

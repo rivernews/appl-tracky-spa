@@ -1,30 +1,42 @@
 :root {
-    --page-transition-duration: 5000ms;
+    --page-transition-duration: 500ms;
 }
 
-.page {
+.exit {
     position: absolute;
+
+    opacity: 1;
+    transform: scale(1);
+
     will-change: opacity transform;
 }
 
-.page-exit {
-    opacity: 1;
-    transform: scale(1);
-}
+.exitActive, .exitDone {
+    position: absolute;
 
-.page-exit-active {
     opacity: 0;
     transform: scale(0.9);
+    
     transition: opacity var(--page-transition-duration), transform var(--page-transition-duration);
+    will-change: opacity transform;
 }
 
-.page-enter {
+.enter {
+    position: absolute;
+
     opacity: 0;
     transform: scale(1.1);
+
+    will-change: opacity transform;
 }
 
-.page-enter-active {
+.enterActive, .enterDone {
+    position: absolute;
+    width: 100%;
+
     opacity: 1;
     transform: scale(1);
+
     transition: opacity var(--page-transition-duration), transform var(--page-transition-duration);
+    will-change: opacity transform;
 }

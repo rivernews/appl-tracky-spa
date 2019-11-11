@@ -55,7 +55,7 @@ export class TabContainer extends Component<ITabContainerProps, ITabContainerSta
 
     render() {
         return (
-            <div className={styles.TabContainer}>
+            <div>
                 <TabBar
                     className={styles.tabBar}
                     activeIndex={this.state.activeIndex}
@@ -77,7 +77,7 @@ export class TabContainer extends Component<ITabContainerProps, ITabContainerSta
                                 { ...rightSlideStyles } :
                                 { ...leftSlideStyles }}
                             in={this.state.activeIndex === index}
-                            timeout={1000}
+                            timeout={500}
                             unmountOnExit
                         >
                             <TabContent

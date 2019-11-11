@@ -121,7 +121,7 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
         const displayingCompanies = this.props.company.requestStatus !== RequestStatus.REQUESTING ? this.state.isFiltering ? this.state.filteredCompanyList : allCompanies : Array.from(Array(5));
 
         return (
-            <>
+            <div>
                 <div className={styles.UserAppPageHeader}>
                     <Headline3>Your Organizations</Headline3>
                     <Button
@@ -236,7 +236,7 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                         </div>
                     </TabContent>
                 </TabContainer>
-            </>
+            </div>
         )
     }
 }
