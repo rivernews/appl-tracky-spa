@@ -14,7 +14,6 @@ interface IApplicationStatusProps {
 export class ApplicationStatus extends BaseModel {
     public text: string;
     public application: IRelationship;
-    // public applicationstatuslink_set: Array<ApplicationStatusLink>
     public applicationstatuslink_set: Array<ApplicationStatusLink>
     public date: string;
     public order: number;

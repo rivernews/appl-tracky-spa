@@ -1,6 +1,7 @@
 import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps, IRelationship } from "./base-model";
 import { Link } from "./link";
+import { ApplicationStatus } from "./application-status";
 import * as Yup from "yup";
 
 interface IApplicationProps {
@@ -11,6 +12,7 @@ interface IApplicationProps {
     job_source?: Link;
     labels?: any;
     notes?: string;
+    statuses?: Array<ApplicationStatus>;
 }
 
 export class Application extends BaseModel {
@@ -21,6 +23,7 @@ export class Application extends BaseModel {
     public job_source: Link;
     public labels: any;
     public notes: string;
+    public statuses: Array<ApplicationStatus>;
 
     constructor({
         user = "",
@@ -30,6 +33,7 @@ export class Application extends BaseModel {
         job_source = new Link({}),
         labels = {},
         notes = "",
+        statuses = [],
         ...args
     }: IApplicationProps & IBaseModelProps) {
         super(args);
@@ -40,6 +44,7 @@ export class Application extends BaseModel {
         this.job_source = job_source;
         this.labels = labels;
         this.notes = notes;
+        this.statuses = statuses;
     }
 
     static schema(){

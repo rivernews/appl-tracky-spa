@@ -89,10 +89,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
         }
 
         const company = this.props.companyStore.collection[this.props.match.params.uuid];
-        const applications = company ? Object.values(this.props.applicationStore.collection).filter(
-            application =>
-                application.user_company === company.uuid
-        ) : [];
+        const applications = company ? company.applications : [];
 
         return (
             <div className={styles.UserCompanyPage}>
@@ -128,14 +125,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
                     />
                 )} */}
                 {company ? applications.map(application => {
-                    const applicationStatusList = application ? Object.values(
-                            this.props.applicationStatusStore
-                                .collection
-                        ).filter(
-                            applicationStatus =>
-                                applicationStatus.application ===
-                                application.uuid
-                        ) : [];
+                    const applicationStatusList = application ? application.statuses : [];
                     return (
                         <ApplicationComponentController
                             key={application.uuid}

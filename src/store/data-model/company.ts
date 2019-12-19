@@ -2,6 +2,7 @@ import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps } from "./base-model";
 import { Address } from "./address";
 import { Link } from "./link";
+import { Application } from "./application";
 import * as Yup from "yup";
 
 interface ICompanyProps {
@@ -11,7 +12,7 @@ interface ICompanyProps {
     hq_location?: Address;
     home_page?: Link;
     ratings?: any;
-    applications?: any;
+    applications?: Array<Application>;
 }
 
 export class Company extends BaseModel {
@@ -21,7 +22,7 @@ export class Company extends BaseModel {
     public hq_location: Address;
     public home_page: Link;
     public ratings: any;
-    public applications: any;
+    public applications: Array<Application>;
 
     constructor({
         user = "",
@@ -30,7 +31,7 @@ export class Company extends BaseModel {
         hq_location = new Address({}),
         home_page = new Link({}),
         ratings = {},
-        applications = {},
+        applications = [],
         ...args
     }: ICompanyProps & IBaseModelProps) {
         super(args);
