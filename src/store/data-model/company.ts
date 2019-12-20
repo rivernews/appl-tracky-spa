@@ -54,10 +54,29 @@ export class Company extends BaseModel {
 }
 
 const initialCompanyInstance = new Company({});
+const initialArchivedCompanyInstance = new Company({});
+
 const CompanyRestApiRedux = RestApiReduxFactory<Company>(
     "companies",
     initialCompanyInstance
 );
+export const targetCompanyRestApiRedux = RestApiReduxFactory<Company>(
+    "targetCompanies",
+    initialCompanyInstance
+);
+export const appliedCompanyRestApiRedux = RestApiReduxFactory<Company>(
+    "appliedCompanies",
+    initialCompanyInstance
+);
+export const interviewingCompanyRestApiRedux = RestApiReduxFactory<Company>(
+    "interviewingCompanies",
+    initialCompanyInstance
+);
+export const archivedCompanyRestApiRedux = RestApiReduxFactory<Company>(
+    "archivedCompanies",
+    initialCompanyInstance
+);
+
 export const CompanyActions = CompanyRestApiRedux.actions;
 export const CompanyReducer = CompanyRestApiRedux.storeReducer;
 export const CompanySagas = CompanyRestApiRedux.sagas;

@@ -14,7 +14,13 @@ export interface IRootState {
 
     // add more state types here here (for each reducer)
     auth: IUpdateAuthState
+
     company: IObjectStore<Company>
+    targetCompany: IObjectStore<Company>
+    appliedCompany: IObjectStore<Company>
+    interviewingCompany: IObjectStore<Company>
+    archivedCompany: IObjectStore<Company>
+    
     application: IObjectStore<Application>
     applicationStatus: IObjectStore<ApplicationStatus>
     // ...

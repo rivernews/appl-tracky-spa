@@ -55,6 +55,11 @@ import styles from "./user-app-page.module.css";
 
 interface IUserAppPageProps extends RouteComponentProps {
     company: IObjectStore<Company>
+    targetCompany: IObjectStore<Company>
+    appliedCompany: IObjectStore<Company>
+    interviewingCompany: IObjectStore<Company>
+    archivedCompany: IObjectStore<Company>
+
     application: IObjectStore<Application>
 }
 
@@ -118,6 +123,12 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
 
     render() {
         const allCompanies = Object.values(this.props.company.collection);
+        const targetCompanies = Object.values(this.props.targetCompany.collection);
+        const appliedCompanies = Object.values(this.props.appliedCompany.collection);
+        const interviewingCompanies = Object.values(this.props.interviewingCompany.collection);
+        const archivedCompanies = Object.values(this.props.archivedCompany.collection);
+
+        // for searching feature
         const displayingCompanies = this.props.company.requestStatus !== RequestStatus.REQUESTING ? this.state.isFiltering ? this.state.filteredCompanyList : allCompanies : Array.from(Array(5));
 
         return (
@@ -133,9 +144,10 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                     />
                 </div>
                 <TabContainer>
-                    <TabContent label="Real stuff">
+                    <TabContent label="All (DEBUG)">
                         <div className={styles.companyListHeader}>
-                            <h1>Actively Applying</h1>
+                            <h1>All (For debug)</h1>
+                            <span>This tab should be removed since it contains duplicated request. After all companies have a default label, you can remove this tab.</span>
                             <TextField
                                 className={styles.searchField}
                                 label="Search Company Name"
@@ -167,29 +179,13 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                             }
                         </div>
                     </TabContent>
-                    <TabContent label="Two Test Test">
+                    <TabContent label={`Target (${targetCompanies.length})`}>
                         <div className={styles.companyListHeader}>
-                            <h1>Another Tab</h1>
-                            <TextField
-                                className={styles.searchField}
-                                label="Search Company Name"
-                                outlined
-                                leadingIcon={<MaterialIcon role="button" icon="search" />}
-                                trailingIcon={this.state.searchText === '' ? undefined : <MaterialIcon role="button" icon="clear" />}
-                                onTrailingIconSelect={this.onSearchFieldClear}
-                            >
-                                <Input
-                                    type={InputFieldType.TEXT}
-                                    inputType="input"
-                                    onKeyDown={this.onSearchFieldKeyDown}
-                                    onChange={this.onSearchFieldChange}
-                                    value={this.state.searchText}
-                                />
-                            </TextField>
+                            <h1>Target</h1>
                         </div>
                         <div>
                             {
-                                displayingCompanies.map(
+                                Object.values(this.props.targetCompany.collection).map(
                                     (company, index) =>
                                         <CompanyListItem
                                             key={company ? company.uuid : index}
@@ -201,29 +197,49 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                             }
                         </div>
                     </TabContent>
-                    <TabContent label="Three test">
+                    <TabContent label={`Applied (${appliedCompanies.length})`}>
                         <div className={styles.companyListHeader}>
-                            <h1>Love it!</h1>
-                            <TextField
-                                className={styles.searchField}
-                                label="Search Company Name"
-                                outlined
-                                leadingIcon={<MaterialIcon role="button" icon="search" />}
-                                trailingIcon={this.state.searchText === '' ? undefined : <MaterialIcon role="button" icon="clear" />}
-                                onTrailingIconSelect={this.onSearchFieldClear}
-                            >
-                                <Input
-                                    type={InputFieldType.TEXT}
-                                    inputType="input"
-                                    onKeyDown={this.onSearchFieldKeyDown}
-                                    onChange={this.onSearchFieldChange}
-                                    value={this.state.searchText}
-                                />
-                            </TextField>
+                            <h1>Applied</h1>
                         </div>
                         <div>
                             {
-                                displayingCompanies.map(
+                                Object.values(this.props.appliedCompany.collection).map(
+                                    (company, index) =>
+                                        <CompanyListItem
+                                            key={company ? company.uuid : index}
+                                            company={company}
+                                            applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
+                                            onClick={company ? this.onCompanyClick : undefined}
+                                        />
+                                )
+                            }
+                        </div>
+                    </TabContent>
+                    <TabContent label={`Interviewing (${interviewingCompanies.length})`}>
+                        <div className={styles.companyListHeader}>
+                            <h1>Interviewing</h1>
+                        </div>
+                        <div>
+                            {
+                                Object.values(this.props.interviewingCompany.collection).map(
+                                    (company, index) =>
+                                        <CompanyListItem
+                                            key={company ? company.uuid : index}
+                                            company={company}
+                                            applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
+                                            onClick={company ? this.onCompanyClick : undefined}
+                                        />
+                                )
+                            }
+                        </div>
+                    </TabContent>
+                    <TabContent label={`Archived (${archivedCompanies.length})`}>
+                        <div className={styles.companyListHeader}>
+                            <h1>Archived</h1>
+                        </div>
+                        <div>
+                            {
+                                Object.values(this.props.archivedCompany.collection).map(
                                     (company, index) =>
                                         <CompanyListItem
                                             key={company ? company.uuid : index}
@@ -244,6 +260,11 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
 const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
     company: store.company,
+    targetCompany: store.targetCompany,
+    appliedCompany: store.appliedCompany,
+    interviewingCompany: store.interviewingCompany,
+    archivedCompany: store.archivedCompany,
+
     application: store.application,
 });
 

@@ -10,7 +10,12 @@ import {
     FailureAuth
 } from "../../store/auth/actions";
 import { resetAllStoreAction } from "../../store/actions";
-import { CompanyActions, Company } from "../../store/data-model/company";
+import { CompanyActions, Company,
+    targetCompanyRestApiRedux,
+    appliedCompanyRestApiRedux,
+    interviewingCompanyRestApiRedux,
+    archivedCompanyRestApiRedux,
+} from "../../store/data-model/company";
 import { ApplicationActions, Application } from "../../store/data-model/application";
 import { ApplicationStatusActions, ApplicationStatus } from "../../store/data-model/application-status";
 // redux-saga
@@ -21,7 +26,7 @@ import { push } from "connected-react-router";
 
 /** api */
 import { AuthenticationService } from "../../utils/authentication";
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { CrudType, RequestStatus, RestApiService } from "../../utils/rest-api";
 
 function* authLoginSagaHandler(
     requestedLoginAuthAction: IRequestedLoginAuthAction
@@ -56,9 +61,19 @@ function* authLoginSagaHandler(
         ));
 
         // initial fetch user data
-        yield put(ApplicationActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Application({})))
-        yield put(CompanyActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({})))
-        yield put(ApplicationStatusActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new ApplicationStatus({})))
+
+        // TODO: clean up after tab complete
+        // yield put(ApplicationActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Application({})))
+
+        yield put(CompanyActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({})));
+        yield put(targetCompanyRestApiRedux.actions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({}), undefined, undefined, undefined, `${RestApiService.state.apiBaseUrl}companies/?labels__text=Target`));
+        yield put(interviewingCompanyRestApiRedux.actions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({}), undefined, undefined, undefined, `${RestApiService.state.apiBaseUrl}companies/?labels__text=Interviewing`));
+        yield put(appliedCompanyRestApiRedux.actions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({}), undefined, undefined, undefined, `${RestApiService.state.apiBaseUrl}companies/?labels__text=Applied`));
+        yield put(archivedCompanyRestApiRedux.actions[CrudType.LIST][RequestStatus.TRIGGERED].action(new Company({}), undefined, undefined, undefined, `${RestApiService.state.apiBaseUrl}companies/?labels__text=Archived`));
+
+        // TODO: clean up after tab complete
+        // yield put(ApplicationStatusActions[CrudType.LIST][RequestStatus.TRIGGERED].action(new ApplicationStatus({})))
+
     } catch (error) {
         console.warn(`auth saga error: ${JSON.stringify(error)}`);
         yield put(FailureAuth(error));

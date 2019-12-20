@@ -6,7 +6,12 @@ import { TAuthActions } from "./auth/types";
 import { IRootState } from "./types";
 import { RootActionNames } from "./actions";
 // rest api
-import { CompanyReducer } from "./data-model/company";
+import { CompanyReducer,
+    targetCompanyRestApiRedux,
+    appliedCompanyRestApiRedux,
+    interviewingCompanyRestApiRedux,
+    archivedCompanyRestApiRedux,
+} from "./data-model/company";
 import { ApplicationReducer } from "./data-model/application";
 import { ApplicationStatusReducer } from "./data-model/application-status";
 
@@ -32,7 +37,13 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
         if (!rootState) {
             rootStateChecked.router = undefined;
             rootStateChecked.auth = undefined;
+
             rootStateChecked.company = undefined;
+            rootStateChecked.targetCompany = undefined;
+            rootStateChecked.appliedCompany = undefined;
+            rootStateChecked.interviewingCompany = undefined;
+            rootStateChecked.archivedCompany = undefined;
+
             rootStateChecked.application = undefined;
             rootStateChecked.applicationStatus = undefined;
             // add initial state for new sub-store here
@@ -51,7 +62,13 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             ...rootState,
             router: connectRouter(history)(rootStateChecked.router, action as LocationChangeAction),
             auth: authReducer(rootStateChecked.auth, action),
+
             company: CompanyReducer(rootStateChecked.company, action),
+            targetCompany: targetCompanyRestApiRedux.storeReducer(rootStateChecked.targetCompany, action),
+            appliedCompany: appliedCompanyRestApiRedux.storeReducer(rootStateChecked.appliedCompany, action),
+            interviewingCompany: interviewingCompanyRestApiRedux.storeReducer(rootStateChecked.interviewingCompany, action),
+            archivedCompany: archivedCompanyRestApiRedux.storeReducer(rootStateChecked.archivedCompany, action),
+
             application: ApplicationReducer(rootStateChecked.application, action),
             applicationStatus: ApplicationStatusReducer(rootStateChecked.applicationStatus, action),
             // add new reducer here
