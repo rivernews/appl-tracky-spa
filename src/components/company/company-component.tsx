@@ -29,6 +29,10 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
             <div className="CompanyComponent">
                 <div className={styles.companyTitleContainer}>
                     <h1>{company ? company.name : <Skeleton width="50vmin" />}</h1>
+                    
+                    <span>{company ? company.labels.length && company.labels[0].text : (
+                        <Skeleton width="40px" />
+                    )}</span>
 
                     {/* company link */}
                     {

@@ -2,12 +2,13 @@ import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps } from "./base-model";
 import { Address } from "./address";
 import { Link } from "./link";
+import { Label } from "./label";
 import { Application } from "./application";
 import * as Yup from "yup";
 
 interface ICompanyProps {
     user?: string;
-    labels?: any;
+    labels?: Array<Label>;
     name?: string;
     hq_location?: Address;
     home_page?: Link;
@@ -17,7 +18,7 @@ interface ICompanyProps {
 
 export class Company extends BaseModel {
     public user: string;
-    public labels: any;
+    public labels: Array<Label>;
     public name: string;
     public hq_location: Address;
     public home_page: Link;

@@ -30,6 +30,15 @@ const CompanyListItem = (props: ICompanyListItemProps) => {
         <Card className={styles.companyCard} onClick={onClick}>
             <CardPrimaryContent className={styles.companyCardContent}>
                 <h1>{props.company ? props.company.name : <Skeleton duration={1.1} width={`50vmin`} />}</h1>
+
+                <span>
+                    {props.company ? (
+                        props.company.labels.length && props.company.labels[0].text
+                    ) : (
+                        <Skeleton width="40px" />
+                    )}
+                </span>
+
                 <List nonInteractive>
                     {
                         props.applications ? props.applications.map((application: Application) => (
