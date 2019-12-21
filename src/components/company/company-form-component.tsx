@@ -22,6 +22,7 @@ import { FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-fie
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
 import { FormAddressFieldMeta } from "../form-factory/form-address-field/form-address-field-meta";
+import { FormLabelFieldMeta } from "../form-factory/form-label-field/form-label-field-meta";
 
 interface ICompanyFormComponentProps {
     company?: Company;
@@ -46,6 +47,12 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
                 fieldName: "name",
                 label: "Organization Name*",
                 autoFocus: true
+            }),
+
+            new FormLabelFieldMeta({
+                fieldName: "labels",
+                label: "Label",
+                isDynamic: true,
             }),
 
             new FormAddressFieldMeta({

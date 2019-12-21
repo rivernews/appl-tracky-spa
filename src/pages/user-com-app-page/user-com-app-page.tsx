@@ -78,6 +78,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
         if (this.props.match.params.uuid) {
             const company = this.props.companyStore.collection[this.props.match.params.uuid];
             this.props.history.push(`/com-form/${company.uuid}/`);
+            return;
         }
 
         console.error("Attempted to edit but no company uuid provided");
@@ -124,8 +125,8 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
                         isShowApplicationStatuses
                     />
                 )} */}
-                {company ? applications.map(application => {
-                    const applicationStatusList = application ? application.statuses : [];
+                {company ? company.applications.map(application => {
+                    const applicationStatusList = application.statuses || [];
                     return (
                         <ApplicationComponentController
                             key={application.uuid}
