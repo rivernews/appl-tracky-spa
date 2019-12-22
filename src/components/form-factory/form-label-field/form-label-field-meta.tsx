@@ -3,6 +3,10 @@ import { FormBaseFieldMeta, IFormBaseFieldProps, IFieldBaseMetaProps } from "../
 // label field
 import { FormLabelField } from "./form-label-field";
 
+// data model
+import { Label } from "../../../store/data-model/label";
+
+
 // API for caller to new props for label field
 export interface IFormLabelFieldProps extends IFormBaseFieldProps {
     onTrailingIconSelect?: () => void
@@ -28,6 +32,8 @@ export class FormLabelFieldMeta extends FormBaseFieldMeta {
         ...props
     }: IFormLabelFieldMetaProps) {
         super(props)
+        this.model = Label;
+
         this.onTrailingIconSelect = onTrailingIconSelect;
         this.autoFocus = autoFocus;
 

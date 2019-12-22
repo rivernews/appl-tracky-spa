@@ -85,8 +85,10 @@ export class FormBaseFieldMeta implements IFormBaseFieldMeta {
         const model = this.model;
         if (model) {
             if (this.isDynamic) {
-
                 return this.getInstanceDataFromFormikValues(values).map((instanceData: any) => new model(instanceData))
+            }
+            else if (Array.isArray(values[this.fieldName])) {
+                return values[this.fieldName].map((value: typeof model) => new model(value));
             }
             else {
                 return new model(values[this.fieldName]);

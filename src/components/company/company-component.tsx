@@ -9,6 +9,9 @@ import MaterialIcon from "@material/react-material-icon";
 // mdc-react icon button
 import '@material/react-icon-button/dist/icon-button.css';
 import IconButton from '@material/react-icon-button';
+// mdc-chips
+import { ChipSet, Chip } from '@material/react-chips';
+import "@material/react-chips/dist/chips.css";
 
 import Skeleton from 'react-loading-skeleton';
 
@@ -29,10 +32,20 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
             <div className="CompanyComponent">
                 <div className={styles.companyTitleContainer}>
                     <h1>{company ? company.name : <Skeleton width="50vmin" />}</h1>
-                    
-                    <span>{company ? company.labels.length && company.labels[0].text : (
+
+                    {company ? (
+                        company.labels.length && company.labels[0].text ? (
+                            <ChipSet>
+                                <Chip label={company.labels[0].text} />
+                            </ChipSet>
+                        ) : (
+                            <ChipSet>
+                                <Chip label="None" />
+                            </ChipSet>
+                        )
+                    ) : (
                         <Skeleton width="40px" />
-                    )}</span>
+                    )}
 
                     {/* company link */}
                     {

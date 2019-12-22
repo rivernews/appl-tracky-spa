@@ -24,6 +24,7 @@ import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-fie
 import { FormAddressFieldMeta } from "../form-factory/form-address-field/form-address-field-meta";
 import { FormLabelFieldMeta } from "../form-factory/form-label-field/form-label-field-meta";
 
+
 interface ICompanyFormComponentProps {
     company?: Company;
     onCancel: (event: any) => void;
@@ -52,7 +53,6 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
             new FormLabelFieldMeta({
                 fieldName: "labels",
                 label: "Label",
-                isDynamic: true,
             }),
 
             new FormAddressFieldMeta({
@@ -83,10 +83,10 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
                 <FormFactory
                     model={Company}
                     initialInstance={this.props.company}
-        
+
                     formFieldPropsList={this.formFieldPropsList}
                     actionButtonPropsList={this.actionButtonPropsList}
-        
+
                     createInstanceTriggerAction={this.props.createCompany}
                     updateInstanceTriggerAction={this.props.updateCompany}
 

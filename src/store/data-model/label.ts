@@ -2,21 +2,21 @@ import { BaseModel, IBaseModelProps } from "./base-model";
 import * as Yup from "yup";
 
 interface ILabelProps {
-    text?: string;
+    text?: labelTypes;
     user?: any;
     color?: string;
     order?: number;
 }
 
 export class Label extends BaseModel {
-    public text: string;
+    public text: labelTypes;
     public user: any;
     public color: string;
     public order: number;
 
     constructor({
-        text = "",
-        user = {},
+        text = labelTypes.TARGET,
+        user = null,
         color = "",
         order = 0,
         ...args
@@ -24,6 +24,7 @@ export class Label extends BaseModel {
         super(args);
         this.text = text;
         this.user = user;
+
         this.color = color;
         this.order = order;
     }
@@ -36,3 +37,12 @@ export class Label extends BaseModel {
         });
     }
 }
+
+export enum labelTypes {
+    TARGET = "Target",
+    APPLIED = "Applied",
+    INTERVIEWING = "Interviewing",
+    ARCHIVED = "Archived",
+}
+
+export const labelSet = new Set(Array.from(Object.values(labelTypes)))
