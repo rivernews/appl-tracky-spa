@@ -1,22 +1,18 @@
 /** redux */
-import { combineReducers, Reducer, AnyAction, Action } from "redux";
+import { Reducer, Action } from "redux";
 import { connectRouter, LocationChangeAction } from 'connected-react-router';
 import { authReducer } from "./auth/reducers";
-import { TAuthActions } from "./auth/types";
 import { IRootState } from "./types";
+import { IObjectStore } from "./rest-api-redux-factory";
 import { RootActionNames } from "./actions";
 // rest api
-import { CompanyReducer,
-    targetCompanyRestApiRedux,
-    appliedCompanyRestApiRedux,
-    interviewingCompanyRestApiRedux,
-    archivedCompanyRestApiRedux,
-} from "./data-model/company";
+import { CompanyReducer, GroupedCompanyRestApiRedux, labelTypesMapToCompanyGroupTypes, companyGroupTypes, Company } from "./data-model/company";
 import { ApplicationReducer } from "./data-model/application";
 import { ApplicationStatusReducer } from "./data-model/application-status";
 
 /** router */
 import { History } from "history";
+
 
 // root reducer with router state
 export const createRootReducer = (history: History<any>): Reducer<IRootState> => {
@@ -39,10 +35,9 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             rootStateChecked.auth = undefined;
 
             rootStateChecked.company = undefined;
-            rootStateChecked.targetCompany = undefined;
-            rootStateChecked.appliedCompany = undefined;
-            rootStateChecked.interviewingCompany = undefined;
-            rootStateChecked.archivedCompany = undefined;
+            Object.values(labelTypesMapToCompanyGroupTypes).forEach((companyGroupText) => {
+                rootStateChecked[companyGroupText] = undefined;
+            });
 
             rootStateChecked.application = undefined;
             rootStateChecked.applicationStatus = undefined;
@@ -57,17 +52,20 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
         }
 
         process.env.NODE_ENV === 'development' && console.log("beforeRootStore", rootState);
+        process.env.NODE_ENV === 'development' && console.log("reducer: incoming action", action);
 
-        const afterStore  = { 
+        const afterStore = { 
             ...rootState,
             router: connectRouter(history)(rootStateChecked.router, action as LocationChangeAction),
             auth: authReducer(rootStateChecked.auth, action),
 
             company: CompanyReducer(rootStateChecked.company, action),
-            targetCompany: targetCompanyRestApiRedux.storeReducer(rootStateChecked.targetCompany, action),
-            appliedCompany: appliedCompanyRestApiRedux.storeReducer(rootStateChecked.appliedCompany, action),
-            interviewingCompany: interviewingCompanyRestApiRedux.storeReducer(rootStateChecked.interviewingCompany, action),
-            archivedCompany: archivedCompanyRestApiRedux.storeReducer(rootStateChecked.archivedCompany, action),
+            ...(Object.values(labelTypesMapToCompanyGroupTypes).reduce((accumulated, companyGroupText) => {
+                return {
+                    ...accumulated,
+                    [companyGroupText]: GroupedCompanyRestApiRedux[companyGroupText].storeReducer(rootStateChecked[companyGroupText], action)
+                }
+            }, {}) as {[key in companyGroupTypes]: IObjectStore<Company> }),
 
             application: ApplicationReducer(rootStateChecked.application, action),
             applicationStatus: ApplicationStatusReducer(rootStateChecked.applicationStatus, action),

@@ -52,7 +52,7 @@ import { faGithub, faGithubAlt, faGithubSquare } from '@fortawesome/free-brands-
 import "@material/react-ripple/dist/ripple.css";
 // import {withRipple} from '@material/react-ripple';
 
-import pageTransitionStyles from  "./page-routes-transition.module.css";
+import pageTransitionStyles from "./page-routes-transition.module.css";
 import styles from "./page-routes.module.css";
 
 
@@ -163,10 +163,20 @@ class PageRoutes extends Component<IPageRoutesProps> {
                             </TopAppBar>
 
                             <TopAppBarFixedAdjust>
+
+                                <LinearProgress
+                                    indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
+
+                                    // mdc's progress bar bug workaround
+                                    // when press back button, avoid showing dotted buffer animation
+                                    buffer={1}
+                                    bufferingDots={true}
+                                />
+
                                 <TransitionGroup>
                                     <CSSTransition
                                         key={this.props.location.key}
-                                        classNames={{...pageTransitionStyles}}
+                                        classNames={{ ...pageTransitionStyles }}
                                         timeout={500}
                                     >
                                         <Switch location={this.props.location}>

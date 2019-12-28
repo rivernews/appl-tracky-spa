@@ -1,5 +1,5 @@
 import { Action, Reducer } from "redux";
-import { takeEvery, take, call, put, actionChannel } from "redux-saga/effects";
+import { take, call, put, actionChannel } from "redux-saga/effects";
 import { SagaIterator } from "redux-saga";
 import {
     RequestStatus,
@@ -13,8 +13,8 @@ import {
 } from "../utils/rest-api";
 import omit from "lodash/omit";
 
-/** state & store */
 
+/** state & store */
 export interface IObjectBase {
     uuid: string;
 }
@@ -26,7 +26,6 @@ interface IObjectList<Schema> {
 }
 
 export interface IObjectStore<Schema> {
-    lastChangedObjectID?: string;
     requestStatus: RequestStatus;
     error?: any;
     collection: IObjectList<Schema>;
@@ -59,10 +58,12 @@ export interface IObjectAction<Schema> extends Action {
 
     // for custumized api call
     absoluteUrl?: string
+
+    // misc options that when dispatch action can pass additional parameters
+    triggerActionOptions?: ITriggerActionOptions<Schema>
     
     payload: {
         formData?: TObject<Schema> | Array<TObject<Schema>>;
-        lastChangedObjectID?: string;
         requestStatus: RequestStatus;
         error?: any;
     };
@@ -70,67 +71,93 @@ export interface IObjectAction<Schema> extends Action {
 
 /** factory API */
 
-interface IRestApiReduxFactory<Schema> {
+export interface IRestApiReduxFactory<Schema> {
     actions: IObjectRestApiReduxFactoryActions;
     storeReducer: Reducer<IObjectStore<Schema>>
     sagas: Array<() => SagaIterator>;
 }
 
+
+export type ObjectRestApiJsonResponse<Schema> = IListRestApiResponse<TObject<Schema>> | ISingleRestApiResponse<TObject<Schema>>
+// TODO: remove any
+export type JsonResponseType<Schema> = ObjectRestApiJsonResponse<Schema> | any;
+
+export interface ISuccessSagaHandlerArgs<Schema> {
+    jsonResponse: JsonResponseType<Schema>
+    formData?: TObject<Schema> | Array<TObject<Schema>>
+    updateFromObject?: TObject<Schema>
+}
+
+interface IReduxFactoryOptions<Schema> {
+    successSagaHandler?: {
+        [key in CrudType]?: (
+            args: ISuccessSagaHandlerArgs<Schema>
+        ) => SagaIterator
+    }
+}
+
+interface ITriggerActionOptions<Schema> {
+    updateFromObject: TObject<Schema>
+}
+
 export const RestApiReduxFactory = <Schema extends IObjectBase>(
     /** should have uuid */ objectName: string,
-    initialObjectInstance: TObject<Schema>
+    initialObjectInstance: TObject<Schema>,
+    reduxOptions: IReduxFactoryOptions<Schema> = {}
 ): IRestApiReduxFactory<Schema> => {
     type TObjectSchema = typeof initialObjectInstance;
     const crudKeywords = Object.values(CrudType);
 
-    let ObjectRestApiRedux: IObjectRestApiReduxFactoryActions = {};
+    let ObjectRestApiActions: IObjectRestApiReduxFactoryActions = {};
     for (let crudKeyword of crudKeywords) {
-        ObjectRestApiRedux[crudKeyword] = {};
+        ObjectRestApiActions[crudKeyword] = {};
         /** store */
         // TODO?: action state
 
         /** action */
         // action type names
         for (let requestStatus of Object.values(RequestStatus)) {
-            ObjectRestApiRedux[crudKeyword][requestStatus] = {
+            ObjectRestApiActions[crudKeyword][requestStatus] = {
                 actionTypeName: "",
                 action: () => {}
             };
-            ObjectRestApiRedux[crudKeyword][
+            ObjectRestApiActions[crudKeyword][
                 requestStatus
             ].actionTypeName = `${requestStatus.toUpperCase()}_${crudKeyword.toUpperCase()}_${objectName.toUpperCase()}`;
         }
 
         // async actions ( & state...)
-        ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED].action = (
+        ObjectRestApiActions[crudKeyword][RequestStatus.TRIGGERED].action = (
             objectClassInstance?: TObjectSchema,
-            successCallback?: Function,
+            successCallback?: (jsonResponse: JsonResponseType<TObjectSchema>) => void,
             failureCallback?: (error: any) => void,
             finalCallback?: Function,
             absoluteUrl?: string,
+            triggerActionOptions?: ITriggerActionOptions<TObjectSchema>
         ): IObjectAction<TObjectSchema> => {
             process.env.NODE_ENV === 'development' && console.log(`action:fired, trigger, ${crudKeyword}`);
             return {
                 type:
-                    ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
+                    ObjectRestApiActions[crudKeyword][RequestStatus.TRIGGERED]
                         .actionTypeName,
                 crudType: crudKeyword,
                 finalCallback,
                 successCallback,
                 failureCallback,
                 absoluteUrl,
+                triggerActionOptions,
                 payload: {
                     requestStatus: RequestStatus.TRIGGERED,
                     formData: objectClassInstance
                 }
             };
         };
-        ObjectRestApiRedux[crudKeyword][
+        ObjectRestApiActions[crudKeyword][
             RequestStatus.REQUESTING
         ].action = (): IObjectAction<TObjectSchema> => {
             return {
                 type:
-                    ObjectRestApiRedux[crudKeyword][RequestStatus.REQUESTING]
+                    ObjectRestApiActions[crudKeyword][RequestStatus.REQUESTING]
                         .actionTypeName,
                 crudType: crudKeyword,
                 payload: {
@@ -138,16 +165,14 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                 }
             };
         };
-        ObjectRestApiRedux[crudKeyword][RequestStatus.SUCCESS].action = (
+        ObjectRestApiActions[crudKeyword][RequestStatus.SUCCESS].action = (
             /** api response */
-            jsonResponse:
-            | IListRestApiResponse<TObjectSchema>
-            | ISingleRestApiResponse<TObjectSchema>,
+            jsonResponse: ObjectRestApiJsonResponse<Schema>,
             triggerFormData?: TObject<Schema> | Array<TObject<Schema>>
         ): IObjectAction<TObjectSchema> => {
             let newState = {
                 type:
-                    ObjectRestApiRedux[crudKeyword][RequestStatus.SUCCESS]
+                    ObjectRestApiActions[crudKeyword][RequestStatus.SUCCESS]
                         .actionTypeName,
                 crudType: crudKeyword
             };
@@ -168,8 +193,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         requestStatus: RequestStatus.SUCCESS,
                         formData: <ISingleRestApiResponse<TObjectSchema>>(
                             jsonResponse
-                        ),
-                        lastChangedObjectID: jsonResponse.uuid
+                        )
                     }
                 };
             } else {
@@ -184,12 +208,12 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                 };
             }
         };
-        ObjectRestApiRedux[crudKeyword][RequestStatus.FAILURE].action = (
+        ObjectRestApiActions[crudKeyword][RequestStatus.FAILURE].action = (
             error: any
         ): IObjectAction<TObjectSchema> => {
             return {
                 type:
-                    ObjectRestApiRedux[crudKeyword][RequestStatus.FAILURE]
+                    ObjectRestApiActions[crudKeyword][RequestStatus.FAILURE]
                         .actionTypeName,
                 crudType: crudKeyword,
                 payload: {
@@ -208,17 +232,14 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
             const absoluteUrl = triggerAction.absoluteUrl;
 
             yield put(
-                ObjectRestApiRedux[crudKeyword][
+                ObjectRestApiActions[crudKeyword][
                     RequestStatus.REQUESTING
                 ].action()
             );
 
             try {
                 // api call
-                const jsonResponse:
-                    | IListRestApiResponse<TObjectSchema>
-                    | ISingleRestApiResponse<TObjectSchema> 
-                    | any = yield call(
+                const jsonResponse: JsonResponseType<Schema> = yield call(
                     (<(params: IRequestParams<TObjectSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)]),
                     {
                         data: formData,
@@ -237,34 +258,53 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                 // if there is .next in res, then it's paginated data and we should perform a next request to next page data
                 if(jsonResponse.next) {
                     process.env.NODE_ENV === 'development' && console.log("Saga: res contains next url, so we will also trigger list request for next=", jsonResponse.next);
-                    yield put(ObjectRestApiRedux[CrudType.LIST][RequestStatus.TRIGGERED].action(
+                    yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
                         undefined, undefined, undefined, undefined, jsonResponse.next
                     ));
                 }
 
-                // success state
-                if (crudKeyword === CrudType.DELETE) {
-                    yield put(
-                        ObjectRestApiRedux[CrudType.DELETE][
-                            RequestStatus.SUCCESS
-                        ].action(jsonResponse, formData)
-                    );
-                } else {
-                    process.env.NODE_ENV === 'development' && console.log("Saga: ready to dispatch success action")
-                    yield put(
-                        ObjectRestApiRedux[crudKeyword][
-                            RequestStatus.SUCCESS
-                        ].action(jsonResponse)
-                    );
+                // handle success state
+
+                // use custom handler if provided
+                const customSuccessSagaHandler: ((args: ISuccessSagaHandlerArgs<Schema>) => void) | undefined = (
+                    reduxOptions.successSagaHandler &&
+                    reduxOptions.successSagaHandler.hasOwnProperty(crudKeyword) &&
+                    reduxOptions.successSagaHandler[crudKeyword as CrudType] // only call the corresponding CRUD success saga handler
+                ) ? (
+                    reduxOptions.successSagaHandler[crudKeyword as CrudType]
+                ) : undefined;
+                if (customSuccessSagaHandler) {
+                    yield call(customSuccessSagaHandler, {
+                        jsonResponse,
+                        formData,
+                        updateFromObject: triggerAction.triggerActionOptions && triggerAction.triggerActionOptions.updateFromObject ? triggerAction.triggerActionOptions.updateFromObject : undefined
+                    });
+                }
+                else {
+                    // default handler
+                    if (crudKeyword === CrudType.DELETE) {
+                        yield put(
+                            ObjectRestApiActions[CrudType.DELETE][
+                                RequestStatus.SUCCESS
+                            ].action(jsonResponse, formData)
+                        );  
+                    } else {
+                        process.env.NODE_ENV === 'development' && console.log("Saga: ready to dispatch success action")
+                        yield put(
+                            ObjectRestApiActions[crudKeyword][
+                                RequestStatus.SUCCESS
+                            ].action(jsonResponse)
+                        );
+                    }
                 }
 
                 if (triggerAction.successCallback) {
-                    triggerAction.successCallback();
+                    triggerAction.successCallback(jsonResponse);
                 }
             } catch (error) {
                 // error state
                 yield put(
-                    ObjectRestApiRedux[crudKeyword][
+                    ObjectRestApiActions[crudKeyword][
                         RequestStatus.FAILURE
                     ].action(error)
                 );
@@ -280,14 +320,14 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
             }
         };
 
-        ObjectRestApiRedux[crudKeyword][
+        ObjectRestApiActions[crudKeyword][
             RequestStatus.TRIGGERED
         ].saga = function*() {
             process.env.NODE_ENV === 'development' && console.log(`Saga: action intercepted; async=trigger, crud=${crudKeyword}, obj=${objectName}`);
             
             // queue style 
             const objectTriggerActionChannel = yield actionChannel(
-                ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED]
+                ObjectRestApiActions[crudKeyword][RequestStatus.TRIGGERED]
                     .actionTypeName
             )
 
@@ -329,8 +369,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         ...objectStore.collection,
                         [newObject.uuid]: newObject
                     },
-                    requestStatus: objectAction.payload.requestStatus,
-                    lastChangedObjectID: objectAction.payload.lastChangedObjectID
+                    requestStatus: objectAction.payload.requestStatus
                 };
             }
 
@@ -368,8 +407,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                         ...objectStore.collection,
                         [newObject.uuid]: newObject
                     },
-                    requestStatus: objectAction.payload.requestStatus,
-                    lastChangedObjectID: objectAction.payload.lastChangedObjectID
+                    requestStatus: objectAction.payload.requestStatus
                 };
             }
 
@@ -413,11 +451,11 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
     };
 
     const sagas = crudKeywords.map((crudKeyword) => 
-        (<() => SagaIterator>ObjectRestApiRedux[crudKeyword][RequestStatus.TRIGGERED].saga)
+        (<() => SagaIterator>ObjectRestApiActions[crudKeyword][RequestStatus.TRIGGERED].saga)
     );
 
     return {
-        actions: ObjectRestApiRedux,
+        actions: ObjectRestApiActions,
         storeReducer,
         sagas
     };

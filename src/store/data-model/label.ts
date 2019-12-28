@@ -44,5 +44,3 @@ export enum labelTypes {
     INTERVIEWING = "Interviewing",
     ARCHIVED = "Archived",
 }
-
-export const labelSet = new Set(Array.from(Object.values(labelTypes)))

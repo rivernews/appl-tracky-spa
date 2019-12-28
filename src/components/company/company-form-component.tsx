@@ -4,12 +4,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../store/types";
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { CrudType, RequestStatus, ISingleRestApiResponse } from "../../utils/rest-api";
 import {
-    IObjectAction
+    IObjectAction, ObjectRestApiJsonResponse
 } from "../../store/rest-api-redux-factory";
 // data models
-import { Company, CompanyActions } from "../../store/data-model/company";
+import { Company, CompanyActions, GroupedCompanyRestApiRedux, labelTypesMapToCompanyGroupTypes } from "../../store/data-model/company";
 
 /** Components */
 import {
@@ -28,10 +28,10 @@ import { FormLabelFieldMeta } from "../form-factory/form-label-field/form-label-
 interface ICompanyFormComponentProps {
     company?: Company;
     onCancel: (event: any) => void;
-    onSubmitSuccess?: () => void;
+    onSubmitSuccess?: (jsonResponse: ObjectRestApiJsonResponse<Company>) => void;
 
     /** redux */
-    createCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) => void;
+    createCompany: (companyFormData: Company, successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void, finalCallback?: Function) => void;
     updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) => void;
 }
 
@@ -101,24 +101,37 @@ const mapStateToProps = (store: IRootState) => ({});
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     return {
-        createCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) =>
+        createCompany: (companyFormData: Company, successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void, finalCallback?: Function) => (
+            // create company object in pool redux
             dispatch(
                 CompanyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
                     companyFormData,
-                    successCallback,
+                    (jsonResponse: ISingleRestApiResponse<Company>) => {
+                        // create ref in grouped redux
+                        dispatch(
+                            // no api calls, so don't dispatch TRIGGER action, just SUCCESS action
+                            GroupedCompanyRestApiRedux[labelTypesMapToCompanyGroupTypes[Company.getLabel(jsonResponse)]].actions[CrudType.CREATE][RequestStatus.SUCCESS].action({ uuid: jsonResponse.uuid })
+                        );
+                        // Only TRIGGER/SUCCESS has success callback. Since this is CREATE/SUCCESS, we can only call the func here. This is necessary because the form component rely on this callback to carry out order-critical operations, like page transition after create, etc.
+                        successCallback && successCallback(jsonResponse);
+                    },
                     undefined,
-                    finalCallback,
-                )
-            ),
-        updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) =>
-            dispatch(
-                CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
-                    companyFormData,
-                    successCallback,
-                    undefined,
-                    finalCallback,
+                    finalCallback
                 )
             )
+        ),
+        updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function, updateFromCompany?: Company) => dispatch(
+            CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
+                companyFormData,
+                successCallback,
+                undefined,
+                finalCallback,
+                undefined,
+                {
+                    updateFromObject: updateFromCompany
+                }
+            )
+        )
     };
 };
 

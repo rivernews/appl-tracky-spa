@@ -13,7 +13,6 @@ import {
     IObjectAction
 } from "../../store/rest-api-redux-factory";
 import { Company, CompanyActions } from "../../store/data-model/company";
-import { Link } from "../../store/data-model/link";
 import {
     Application,
     ApplicationActions

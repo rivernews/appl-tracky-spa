@@ -2,12 +2,8 @@ import createSagaMiddleware from 'redux-saga';
 import { all } from "redux-saga/effects";
 import { authLoginSaga, authLogoutSaga } from "./auth/sagas";
 // rest api
-import { CompanySagas,
-    targetCompanyRestApiRedux,
-    appliedCompanyRestApiRedux,
-    interviewingCompanyRestApiRedux,
-    archivedCompanyRestApiRedux
-} from "../store/data-model/company";
+import { CompanySagas, GroupedCompanyRestApiRedux, labelTypesMapToCompanyGroupTypes} from "../store/data-model/company";
+import { labelTypes } from '../store/data-model/label';
 import { ApplicationSagas } from "../store/data-model/application";
 import { ApplicationStatusSagas } from "../store/data-model/application-status";
 
@@ -24,10 +20,11 @@ const rootSaga = function*() {
         authLogoutSaga(),
 
         ...CompanySagas.map((saga) => saga()),
-        ...targetCompanyRestApiRedux.sagas.map((saga) => saga()),
-        ...appliedCompanyRestApiRedux.sagas.map((saga) => saga()),
-        ...interviewingCompanyRestApiRedux.sagas.map((saga) => saga()),
-        ...archivedCompanyRestApiRedux.sagas.map((saga) => saga()),
+        ...Object.values(labelTypes).map(labelText => {
+            console.log('mmmy test', labelText);
+
+            return GroupedCompanyRestApiRedux[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]].sagas.map(saga => saga())
+        }).flat(),
 
         ...ApplicationSagas.map((saga) => saga()),
         ...ApplicationStatusSagas.map((saga) => saga()),
