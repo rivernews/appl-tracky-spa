@@ -1,4 +1,4 @@
-import { IObjectStore, IObjectAction, TObject, IObjectList, IObjectBase } from "../rest-api-redux-factory";
+import { IObjectStore, IObjectAction, TObject, IObjectList, IObjectBase } from "../types/factory-types";
 
 import { RequestStatus, CrudType } from "../../utils/rest-api";
 

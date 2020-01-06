@@ -1,4 +1,4 @@
-import { ISuccessSagaHandlerArgs } from "../rest-api-redux-factory";
+import { ISuccessSagaHandlerArgs } from "../types/factory-types";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 import { IReference } from "../../data-model/base-model";
 import { Company } from "../../data-model/company/company";

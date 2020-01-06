@@ -1,4 +1,4 @@
-import { TObject } from "../state-management/rest-api-redux-factory";
+import { TObject } from "../state-management/types/factory-types";
 import { AuthenticationService } from "./authentication";
 
 

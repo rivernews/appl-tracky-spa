@@ -1,4 +1,4 @@
-import { ISuccessSagaHandlerArgs, IObjectStore } from "../rest-api-redux-factory";
+import { ISuccessSagaHandlerArgs, IObjectStore } from "../types/factory-types";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 import { Company, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
 import { CompanyActionCreators, GroupedCompanyActionCreators, ApplicationStatusActionCreators, ApplicationActionCreators } from "../action-creators/root-actions";
@@ -13,9 +13,7 @@ export const companyDoneUpdateSuccessSagaHandler = function*(args: ISuccessSagaH
     if (!args.data || (Array.isArray(args.data) && !args.data.length)) {
         return;
     }
-    // we need:
-    // destination group action, jsonResponse
-    // current group action
+
     const destinationCompany = Array.isArray(args.data) ? args.data[0] : args.data;
     const destinationLabelText = Company.getLabel(destinationCompany);
 
@@ -28,17 +26,13 @@ export const companyDoneUpdateSuccessSagaHandler = function*(args: ISuccessSagaH
         return;
     }
 
-    // TODO:
-    // 1) dispatch a success/CREATE action of the new label redux (company).
-    // get destination group's action
-    // dispatch it
+    // dispatch a success/CREATE action to the destination company group's action
     const destinationCreateAction = GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[destinationLabelText]][CrudType.CREATE][RequestStatus.SUCCESS].action;
     yield put(
         destinationCreateAction({ uuid: destinationCompany.uuid })
     );
     
-    // 2) dispatch a success/DELETE action of the original (current) label redux. 
-    // dispatch current group action
+    // dispatch a success/DELETE action of the original (current) company group 
     const currentDeleteAction = GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[currentLabelText]][CrudType.DELETE][RequestStatus.SUCCESS].action;
     yield put(
         currentDeleteAction(undefined, { uuid: currentCompany.uuid })
@@ -109,38 +103,12 @@ export const groupedCompanyListSuccessSagaHandler = function*(args: ISuccessSaga
 
     const currentLabelText = Company.getLabel(fetchedCompanyList[0]);
 
-    // normalize company's relational data
-    // const normalizedCompanyData = normalize(fetchedCompanyList, CompanyListNormalizeSchema);
-
-    // console.log('\n\nnormalizedCompanyData', normalizedCompanyData);
-
-    // console.log('\n\n\nLIST application start');
-    // // place application objects in its store
-    // if (normalizedCompanyData.entities.applications) {
-    //     yield put(
-    //         ApplicationActionCreators[CrudType.LIST][RequestStatus.SUCCESS].action({
-    //             results: Object.values(normalizedCompanyData.entities.applications)
-    //         })
-    //     );
-    // }
-    // // place status objects in its store
-    // console.log('\n\n\nLIST status start');
-    // if (normalizedCompanyData.entities.statuses) {
-    //     yield put(
-    //         ApplicationStatusActionCreators[CrudType.LIST][RequestStatus.SUCCESS].action({
-    //             results: Object.values(normalizedCompanyData.entities.statuses)
-    //         })
-    //     );
-    // }
-    // // place company objects in pool redux
-    // console.log('\n\n\nLIST companies start');
+    // place company objects in pool redux
     yield put(
         CompanyActionCreators[CrudType.LIST][RequestStatus.SUCCESS].action({
             results: fetchedCompanyList
         })
     );
-    
-    // console.log('LIST companies done');
 
     // place "pointers", i.e., uuids, of company objects to grouped redux
     const fetchedCompanyListUuids = fetchedCompanyList.map(company => ({

@@ -7,7 +7,7 @@ import { IRootState } from "../../state-management/types/root-types";
 import { CrudType, RequestStatus, ISingleRestApiResponse } from "../../utils/rest-api";
 import {
     IObjectAction, ObjectRestApiJsonResponse
-} from "../../state-management/rest-api-redux-factory";
+} from "../../state-management/types/factory-types";
 // data models
 import { Company, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
 import { CompanyActionCreators, GroupedCompanyActionCreators } from "../../state-management/action-creators/root-actions";

@@ -5,7 +5,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
-import { IObjectStore, IObjectAction } from "../../state-management/rest-api-redux-factory";
+import { IObjectStore, IObjectAction } from "../../state-management/types/factory-types";
 // data models
 import { ApplicationStatus } from "../../data-model/application-status/application-status";
 import { ApplicationStatusLink } from "../../data-model/application-status-link";

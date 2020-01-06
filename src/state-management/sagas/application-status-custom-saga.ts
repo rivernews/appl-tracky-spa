@@ -1,4 +1,4 @@
-import { ISuccessSagaHandlerArgs } from "../rest-api-redux-factory";
+import { ISuccessSagaHandlerArgs } from "../types/factory-types";
 import { IReference } from "../../data-model/base-model";
 import { IRootState } from "../types/root-types";
 import { Application } from "../../data-model/application/application";

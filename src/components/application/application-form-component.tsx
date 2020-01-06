@@ -8,7 +8,7 @@ import { CrudType, RequestStatus } from "../../utils/rest-api";
 import {
     IObjectStore,
     IObjectAction
-} from "../../state-management/rest-api-redux-factory";
+} from "../../state-management/types/factory-types";
 import { ApplicationActionCreators } from "../../state-management/action-creators/root-actions";
 
 // data models

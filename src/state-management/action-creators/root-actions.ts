@@ -1,6 +1,6 @@
 import { RestApiActionCreatorsFactory } from "./action-creator-factory";
 import { companyGroupTypes, labelTypesMapToCompanyGroupTypes, Company } from "../../data-model/company/company";
-import { IObjectRestApiReduxFactoryActions } from "../rest-api-redux-factory";
+import { IObjectRestApiReduxFactoryActions } from "../types/factory-types";
 import { Application } from "../../data-model/application/application";
 import { ApplicationStatus } from "../../data-model/application-status/application-status";
 

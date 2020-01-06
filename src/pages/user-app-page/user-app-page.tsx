@@ -7,7 +7,7 @@ import { Utilities } from "../../utils/utilities";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
-import { IObjectAction, IObjectStore } from "../../state-management/rest-api-redux-factory";
+import { IObjectAction, IObjectStore } from "../../state-management/types/factory-types";
 import { InputFieldType } from "../../components/form-factory/form-base-field/form-base-field-meta";
 // data models
 import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes } from "../../data-model/company/company";

@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Application } from "../../data-model/application/application";
 import { IRootState } from "../../state-management/types/root-types";
-import { IObjectAction, IObjectStore } from "../../state-management/rest-api-redux-factory";
+import { IObjectAction, IObjectStore } from "../../state-management/types/factory-types";
 import { Dispatch } from "redux";
 
 /** data model */

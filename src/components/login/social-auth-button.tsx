@@ -74,7 +74,8 @@ class SocialAuthButton extends Component<
                     <SocialAuthLogoutButton
                         onSuccess={this.onSocialLogoutSuccess}
                         onClick={this.onSocialLogoutSuccess}
-                        // TODO: logout - ideally no need to wait for request status, just interrupt existing requests
+                        
+                        // TODO: logout - ideally no need to wait for request status, just interrupt existing requests (actually this should be possible by looking at `axios` and its abort request feature, or the native javascript `AbortController` and its `AbortController.abort()`).
                         // However, we'll have to cancel those ongoing sagas for data fetching
                         // disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
                     />

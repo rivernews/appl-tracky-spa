@@ -7,7 +7,7 @@ import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
 import {
     IObjectAction, IObjectStore,
-} from "../../state-management/rest-api-redux-factory";
+} from "../../state-management/types/factory-types";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 import { ApplicationStatusActionCreators } from "../../state-management/action-creators/root-actions";
 

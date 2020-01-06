@@ -3,7 +3,7 @@ import { Reducer, Action } from "redux";
 import { connectRouter, LocationChangeAction } from 'connected-react-router';
 import { authReducer } from "./auth-reducers";
 import { IRootState } from "../types/root-types";
-import { IObjectStore } from "../rest-api-redux-factory";
+import { IObjectStore } from "../types/factory-types";
 import { RootActionNames } from "../action-creators/root-actions";
 import { RestApiReducerFactory } from "./reducer-factory";
 import { ApplicationStatus } from "../../data-model/application-status/application-status";

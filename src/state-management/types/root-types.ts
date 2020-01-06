@@ -1,6 +1,6 @@
 import { IUpdateAuthState } from "./auth-types";
 
-import { IObjectStore } from "../rest-api-redux-factory";
+import { IObjectStore } from "./factory-types";
 import { Company, companyGroupTypes } from "../../data-model/company/company";
 import { Application } from "../../data-model/application/application";
 import { ApplicationStatus } from "../../data-model/application-status/application-status";

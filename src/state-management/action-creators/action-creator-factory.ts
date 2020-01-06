@@ -1,4 +1,4 @@
-import { IObjectBase, TObject, IObjectRestApiReduxFactoryActions, JsonResponseType, ITriggerActionOptions, IObjectAction, ObjectRestApiJsonResponse } from "../rest-api-redux-factory";
+import { IObjectBase, TObject, IObjectRestApiReduxFactoryActions, JsonResponseType, ITriggerActionOptions, IObjectAction, ObjectRestApiJsonResponse } from "../types/factory-types";
 
 import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, ISingleRestApiResponse, IListRestApiResponse } from "../../utils/rest-api";
 
@@ -11,8 +11,6 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
     let ObjectRestApiActions: IObjectRestApiReduxFactoryActions = {};
     for (let crudKeyword of crudKeywords) {
         ObjectRestApiActions[crudKeyword] = {};
-        /** store */
-        // TODO?: action state
 
         /** action */
         // action type names

@@ -12,7 +12,7 @@ import { ISingleRestApiResponse } from "../../utils/rest-api";
 import {
     IObjectAction,
     IObjectStore
-} from "../../state-management/rest-api-redux-factory";
+} from "../../state-management/types/factory-types";
 import { Company } from "../../data-model/company/company";
 
 /** Components */

@@ -1,4 +1,4 @@
-import { IObjectBase, IObjectRestApiReduxFactoryActions, JsonResponseType, ITriggerActionOptions, IObjectAction, ISuccessSagaHandlerArgs, ISagaFactoryOptions } from "../rest-api-redux-factory";
+import { IObjectBase, IObjectRestApiReduxFactoryActions, JsonResponseType, ITriggerActionOptions, IObjectAction, ISuccessSagaHandlerArgs, ISagaFactoryOptions } from "../types/factory-types";
 
 import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, ISingleRestApiResponse, IListRestApiResponse, IRequestParams, RestApiService, CrudMapToRest } from "../../utils/rest-api";
 import { SagaIterator } from "redux-saga";
