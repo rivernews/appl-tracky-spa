@@ -3,10 +3,12 @@ import React, { Component } from "react";
 /** Components */
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
+import { Overline } from "@material/react-typography";
 
 import { FormInputFieldMeta } from "../form-input-field/form-input-field-meta";
 import { FormInputField } from "../form-input-field/form-input-field";
 import { IFormBaseFieldProps } from "../form-base-field/form-base-field-meta";
+
 
 export interface IFormLinkFieldComponentProps extends IFormBaseFieldProps {
 }
@@ -33,7 +35,7 @@ export class FormLinkFieldComponent extends Component<IFormLinkFieldComponentPro
     render() {
         return (
             <div className="FormLinkField">
-                {this.props.label && <h4>{this.props.label}</h4>}
+                {this.props.label && <Overline>{this.props.label}</Overline>}
                 <FormInputField
                     {...this.textInputFieldMeta}
                 />

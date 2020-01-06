@@ -53,7 +53,7 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
 
             new FormLabelFieldMeta({
                 fieldName: "labels",
-                label: "Label",
+                label: "Process Status",
             }),
 
             new FormAddressFieldMeta({

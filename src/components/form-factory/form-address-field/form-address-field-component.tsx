@@ -3,10 +3,12 @@ import React, { Component } from "react";
 /** Components */
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
+import { Overline } from '@material/react-typography';
 
 import { FormInputFieldMeta } from "../form-input-field/form-input-field-meta";
 import { FormInputField } from "../form-input-field/form-input-field";
 import { IFormBaseFieldProps } from "../form-base-field/form-base-field-meta";
+
 
 export interface IFormAddressFieldComponentProps extends IFormBaseFieldProps {
 }
@@ -17,7 +19,7 @@ export class FormAddressFieldComponent extends Component<IFormAddressFieldCompon
     placeNameInputFieldMeta: FormInputFieldMeta;
 
     constructor(props: IFormAddressFieldComponentProps) {
-        super(props)
+        super(props);
 
         this.fullAddressInputFieldMeta = new FormInputFieldMeta({
             fieldName: `${this.props.fieldName}.full_address`,
@@ -32,7 +34,7 @@ export class FormAddressFieldComponent extends Component<IFormAddressFieldCompon
     render() {
         return (
             <div className="FormAddressField">
-                {this.props.label && <h4>{this.props.label}</h4>}
+                {this.props.label && <Overline>{this.props.label}</Overline>}
                 
                 <FormInputField
                     {...this.placeNameInputFieldMeta}

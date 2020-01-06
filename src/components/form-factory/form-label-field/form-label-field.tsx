@@ -22,6 +22,7 @@ export class FormLabelField extends Component<IFormLabelFieldProps> {
                     name={this.props.fieldName}
                     render={({ field, form }: FieldProps<number | string>) => (
                         <LabelGroupComponentContainer 
+                            titleText={this.props.label}
                             selectedLabels={field.value}
                             onChange={(selectedLabelText: labelTypes) => {
                                 form.setFieldValue(field.name, [new Label({

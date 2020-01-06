@@ -3,28 +3,25 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 
 /** Redux */
 import { connect } from "react-redux";
-import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
 import { Label, labelTypes } from "../../data-model/label";
 
 /** Components */
 import { ChipSet, Chip } from '@material/react-chips';
 import "@material/react-chips/dist/chips.css";
+import { Overline } from "@material/react-typography";
 
 
 interface ILabelGroupComponentProps extends RouteComponentProps {
+    titleText?: string
     selectedLabels?: Label[]
     onChange?: (selectedLabelText: labelTypes) => void
 }
-
 
 const LabelGroupComponent: FunctionComponent<ILabelGroupComponentProps> = (props) => {
     const [selectedLabels, setSelectedLabels] = useState<labelTypes[]>(
         props.selectedLabels && props.selectedLabels.length ? [props.selectedLabels[0].text] : [labelTypes.TARGET]
     );
-
-    console.log('label prop is', props.selectedLabels);
-    console.log('label state is', selectedLabels);
 
     const handleSelectionChange = (selectedLabels: Array<string>) => {
         setSelectedLabels(selectedLabels as labelTypes[]);
@@ -37,7 +34,7 @@ const LabelGroupComponent: FunctionComponent<ILabelGroupComponentProps> = (props
 
     return (
         <div className="LabelGroupComponent">
-            <h1>LabelGroupComponent Works!</h1>
+            {props.titleText && <Overline>{props.titleText}</Overline>}
             <ChipSet choice selectedChipIds={selectedLabels} handleSelect={handleSelectionChange}>
                 {
                     Object.values(labelTypes).map((labelText, index) => {
