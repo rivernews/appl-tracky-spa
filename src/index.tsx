@@ -8,12 +8,12 @@ import * as serviceWorker from "./serviceWorker";
 import { Provider } from "react-redux";
 import { Store } from "redux";
 /** root store */
-import { IRootState } from "./store/types";
-import { store } from "./store/store-config";
+import { IRootState } from "./state-management/types/root-types";
+import { store } from "./state-management/store/store-config";
 
 /** router */
 import { ConnectedRouter } from "connected-react-router";
-import { history } from "./store/store-config";
+import { history } from "./state-management/store/store-config";
 
 /** types */
 interface IRootProps {

@@ -12,6 +12,8 @@ import {
     IsSingleRestApiResponseTypeGuard
 } from "../utils/rest-api";
 import omit from "lodash/omit";
+import { Schema, normalize, schema } from "normalizr";
+import { IReference } from "../data-model/base-model";
 
 
 /** state & store */
@@ -21,7 +23,7 @@ export interface IObjectBase {
 
 export type TObject<Schema> = IObjectBase & { [Property in keyof Schema]: Schema[Property] };
 
-interface IObjectList<Schema> {
+export interface IObjectList<Schema> {
     [uuid: string]: TObject<Schema>;
 }
 
@@ -33,7 +35,7 @@ export interface IObjectStore<Schema> {
 
 /** action */
 
-type IObjectRestApiReduxFactoryActions = {
+export type IObjectRestApiReduxFactoryActions = {
     [restfulKeyword: string]: {
         [asyncKeyword: string]: {
             actionTypeName: string;
@@ -48,7 +50,7 @@ export interface IObjectAction<Schema> extends Action {
     crudType: CrudType;
 
     // for deleteAction or other actions to obtain the original instance obj passed into trigger action
-    triggerFormData?: TObject<Schema> | Array<TObject<Schema>>;
+    triggerFormData?: TObject<Schema> | Array<TObject<Schema>> | Array<IReference>;
 
     // for saga to perform additional side effect e.g. navigation
     // only for triggerActions
@@ -69,6 +71,7 @@ export interface IObjectAction<Schema> extends Action {
     };
 }
 
+
 /** factory API */
 
 export interface IRestApiReduxFactory<Schema> {
@@ -83,27 +86,45 @@ export type ObjectRestApiJsonResponse<Schema> = IListRestApiResponse<TObject<Sch
 export type JsonResponseType<Schema> = ObjectRestApiJsonResponse<Schema> | any;
 
 export interface ISuccessSagaHandlerArgs<Schema> {
-    jsonResponse: JsonResponseType<Schema>
-    formData?: TObject<Schema> | Array<TObject<Schema>>
+    data?: Array<TObject<Schema>> | TObject<Schema>
     updateFromObject?: TObject<Schema>
 }
 
-interface IReduxFactoryOptions<Schema> {
-    successSagaHandler?: {
+export interface ISagaFactoryOptions<ObjectSchema> {
+    // completely overwrites factory's saga success handler
+    overrideCrudSuccessSagaHandler?: {
         [key in CrudType]?: (
-            args: ISuccessSagaHandlerArgs<Schema>
+            args: ISuccessSagaHandlerArgs<ObjectSchema>
         ) => SagaIterator
+    }
+
+    // add-on and will be executed after factory's saga success handler
+    doneCrudSuccessSagaHandler?: {
+        [key in CrudType]?: (
+            args: ISuccessSagaHandlerArgs<ObjectSchema>
+        ) => SagaIterator
+    }
+
+    normalizeManifest?: {
+        schema: Schema
+        listSchema: Schema
+
+        objectEntityKey: string
+
+        relationalEntityReduxActionsMap: {
+            [relationalEntityKeys: string]: IObjectRestApiReduxFactoryActions
+        }
     }
 }
 
-interface ITriggerActionOptions<Schema> {
+export interface ITriggerActionOptions<Schema> {
     updateFromObject: TObject<Schema>
 }
 
-export const RestApiReduxFactory = <Schema extends IObjectBase>(
+const RestApiReduxFactory = <Schema extends IObjectBase>(
     /** should have uuid */ objectName: string,
     initialObjectInstance: TObject<Schema>,
-    reduxOptions: IReduxFactoryOptions<Schema> = {}
+    reduxOptions: ISagaFactoryOptions<Schema> = {}
 ): IRestApiReduxFactory<Schema> => {
     type TObjectSchema = typeof initialObjectInstance;
     const crudKeywords = Object.values(CrudType);
@@ -228,7 +249,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
             triggerAction: IObjectAction<TObjectSchema>
         ) {
             process.env.NODE_ENV === 'development' && console.log(`Saga: action intercepted; aync=trigger, crud=${crudKeyword}, obj=${objectName}; ready to call api`);
-            const formData = triggerAction.payload.formData;
+            let formData = triggerAction.payload.formData;
             const absoluteUrl = triggerAction.absoluteUrl;
 
             yield put(
@@ -239,7 +260,7 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
             try {
                 // api call
-                const jsonResponse: JsonResponseType<Schema> = yield call(
+                let jsonResponse: JsonResponseType<Schema> = yield call(
                     (<(params: IRequestParams<TObjectSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)]),
                     {
                         data: formData,
@@ -263,39 +284,158 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
                     ));
                 }
 
-                // handle success state
+                // normalize primary object data (for relational object normalizing, will do it later) if  normalize manifest speciified
+                let normalizeData: undefined | Array<TObjectSchema> = undefined;
+                let relationalNormalizeData: undefined | {
+                    [relationalEntityKey: string]: Array<TObjectSchema>
+                } = undefined;
+                
+                if (reduxOptions.normalizeManifest) {
+                    process.env.NODE_ENV === 'development' && console.log("Saga: receive normalizeManifest");
 
-                // use custom handler if provided
-                const customSuccessSagaHandler: ((args: ISuccessSagaHandlerArgs<Schema>) => void) | undefined = (
-                    reduxOptions.successSagaHandler &&
-                    reduxOptions.successSagaHandler.hasOwnProperty(crudKeyword) &&
-                    reduxOptions.successSagaHandler[crudKeyword as CrudType] // only call the corresponding CRUD success saga handler
+                    const normalizeObjectEntityKey = reduxOptions.normalizeManifest.objectEntityKey;
+
+                    let dataSource = undefined;
+                    if (crudKeyword === CrudType.DELETE) {
+                        dataSource = formData;
+                    }
+                    else if (IsSingleRestApiResponseTypeGuard(jsonResponse)) {
+                        dataSource = jsonResponse;
+                    }
+                    else {
+                        dataSource = jsonResponse.results;
+                    }
+                    process.env.NODE_ENV === 'development' && console.log("Saga: jsonResponse is", jsonResponse);
+                    process.env.NODE_ENV === 'development' && console.log("Saga: formData is", formData);
+                    process.env.NODE_ENV === 'development' && console.log("Saga: data source is", dataSource);
+
+                    const normalizeDataSource = normalize(
+                        dataSource,
+                        Array.isArray(dataSource) ? reduxOptions.normalizeManifest.listSchema : reduxOptions.normalizeManifest.schema
+                    );
+                    process.env.NODE_ENV === 'development' && console.log("Saga: normalized data source is", normalizeDataSource);
+
+                    normalizeData = Object.values(normalizeDataSource.entities[normalizeObjectEntityKey]);
+                    if (crudKeyword === CrudType.DELETE) {
+                        formData = normalizeData;
+                    }
+                    else if (IsSingleRestApiResponseTypeGuard(jsonResponse)) {
+                        jsonResponse = normalizeData[0];
+                    }
+                    else {
+                        jsonResponse.results = normalizeData;
+                    }
+                    process.env.NODE_ENV === 'development' && console.log("Saga: data to dispatch SUCCESS action", crudKeyword === CrudType.DELETE ? formData : jsonResponse);
+
+                    relationalNormalizeData = Object.keys(reduxOptions.normalizeManifest.relationalEntityReduxActionsMap).filter(key => normalizeDataSource.entities.hasOwnProperty(key)).reduce((accumulate, relationalEntityKey) => ({
+                        ...accumulate,
+                        [relationalEntityKey]: Object.values(normalizeDataSource.entities[relationalEntityKey])
+                    }), {});
+                    process.env.NODE_ENV === 'development' && console.log("relational normalize data for SUCCESS action", relationalNormalizeData);
+                }
+
+                // handle success state --
+
+                // dispatch relational object actions, if normalize is needed (normalize manifest specified)
+                if (reduxOptions.normalizeManifest && relationalNormalizeData) {
+                    process.env.NODE_ENV === 'development' && console.log('Saga: about to dispatch relational, normalized objects');
+
+                    switch (crudKeyword) {
+                        case CrudType.UPDATE:
+                            // relational object will do nothing when primary action is UPDATE - UPDATE is purely on primary object
+                            break
+                            
+                        case CrudType.LIST: 
+                            // relational objects should also apply LIST
+                        case CrudType.CREATE:
+                            // when there's a fresh new object created, if there're relational objects present then will also apply LIST to them
+                            for (const relationalEntityKey in reduxOptions.normalizeManifest.relationalEntityReduxActionsMap) {
+                                if (
+                                    // if no embed data, normalizr will not include it in `entities`
+                                    // so don't compare length; just compare its key existence
+                                    !relationalNormalizeData[relationalEntityKey] 
+                                ) {
+                                    process.env.NODE_ENV === 'development' && console.log('skip for relational key', relationalEntityKey)
+                                    continue;
+                                }
+
+                                const dispatchResponseData = IsSingleRestApiResponseTypeGuard(jsonResponse) ? (
+                                    relationalNormalizeData[relationalEntityKey][0]
+                                ) : {
+                                    results: relationalNormalizeData[relationalEntityKey]
+                                };
+
+                                process.env.NODE_ENV === 'development' && console.log(`Saga: relational action dispatch; crud=${crudKeyword}, entity=${relationalEntityKey}, dispatchResponseData for action is`, dispatchResponseData);
+
+                                const relationalActions = reduxOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions;
+                                
+                                yield put(
+                                    relationalActions[crudKeyword][RequestStatus.SUCCESS].action(dispatchResponseData)
+                                );
+                            }
+                            break;
+                        
+                        case CrudType.DELETE:
+                            // relational objects should apply DELETE action -- this is a bulk deletion, not single delete
+                            for (const relationalEntityKey in reduxOptions.normalizeManifest.relationalEntityReduxActionsMap) {
+                                const relationalActions = reduxOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions;
+                                yield put(
+                                    relationalActions[CrudType.DELETE][RequestStatus.SUCCESS].action(undefined, formData)
+                                );
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                } 
+
+                // dispatch primary object action
+                const overrideCrudSuccessSagaHandler: ((args: ISuccessSagaHandlerArgs<Schema>) => void) | undefined = (
+                    reduxOptions.overrideCrudSuccessSagaHandler &&
+                    reduxOptions.overrideCrudSuccessSagaHandler.hasOwnProperty(crudKeyword) &&
+                    reduxOptions.overrideCrudSuccessSagaHandler[crudKeyword as CrudType] // only call the corresponding CRUD success saga handler
                 ) ? (
-                    reduxOptions.successSagaHandler[crudKeyword as CrudType]
+                    reduxOptions.overrideCrudSuccessSagaHandler[crudKeyword as CrudType]
                 ) : undefined;
-                if (customSuccessSagaHandler) {
-                    yield call(customSuccessSagaHandler, {
-                        jsonResponse,
-                        formData,
-                        updateFromObject: triggerAction.triggerActionOptions && triggerAction.triggerActionOptions.updateFromObject ? triggerAction.triggerActionOptions.updateFromObject : undefined
+                if (overrideCrudSuccessSagaHandler) {
+                    // use custom handler if provided
+                    yield call(overrideCrudSuccessSagaHandler, {
+                        data: normalizeData ? normalizeData : (
+                            crudKeyword === CrudType.DELETE ? formData : jsonResponse
+                        ),
+                        updateFromObject: triggerAction.triggerActionOptions ? triggerAction.triggerActionOptions.updateFromObject : undefined
                     });
                 }
                 else {
                     // default handler
                     if (crudKeyword === CrudType.DELETE) {
+                        process.env.NODE_ENV === 'development' && console.log("Saga: ready to dispatch delete action, formData =", formData)
                         yield put(
                             ObjectRestApiActions[CrudType.DELETE][
                                 RequestStatus.SUCCESS
-                            ].action(jsonResponse, formData)
+                            ].action(undefined, formData)
                         );  
                     } else {
-                        process.env.NODE_ENV === 'development' && console.log("Saga: ready to dispatch success action")
+                        process.env.NODE_ENV === 'development' && console.log("Saga: ready to dispatch success action, jsonResponse =", jsonResponse)
                         yield put(
                             ObjectRestApiActions[crudKeyword][
                                 RequestStatus.SUCCESS
                             ].action(jsonResponse)
                         );
                     }
+                }
+
+                // add-on behavior
+                const doneCrudSuccessSagaHandler = reduxOptions.doneCrudSuccessSagaHandler && reduxOptions.doneCrudSuccessSagaHandler[crudKeyword as CrudType] ? reduxOptions.doneCrudSuccessSagaHandler[crudKeyword as CrudType] : undefined;
+                if (doneCrudSuccessSagaHandler) {
+                    yield call(doneCrudSuccessSagaHandler, {
+                            data: normalizeData ? normalizeData : (
+                                crudKeyword === CrudType.DELETE ? formData : jsonResponse
+                            ),
+                            updateFromObject: triggerAction.triggerActionOptions ? triggerAction.triggerActionOptions.updateFromObject : undefined
+                        }
+                    );
                 }
 
                 if (triggerAction.successCallback) {
@@ -413,13 +553,20 @@ export const RestApiReduxFactory = <Schema extends IObjectBase>(
 
             // DELETE
             else if (objectAction.crudType === CrudType.DELETE) {
-                let targetDeleteObject = <TObject<TObjectSchema>>objectAction.triggerFormData;
-                process.env.NODE_ENV === 'development' && console.log("Reducer: delete, targetobj=", targetDeleteObject)
-
-                process.env.NODE_ENV === 'development' && console.log("Reducer: delete, beforestore=", objectStore)
+                let targetDeleteUuids = [];
+                if (!Array.isArray(objectAction.triggerFormData)) {
+                    const targetDeleteObject = <TObject<TObjectSchema>>objectAction.triggerFormData;
+                    process.env.NODE_ENV === 'development' && console.log("Reducer: delete, targetobj=", targetDeleteObject)
+                    targetDeleteUuids.push(targetDeleteObject.uuid);
+                } else {
+                    const targetDeleteObjectList = <Array<TObject<TObjectSchema>>>objectAction.triggerFormData;
+                    process.env.NODE_ENV === 'development' && console.log("Reducer: delete, targetobjList=", targetDeleteObjectList);
+                    targetDeleteUuids = targetDeleteObjectList.map(targetDeleteObject => targetDeleteObject.uuid);
+                }
                 
+                process.env.NODE_ENV === 'development' && console.log("Reducer: delete, beforestore=", objectStore)
                 const afterStore = {
-                    collection: omit(objectStore.collection, [targetDeleteObject.uuid]),
+                    collection: omit(objectStore.collection, targetDeleteUuids),
                     requestStatus: objectAction.payload.requestStatus
                 }
                 process.env.NODE_ENV === 'development' && console.log("Reducer: delete, afterstore", afterStore)

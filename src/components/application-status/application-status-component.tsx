@@ -4,18 +4,16 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
+import { IRootState } from "../../state-management/types/root-types";
 import {
     IObjectAction, IObjectStore,
-} from "../../store/rest-api-redux-factory";
+} from "../../state-management/rest-api-redux-factory";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { ApplicationStatusActionCreators } from "../../state-management/action-creators/root-actions";
 
 /** data model */
-import {
-    ApplicationStatus,
-    ApplicationStatusActions
-} from "../../store/data-model/application-status";
-import { Application } from "../../store/data-model/application";
+import { ApplicationStatus } from "../../data-model/application-status/application-status";
+import { Application } from "../../data-model/application/application";
 
 /** Components */
 import MaterialIcon from "@material/react-material-icon";
@@ -209,7 +207,7 @@ const mapDispatchToProps = (
             callback?: Function
         ) =>
             dispatch(
-                ApplicationStatusActions[CrudType.DELETE][
+                ApplicationStatusActionCreators[CrudType.DELETE][
                     RequestStatus.TRIGGERED
                 ].action(applicationStatusToDelete, callback)
             )

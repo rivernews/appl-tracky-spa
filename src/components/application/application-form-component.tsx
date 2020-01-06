@@ -3,18 +3,17 @@ import React, { Component } from "react";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
+import { IRootState } from "../../state-management/types/root-types";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 import {
     IObjectStore,
     IObjectAction
-} from "../../store/rest-api-redux-factory";
+} from "../../state-management/rest-api-redux-factory";
+import { ApplicationActionCreators } from "../../state-management/action-creators/root-actions";
+
 // data models
-import { Company } from "../../store/data-model/company";
-import {
-    Application,
-    ApplicationActions
-} from "../../store/data-model/application";
+import { Company } from "../../data-model/company/company";
+import { Application } from "../../data-model/application/application";
 
 /** Components */
 import {
@@ -27,6 +26,7 @@ import { FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-fie
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
 import { FormRichTextFieldMeta } from "../form-factory/form-rich-text-field/form-rich-text-field-meta";
+
 
 interface IApplicationFormComponentProps {
     application?: Application;
@@ -125,7 +125,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
             finalCallback?: Function,
         ) =>
             dispatch(
-                ApplicationActions[CrudType.CREATE][
+                ApplicationActionCreators[CrudType.CREATE][
                     RequestStatus.TRIGGERED
                 ].action(applicationFormData, successCallback, undefined, finalCallback)
             )
@@ -136,7 +136,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
             finalCallback?: Function,
         ) =>
             dispatch(
-                ApplicationActions[CrudType.UPDATE][
+                ApplicationActionCreators[CrudType.UPDATE][
                     RequestStatus.TRIGGERED
                 ].action(applicationFormData, successCallback, undefined, finalCallback)
             )

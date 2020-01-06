@@ -63,6 +63,10 @@ Special credit to [The React + Redux Container Pattern](https://www.thegreatcode
 Is this easier to use than spreadsheet? The UI should make the registering process as quick as possible. If we split into too many steps and pages, it'll dramatically slow down the process.
 But sure, we're still not sure what is the best and what are the needs. We can always iterate the layout or process at a later point.
 
+## Development experience
+
+ES Linter [rules](https://eslint.org/docs/rules/), can be specified in `package.json`.
+
 ## Project Motivation
 
 During this season of job searching (as of March 2019), many people must be crazy working with some spreadsheet keeping track of their job application, especially when you're applying for 50+ or even 100+. When a recruiter finally get back to you and invite you to an interview, you don't want to ask that disastrous question - "Could you tell me what is the position I was applying to?" Surprisingly, there aren't many tools out there so far - just google "job application track tool" and you'll see not many options. Seems like most of us are still using a spreadsheet, including me. An option out there is called Huntr (https://huntr.co/), and it looks like a Trello board. But it charges you once you add more than 40 records. The UI is beautiful, but it's a bit too complicate for me. 

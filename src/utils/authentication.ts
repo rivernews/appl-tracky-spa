@@ -1,7 +1,7 @@
 import { RestApiService } from "./rest-api";
-import { BaseModel, IBaseModelProps } from "../store/data-model/base-model";
+import { BaseModel, IBaseModelProps } from "../data-model/base-model";
 
-import { RequestedLoginMode, RequestedLoginAuthActionParams } from "../store/auth/types";
+import { RequestedLoginMode, RequestedLoginAuthActionParams } from "../state-management/types/auth-types";
 
 export interface ILoginObjectProps {
     code?: string;

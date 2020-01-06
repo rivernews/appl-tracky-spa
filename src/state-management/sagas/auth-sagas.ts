@@ -3,21 +3,22 @@ import {
     AuthActionNames,
     IRequestedLoginAuthAction,
     IRequestedLogoutAuthAction
-} from "../../store/auth/types";
+} from "../types/auth-types";
 import {
     SuccessLoginAuth,
     SuccessLogoutAuth,
     FailureAuth
-} from "../../store/auth/actions";
-import { resetAllStoreAction } from "../../store/actions";
-import { GroupedCompanyRestApiRedux, labelTypesMapToCompanyGroupTypes } from "../../store/data-model/company";
-import { labelTypes } from "../../store/data-model/label";
+} from "../action-creators/auth-actions";
+import { resetAllStoreAction, GroupedCompanyActionCreators, CompanyActionCreators } from "../action-creators/root-actions";
+import { labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
+import { labelTypes } from "../../data-model/label";
 // redux-saga
 import { takeEvery, call, put } from "redux-saga/effects";
 
 /** api */
 import { AuthenticationService } from "../../utils/authentication";
 import { CrudType, RequestStatus, RestApiService } from "../../utils/rest-api";
+
 
 function* authLoginSagaHandler(
     requestedLoginAuthAction: IRequestedLoginAuthAction
@@ -52,9 +53,18 @@ function* authLoginSagaHandler(
         ));
 
         // initial fetch user data
+        // yield put(
+        //     CompanyActionCreators[CrudType.LIST][RequestStatus.TRIGGERED].action()
+        // );
+        yield put(
+            GroupedCompanyActionCreators["targetCompany"][CrudType.LIST][RequestStatus.TRIGGERED].action(
+                {}, undefined, undefined, undefined,
+                `${RestApiService.state.apiBaseUrl}companies/?labels__isnull=True`
+            )
+        );
         for (let labelText of Object.values(labelTypes)) {
             yield put(
-                GroupedCompanyRestApiRedux[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]].actions[CrudType.LIST][RequestStatus.TRIGGERED].action(
+                GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]][CrudType.LIST][RequestStatus.TRIGGERED].action(
                     {}, undefined, undefined, undefined,
                     `${RestApiService.state.apiBaseUrl}companies/?labels__text=${labelText}`
                 )

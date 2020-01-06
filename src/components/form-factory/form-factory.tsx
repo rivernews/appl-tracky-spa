@@ -5,7 +5,7 @@ import React, { Component } from "react";
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 // data model
-import { DataModelClass, DataModelInstance } from "../../store/data-model/base-model";
+import { DataModelClass, DataModelInstance } from "../../data-model/base-model";
 // formik
 import {
     Formik,
@@ -17,7 +17,7 @@ import * as Yup from 'yup';
 // base field
 import { FormBaseFieldMeta } from "./form-base-field/form-base-field-meta";
 import { ISingleRestApiResponse } from "../../utils/rest-api";
-import { JsonResponseType } from "../../store/rest-api-redux-factory";
+import { JsonResponseType } from "../../state-management/rest-api-redux-factory";
 
 
 export enum ActionButtonType {

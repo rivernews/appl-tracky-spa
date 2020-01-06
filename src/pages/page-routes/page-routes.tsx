@@ -2,8 +2,8 @@ import React, { Component, memo } from "react";
 
 /** Redux */
 import { connect } from "react-redux";
-import { IRootState } from "../../store/types";
-import { IUpdateAuthState } from "../../store/auth/types";
+import { IRootState } from "../../state-management/types/root-types";
+import { IUpdateAuthState } from "../../state-management/types/auth-types";
 
 import { RequestStatus } from "../../utils/rest-api";
 

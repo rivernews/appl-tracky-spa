@@ -1,7 +1,8 @@
 import React from "react";
 import { FormikValues } from "formik";
-import { DataModelClass } from "../../../store/data-model/base-model";
+import { DataModelClass } from "../../../data-model/base-model";
 import { FormInputField } from "../form-input-field/form-input-field";
+
 
 export enum InputFieldType {
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input

@@ -1,7 +1,6 @@
-import React from "react";
-import { TObject, IObjectBase } from "../store/rest-api-redux-factory";
-import { BaseModel } from "../store/data-model/base-model";
+import { TObject } from "../state-management/rest-api-redux-factory";
 import { AuthenticationService } from "./authentication";
+
 
 export enum RequestStatus {
     TRIGGERED = "triggered",

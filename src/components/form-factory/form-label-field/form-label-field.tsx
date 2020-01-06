@@ -2,8 +2,8 @@ import React, { Component } from "react";
 
 /** Components */
 import { LabelGroupComponentContainer } from "../../label/label-group-component";
-import { labelTypes } from "../../../store/data-model/label";
-import { Label } from "../../../store/data-model/label";
+import { labelTypes } from "../../../data-model/label";
+import { Label } from "../../../data-model/label";
 // formik
 import {
     Field, FieldProps,

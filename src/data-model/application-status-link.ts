@@ -1,4 +1,3 @@
-import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps, IRelationship } from "./base-model";
 import { Link } from "./link";
 

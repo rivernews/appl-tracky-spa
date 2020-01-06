@@ -3,13 +3,14 @@ import React, { Component } from "react";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
+import { IRootState } from "../../state-management/types/root-types";
 import { CrudType, RequestStatus, ISingleRestApiResponse } from "../../utils/rest-api";
 import {
     IObjectAction, ObjectRestApiJsonResponse
-} from "../../store/rest-api-redux-factory";
+} from "../../state-management/rest-api-redux-factory";
 // data models
-import { Company, CompanyActions, GroupedCompanyRestApiRedux, labelTypesMapToCompanyGroupTypes } from "../../store/data-model/company";
+import { Company, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
+import { CompanyActionCreators, GroupedCompanyActionCreators } from "../../state-management/action-creators/root-actions";
 
 /** Components */
 import {
@@ -104,13 +105,13 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
         createCompany: (companyFormData: Company, successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void, finalCallback?: Function) => (
             // create company object in pool redux
             dispatch(
-                CompanyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
+                CompanyActionCreators[CrudType.CREATE][RequestStatus.TRIGGERED].action(
                     companyFormData,
                     (jsonResponse: ISingleRestApiResponse<Company>) => {
                         // create ref in grouped redux
                         dispatch(
                             // no api calls, so don't dispatch TRIGGER action, just SUCCESS action
-                            GroupedCompanyRestApiRedux[labelTypesMapToCompanyGroupTypes[Company.getLabel(jsonResponse)]].actions[CrudType.CREATE][RequestStatus.SUCCESS].action({ uuid: jsonResponse.uuid })
+                            GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[Company.getLabel(jsonResponse)]][CrudType.CREATE][RequestStatus.SUCCESS].action({ uuid: jsonResponse.uuid })
                         );
                         // Only TRIGGER/SUCCESS has success callback. Since this is CREATE/SUCCESS, we can only call the func here. This is necessary because the form component rely on this callback to carry out order-critical operations, like page transition after create, etc.
                         successCallback && successCallback(jsonResponse);
@@ -121,7 +122,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
             )
         ),
         updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function, updateFromCompany?: Company) => dispatch(
-            CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
+            CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
                 companyFormData,
                 successCallback,
                 undefined,

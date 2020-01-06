@@ -3,9 +3,9 @@ import React, { Component, Dispatch } from "react";
 /** redux */
 import { AnyAction } from "redux";
 import { connect } from "react-redux";
-import { IRootState } from "../../store/types";
-import { IUpdateAuthState } from "../../store/auth/types";
-import { RequestedLogoutAuth } from "../../store/auth/actions";
+import { IRootState } from "../../state-management/types/root-types";
+import { IUpdateAuthState } from "../../state-management/types/auth-types";
+import { RequestedLogoutAuth } from "../../state-management/action-creators/auth-actions";
 
 /** Routes & pages */
 import { UserInfo } from "../../components/user-info/user-info";

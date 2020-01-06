@@ -1,7 +1,7 @@
 /** redux */
 import { createStore, applyMiddleware, compose } from "redux";
-import { IRootState } from "../store/types";
-import { createRootReducer } from "../store/reducers";
+import { IRootState } from "../types/root-types";
+import { createRootReducer } from "../reducers/root-reducers";
 
 /** router */
 import { createBrowserHistory } from 'history';
@@ -9,11 +9,11 @@ import { routerMiddleware } from 'connected-react-router';
 
 /** middleware */
 // saga
-import { sagaMiddleware, runSagaMiddleaware } from "../sagas/saga-config";
+import { sagaMiddleware, runSagaMiddleaware } from "../sagas/root-saga";
 
 
 
-const history = createBrowserHistory({
+export const history = createBrowserHistory({
     basename: (process.env.NODE_ENV === 'development') ?  
     ``
     :
@@ -44,6 +44,5 @@ export const store = createStore<IRootState, any, any, any>(
 /** after mount saga middlewares to store, run them */
 runSagaMiddleaware();
 
-export {
-    history
-};
+export const getCompanyStore = (store: IRootState) => store.company;
+export const getApplicationStore = (store: IRootState) => store.application;

@@ -6,14 +6,14 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
+import { IRootState } from "../../state-management/types/root-types";
 // REST API
 import { ISingleRestApiResponse } from "../../utils/rest-api";
 import {
     IObjectAction,
     IObjectStore
-} from "../../store/rest-api-redux-factory";
-import { Company } from "../../store/data-model/company";
+} from "../../state-management/rest-api-redux-factory";
+import { Company } from "../../data-model/company/company";
 
 /** Components */
 import "./add-com-page.css"

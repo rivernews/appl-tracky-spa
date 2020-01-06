@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
 /** Redux & data models */
-import { Company } from "../../store/data-model/company";
-import { Application } from "../../store/data-model/application";
+import { Company } from "../../data-model/company/company";
+import { Application } from "../../data-model/application/application";
 
 /** Components */
 import Card, { CardPrimaryContent } from "@material/react-card";

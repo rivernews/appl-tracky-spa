@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 /** Redux */
-import { Company } from "../../store/data-model/company";
+import { Company } from "../../data-model/company/company";
 
 /** Components */
 import MaterialIcon from "@material/react-material-icon";
@@ -16,6 +15,7 @@ import "@material/react-chips/dist/chips.css";
 import Skeleton from 'react-loading-skeleton';
 
 import styles from './company-component.module.css';
+
 
 interface ICompanyComponentProps {
     company: Company;
@@ -66,7 +66,7 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
 
                     {/* company actions */}
                     {
-                        <div className="CompanyActions">
+                        <div className="CompanyActionCreators">
                             <IconButton disabled={this.props.actionButtonsDisabled} onClick={this.props.onEditIconClicked}>
                                 <MaterialIcon hasRipple icon="edit" />
                             </IconButton>

@@ -1,4 +1,3 @@
-import { RestApiReduxFactory } from "../rest-api-redux-factory";
 import { BaseModel, IBaseModelProps } from "./base-model";
 import * as Yup from "yup";
 
@@ -55,9 +54,3 @@ export class Address extends BaseModel {
     }
 
 }
-
-const initialAddressInstance = new Address({});
-const AddressRestApiRedux = RestApiReduxFactory<Address>(
-    "addresses",
-    initialAddressInstance
-);

@@ -1,7 +1,7 @@
-import { RestApiReduxFactory } from "../rest-api-redux-factory";
-import { BaseModel, IBaseModelProps, IRelationship } from "./base-model";
-import { ApplicationStatusLink } from "./application-status-link";
+import { BaseModel, IBaseModelProps, IRelationship } from "../base-model";
+import { ApplicationStatusLink } from "../application-status-link";
 import * as Yup from "yup";
+
 
 interface IApplicationStatusProps {
     text?: string;
@@ -53,12 +53,3 @@ export class ApplicationStatus extends BaseModel {
         return localeNowTimeString;
     }
 }
-
-const initialApplicationStatusInstance = new ApplicationStatus({});
-const ApplicationStatusRestApiRedux = RestApiReduxFactory<ApplicationStatus>(
-    "application-statuses",
-    initialApplicationStatusInstance
-);
-export const ApplicationStatusActions = ApplicationStatusRestApiRedux.actions;
-export const ApplicationStatusReducer = ApplicationStatusRestApiRedux.storeReducer;
-export const ApplicationStatusSagas = ApplicationStatusRestApiRedux.sagas;

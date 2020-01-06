@@ -1,8 +1,8 @@
-import { RestApiReduxFactory } from "../rest-api-redux-factory";
-import { BaseModel, IBaseModelProps, IRelationship } from "./base-model";
-import { Link } from "./link";
-import { ApplicationStatus } from "./application-status";
+import { BaseModel, IBaseModelProps, IRelationship, IReference } from "../base-model";
+import { Link } from "../link";
+import { ApplicationStatus } from "../application-status/application-status";
 import * as Yup from "yup";
+
 
 interface IApplicationProps {
     user?: IRelationship;
@@ -12,18 +12,18 @@ interface IApplicationProps {
     job_source?: Link;
     labels?: any;
     notes?: string;
-    statuses?: Array<ApplicationStatus>;
+    statuses?: Array<ApplicationStatus> | Array<IReference>;
 }
 
 export class Application extends BaseModel {
-    public user: string;
+    public user: IRelationship;
     public user_company: IRelationship;
     public position_title: string;
     public job_description_page: Link;
     public job_source: Link;
     public labels: any;
     public notes: string;
-    public statuses: Array<ApplicationStatus>;
+    public statuses: Array<ApplicationStatus> | Array<IReference>;
 
     constructor({
         user = "",
@@ -56,12 +56,3 @@ export class Application extends BaseModel {
         });
     }
 }
-
-const initialApplicationInstance = new Application({});
-const ApplicationRestApiRedux = RestApiReduxFactory<Application>(
-    "applications",
-    initialApplicationInstance
-);
-export const ApplicationActions = ApplicationRestApiRedux.actions;
-export const ApplicationReducer = ApplicationRestApiRedux.storeReducer;
-export const ApplicationSagas = ApplicationRestApiRedux.sagas;

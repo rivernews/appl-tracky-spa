@@ -4,7 +4,7 @@ import { FormBaseFieldMeta, IFormBaseFieldProps, IFieldBaseMetaProps } from "../
 import { FormLabelField } from "./form-label-field";
 
 // data model
-import { Label } from "../../../store/data-model/label";
+import { Label } from "../../../data-model/label";
 
 
 // API for caller to new props for label field

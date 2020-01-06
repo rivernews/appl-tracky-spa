@@ -11,7 +11,7 @@ import {
     IFailureAuthAction,
     /** action names */
     AuthActionNames,
-} from "./types";
+} from "../types/auth-types";
 
 import { RequestStatus } from "../../utils/rest-api";
 

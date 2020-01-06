@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import { IUpdateAuthState } from "../../store/auth/types";
+import { IUpdateAuthState } from "../../state-management/types/auth-types";
 
 interface UserInfoProps {
     auth: IUpdateAuthState;

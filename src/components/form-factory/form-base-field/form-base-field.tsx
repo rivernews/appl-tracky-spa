@@ -10,7 +10,7 @@ import Button from "@material/react-button";
 import '@material/react-icon-button/dist/icon-button.css';
 import IconButton from '@material/react-icon-button';
 // data model
-import { DataModelClass } from "../../../store/data-model/base-model";
+import { DataModelClass } from "../../../data-model/base-model";
 // formik
 import {
     FieldArray,
@@ -18,6 +18,7 @@ import {
 } from "formik";
 // base field
 import { IFormBaseFieldProps } from "./form-base-field-meta";
+
 
 interface IFormBaseDyanmicFieldControllsProps {
     index: number

@@ -4,8 +4,8 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
-import { Label, labelTypes } from "../../store/data-model/label";
+import { IRootState } from "../../state-management/types/root-types";
+import { Label, labelTypes } from "../../data-model/label";
 
 /** Components */
 import { ChipSet, Chip } from '@material/react-chips';

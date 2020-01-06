@@ -5,7 +5,7 @@ import {
     IUpdateAuthState, 
     /** action */
     AuthActionNames, TAuthActions 
-} from "./types";
+} from "../types/auth-types";
 
 import { RequestStatus } from "../../utils/rest-api";
 

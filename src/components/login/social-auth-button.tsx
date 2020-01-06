@@ -4,9 +4,9 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 /** Redux */
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IRootState } from "../../store/types";
-import { IUpdateAuthAction, IRequestedLoginAuthAction, TAuthActions, IUpdateAuthState, RequestedLoginMode } from "../../store/auth/types";
-import { UpdateAuth, RequestedLoginAuth, RequestedLogoutAuth } from "../../store/auth/actions";
+import { IRootState } from "../../state-management/types/root-types";
+import { IUpdateAuthAction, IRequestedLoginAuthAction, TAuthActions, IUpdateAuthState, RequestedLoginMode } from "../../state-management/types/auth-types";
+import { UpdateAuth, RequestedLoginAuth, RequestedLogoutAuth } from "../../state-management/action-creators/auth-actions";
 
 /** rest api */
 import { RequestStatus } from "../../utils/rest-api";

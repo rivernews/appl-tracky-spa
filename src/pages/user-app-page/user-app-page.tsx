@@ -6,13 +6,13 @@ import { Utilities } from "../../utils/utilities";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
-import { IObjectAction, IObjectStore } from "../../store/rest-api-redux-factory";
+import { IRootState } from "../../state-management/types/root-types";
+import { IObjectAction, IObjectStore } from "../../state-management/rest-api-redux-factory";
 import { InputFieldType } from "../../components/form-factory/form-base-field/form-base-field-meta";
 // data models
-import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes } from "../../store/data-model/company";
-import { labelTypes } from "../../store/data-model/label";
-import { Application } from "../../store/data-model/application";
+import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes } from "../../data-model/company/company";
+import { labelTypes } from "../../data-model/label";
+import { Application } from "../../data-model/application/application";
 
 /** Components */
 // mdc react icon
@@ -29,7 +29,6 @@ import { TabContainer } from "../../components/tab/tab-container";
 import { TabContent } from "../../components/tab/tab-content";
 
 // objects
-// import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 import { CompanyListItem } from "../../components/company/company-list-item";
 import { RequestStatus } from "../../utils/rest-api";
 
@@ -52,6 +51,7 @@ import '@material/react-typography/dist/typography.css';
 
 // styling
 import styles from "./user-app-page.module.css";
+import { IReference } from "../../data-model/base-model";
 
 
 interface IUserAppPageProps extends RouteComponentProps {
@@ -187,11 +187,15 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                                             Object.values(this.props[labelTypesMapToCompanyGroupTypes[labelText]].collection).map(
                                                 (companyRef, index) => {
                                                     const company = this.props.company.collection[companyRef.uuid];
+                                                    const applications = company ? (company.applications as Array<IReference>).map((applicationUuid) => {
+                                                        return this.props.application.collection[applicationUuid];
+                                                    }) : undefined;
+
                                                     return (
                                                         <CompanyListItem
                                                             key={company ? company.uuid : index}
                                                             company={company}
-                                                            applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
+                                                            applications={applications}
                                                             onClick={company ? this.onCompanyClick : undefined}
                                                         />
                                                     )
