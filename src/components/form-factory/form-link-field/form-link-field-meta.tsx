@@ -1,5 +1,5 @@
 // data model
-import { Link } from "../../../store/data-model/link";
+import { Link } from "../../../data-model/link";
 
 /** Components */
 // base field

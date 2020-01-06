@@ -5,19 +5,20 @@ import React, { Component } from "react";
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
 // data model
-import { DataModelClass, DataModelInstance, BaseModel } from "../../store/data-model/base-model";
+import { DataModelClass, DataModelInstance } from "../../data-model/base-model";
 // formik
 import {
     Formik,
     Form,
-    FormikValues,
-    FormikErrors,
-    FormikTouched
+    FormikValues
 } from "formik";
 // yup
 import * as Yup from 'yup';
 // base field
 import { FormBaseFieldMeta } from "./form-base-field/form-base-field-meta";
+import { ISingleRestApiResponse } from "../../utils/rest-api";
+import { JsonResponseType } from "../../state-management/types/factory-types";
+
 
 export enum ActionButtonType {
     SUBMIT = "submit",
@@ -33,7 +34,7 @@ export class FormActionButtonProps {
 }
 
 export interface IFormFactoryProps<IDataModel> {
-    onSubmitSuccess?: () => void;
+    onSubmitSuccess?: (jsonResponse: JsonResponseType<IDataModel>) => void;
 
     // pass in either `initialValues` or `initialInstance`, this is important for yup to render error message. If no initial info at all, yup will not display errors properly.
     // `initialValues` should be used only for customize form; for data model forms please use `initialInstance` so update & create form can be handled together
@@ -54,13 +55,14 @@ export interface IFormFactoryProps<IDataModel> {
     
     createInstanceTriggerAction?: (
         instance: IDataModel,
-        successCallback?: Function,
+        successCallback?: (jsonResponse: ISingleRestApiResponse<IDataModel>) => void,
         finalCallback?: Function,
     ) => void;
     updateInstanceTriggerAction?: (
         instance: IDataModel,
         successCallback?: Function,
         finalCallback?: Function,
+        updateFromCompany?: IDataModel
     ) => void;
 }
 
@@ -131,7 +133,7 @@ export class FormFactory<DataModel> extends Component<
                 this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
             } else {
                 process.env.NODE_ENV === 'development' && console.log("ready to send update instance");
-                this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
+                this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false), this.props.initialInstance);
             }
         }
         else if (this.props.onSubmit) {

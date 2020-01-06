@@ -5,23 +5,18 @@ import { RouteComponentProps } from "react-router";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
+import { IRootState } from "../../state-management/types/root-types";
 // rest api
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 import {
     IObjectStore,
     IObjectAction
-} from "../../store/rest-api-redux-factory";
-import { Company, CompanyActions } from "../../store/data-model/company";
-import { Link } from "../../store/data-model/link";
-import {
-    Application,
-    ApplicationActions
-} from "../../store/data-model/application";
-import { ApplicationStatus } from "../../store/data-model/application-status";
+} from "../../state-management/types/factory-types";
+import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes } from "../../data-model/company/company";
+import { Application } from "../../data-model/application/application";
+import { ApplicationStatus } from "../../data-model/application-status/application-status";
 
 /** Components */
-// import { CompanyApplicationComponentContainer } from "../../components/company-application/company-application-component";
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
 // mdc react button
@@ -33,12 +28,15 @@ import { ApplicationComponentController } from "../../components/application/app
 import { CompanyComponent } from "../../components/company/company-component";
 
 import styles from "./user-com-app-page.module.css";
+import { IReference } from "../../data-model/base-model";
+import { CompanyActionCreators, ApplicationActionCreators } from "../../state-management/action-creators/root-actions";
+
 
 interface IUserComAppPageParams {
     uuid: string;
 }
 
-interface IUserComAppPageProps
+interface IUserComAppPageNoGroupCompanyProps
     extends RouteComponentProps<IUserComAppPageParams> {
     companyStore: IObjectStore<Company>;
     applicationStore: IObjectStore<Application>;
@@ -53,10 +51,13 @@ interface IUserComAppPageProps
     updateCompany: (companyToUpdate: Company, callback?: Function) => void;
 }
 
+type IUserComAppPageProps = IUserComAppPageNoGroupCompanyProps & {
+    [key in companyGroupTypes]: IObjectStore<Company>
+}
 
 class UserComAppPage extends Component<IUserComAppPageProps> {
     componentDidMount() {
-        let companyUuid = this.props.match.params.uuid;
+        const companyUuid = this.props.match.params.uuid;
         process.env.NODE_ENV === 'development' && console.log("mount, got uuid from route?", companyUuid);
     }
 
@@ -78,6 +79,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
         if (this.props.match.params.uuid) {
             const company = this.props.companyStore.collection[this.props.match.params.uuid];
             this.props.history.push(`/com-form/${company.uuid}/`);
+            return;
         }
 
         console.error("Attempted to edit but no company uuid provided");
@@ -89,10 +91,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
         }
 
         const company = this.props.companyStore.collection[this.props.match.params.uuid];
-        const applications = company ? Object.values(this.props.applicationStore.collection).filter(
-            application =>
-                application.user_company === company.uuid
-        ) : [];
+        const applications = company ? company.applications as Array<IReference> : [];
 
         return (
             <div className={styles.UserCompanyPage}>
@@ -121,24 +120,13 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
                 </div>
 
                 {/* application list */}
-                {/* {company.uuid && (
-                    <CompanyApplicationComponentContainer
-                        company={company}
-                        isShowApplicationStatuses
-                    />
-                )} */}
-                {company ? applications.map(application => {
-                    const applicationStatusList = application ? Object.values(
-                            this.props.applicationStatusStore
-                                .collection
-                        ).filter(
-                            applicationStatus =>
-                                applicationStatus.application ===
-                                application.uuid
-                        ) : [];
+                {company ? applications.map((applicationRef, applicationsIndex) => {
+                    const application = this.props.applicationStore.collection[applicationRef as IReference];
+
+                    const applicationStatusList =  application ? (application.statuses as Array<IReference>).map((statusUuid) => this.props.applicationStatusStore.collection[statusUuid]) : undefined;
                     return (
                         <ApplicationComponentController
-                            key={application.uuid}
+                            key={applicationsIndex}
                             application={application}
                             company={company}
                             applicationStatusList={applicationStatusList}
@@ -160,15 +148,28 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
             return <h1>Company uuid not specified</h1>
         }
 
-        if (this.props.companyStore.requestStatus === RequestStatus.REQUESTING) {
+        // if such company in store, just take it
+        if (this.props.match.params.uuid in this.props.companyStore.collection) {
             return this.renderPage();
         }
 
-        if (!this.props.companyStore.collection) {
-            return <h1>You don't have any company yet</h1>
+        // need to really make sure company not found in database
+        // will not show "not found" till all requesting finish
+        let someStillRequesting: boolean = false;
+        for (const companyGroupText of Object.values(labelTypesMapToCompanyGroupTypes)) {
+            if (
+                this.props[companyGroupText].requestStatus !== RequestStatus.SUCCESS ||
+                this.props[companyGroupText].requestStatus !== RequestStatus.FAILURE
+            ) {
+                someStillRequesting = true;
+                break;
+            }
         }
 
-        if (!(this.props.match.params.uuid in this.props.companyStore.collection)) {
+        if (
+            !someStillRequesting &&
+            !(this.props.match.params.uuid in this.props.companyStore.collection)
+        ) {
             return <h1>Company not found</h1>
         }
 
@@ -189,6 +190,10 @@ const mapStateToProps = (store: IRootState) => {
     return {
         // prop: store.prop
         companyStore: store.company,
+        ...(Object.values(labelTypesMapToCompanyGroupTypes).reduce((accumulate, companyGroupText) => ({
+            ...accumulate,
+            [companyGroupText]: store[companyGroupText]
+        }), {})),
         applicationStore: store.application,
         applicationStatusStore: store.applicationStatus
     };
@@ -202,21 +207,21 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
             callback?: Function
         ) =>
             dispatch(
-                ApplicationActions[CrudType.CREATE][
+                ApplicationActionCreators[CrudType.CREATE][
                     RequestStatus.TRIGGERED
                 ].action(applicationFormData, callback)
             )
         ,
         deleteCompany: (companyToDelete: Company, callback?: Function) =>
             dispatch(
-                CompanyActions[CrudType.DELETE][RequestStatus.TRIGGERED].action(
+                CompanyActionCreators[CrudType.DELETE][RequestStatus.TRIGGERED].action(
                     companyToDelete,
                     callback
                 )
             ),
         updateCompany: (companyToUpdate: Company, callback?: Function) =>
             dispatch(
-                CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
+                CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
                     companyToUpdate,
                     callback
                 )

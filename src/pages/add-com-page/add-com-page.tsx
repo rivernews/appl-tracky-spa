@@ -6,29 +6,23 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
+import { IRootState } from "../../state-management/types/root-types";
 // REST API
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { ISingleRestApiResponse } from "../../utils/rest-api";
 import {
     IObjectAction,
     IObjectStore
-} from "../../store/rest-api-redux-factory";
-import { CompanyActions, Company } from "../../store/data-model/company";
-import { Address } from "../../store/data-model/address";
-import { Link } from "../../store/data-model/link";
+} from "../../state-management/types/factory-types";
+import { Company } from "../../data-model/company/company";
 
 /** Components */
 import "./add-com-page.css"
-
-//mdc-react icon
-import MaterialIcon from "@material/react-material-icon";
 // mdc-react button
 import "@material/react-button/dist/button.css";
-import Button from "@material/react-button";
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
-import TextField, { HelperText, Input } from "@material/react-text-field";
 import { CompanyFormComponentContainer } from "../../components/company/company-form-component";
+
 
 interface IAddComPageParams {
     uuid?: string;
@@ -54,25 +48,20 @@ class AddComPage extends Component<IAddComPageProps> {
                 <h1>{!company ? "Add an Organization" : `Update Organization`}</h1>
                 <CompanyFormComponentContainer
                     company={company}
-                    onSubmitSuccess={() => {
+                    onSubmitSuccess={(jsonResponse) => {
                         process.env.NODE_ENV === 'development' && console.log("com form page: onSubmitSuccess");
                         
-                        if (this.props.company.lastChangedObjectID) {
-                            let newCompany = this.props.company.collection[
-                                this.props.company.lastChangedObjectID
-                            ];
-                            process.env.NODE_ENV === 'development' && console.log("new company:", newCompany);
+                        const uuid = (jsonResponse as ISingleRestApiResponse<Company>).uuid;
 
-                            company ? (
-                                // case: update company, let user be able to go back to update form
-                                this.props.history.push(`/com-app/${newCompany.uuid}/`)
-                            ) : (
-                                // case: create company, don't let user go back to form. If attempt to update company, user should click on edit; if attempt to create another company, should go to /home/ to do so
-                                this.props.history.replace(`/com-app/${newCompany.uuid}/`)
-                            );
-                        } else {
-                            console.error("store has no lastChangedObjectID");
-                        }
+                        process.env.NODE_ENV === 'development' && console.log("new company:", jsonResponse);
+
+                        company ? (
+                            // case: update company, let user be able to go back to update form
+                            this.props.history.push(`/com-app/${uuid}/`)
+                        ) : (
+                            // case: create company, don't let user go back to form. If attempt to update company, user should click on edit; if attempt to create another company, should go to /home/ to do so
+                            this.props.history.replace(`/com-app/${uuid}/`)
+                        );
                     }}
                     onCancel={event => {
                         this.props.history.goBack()

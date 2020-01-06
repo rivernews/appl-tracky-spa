@@ -2,17 +2,14 @@ import React, { Component } from "react";
 
 /** Redux */
 import { connect } from "react-redux";
-import {
-    Application,
-    ApplicationActions
-} from "../../store/data-model/application";
-import { IRootState } from "../../store/types";
-import { IObjectAction, IObjectStore } from "../../store/rest-api-redux-factory";
+import { Application } from "../../data-model/application/application";
+import { IRootState } from "../../state-management/types/root-types";
+import { IObjectAction, IObjectStore } from "../../state-management/types/factory-types";
 import { Dispatch } from "redux";
 
 /** data model */
-import { ApplicationStatus } from "../../store/data-model/application-status";
-import { Company } from "../../store/data-model/company";
+import { ApplicationStatus } from "../../data-model/application-status/application-status";
+import { Company } from "../../data-model/company/company";
 
 /** rest api */
 import { CrudType, RequestStatus } from "../../utils/rest-api";
@@ -26,8 +23,6 @@ import Button from "@material/react-button";
 import IconButton from "@material/react-icon-button";
 import { ApplicationStatusComponentContainer } from "../application-status/application-status-component";
 import { ApplicationFormComponentContainer } from "./application-form-component";
-import Card, { CardPrimaryContent } from "@material/react-card";
-import List, { ListItem, ListItemText } from "@material/react-list";
 import {
     Headline6,
 } from '@material/react-typography';
@@ -40,6 +35,8 @@ import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
 import Skeleton from 'react-loading-skeleton';
 
 import styles from './application-component.module.css';
+import { ApplicationActionCreators } from "../../state-management/action-creators/root-actions";
+
 
 /** Types */
 interface IApplicationComponentProps {
@@ -243,7 +240,16 @@ export class ApplicationComponent extends Component<
                 <div className="statusContainer">
                     <Headline6>Status</Headline6>
 
+                    {/* application status form controller */}
                     {
+                        <ApplicationStatusComponentContainer
+                            application={application}
+                            isOnlyForm
+                        />
+                    }
+
+                    {
+                        /* show skeleton to indicate application status is loading */
                         (this.props.applicationStatusStore.requestStatus === RequestStatus.REQUESTING) && (
                             <ApplicationStatusComponentContainer />
                         )
@@ -251,24 +257,16 @@ export class ApplicationComponent extends Component<
 
                     {
                         application && (
-                            applicationStatusList.map(applicationStatus => {
+                            applicationStatusList.map((applicationStatus, index) => {
                                 return (
                                     <ApplicationStatusComponentContainer
-                                        key={applicationStatus.uuid}
+                                        key={index}
                                         applicationStatus={applicationStatus}
                                         application={application}
                                     />
                                 );
                             })
                         )
-                    }
-
-                    {/* application status form controller */}
-                    {
-                        <ApplicationStatusComponentContainer
-                            application={application}
-                            isOnlyForm
-                        />
                     }
                 </div>
             </div>
@@ -288,7 +286,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
             callback?: Function
         ) =>
             dispatch(
-                ApplicationActions[CrudType.DELETE][
+                ApplicationActionCreators[CrudType.DELETE][
                     RequestStatus.TRIGGERED
                 ].action(applicationToDelete, callback)
             )

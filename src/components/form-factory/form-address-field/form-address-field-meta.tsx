@@ -1,5 +1,5 @@
 // data model
-import { Address } from "../../../store/data-model/address";
+import { Address } from "../../../data-model/address";
 
 /** Components */
 // base field

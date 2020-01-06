@@ -3,13 +3,14 @@ import React, { Component } from "react";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { IRootState } from "../../state-management/types/root-types";
+import { CrudType, RequestStatus, ISingleRestApiResponse } from "../../utils/rest-api";
 import {
-    IObjectAction
-} from "../../store/rest-api-redux-factory";
+    IObjectAction, ObjectRestApiJsonResponse
+} from "../../state-management/types/factory-types";
 // data models
-import { Company, CompanyActions } from "../../store/data-model/company";
+import { Company, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
+import { CompanyActionCreators, GroupedCompanyActionCreators } from "../../state-management/action-creators/root-actions";
 
 /** Components */
 import {
@@ -22,14 +23,16 @@ import { FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-fie
 import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
 import { FormAddressFieldMeta } from "../form-factory/form-address-field/form-address-field-meta";
+import { FormLabelFieldMeta } from "../form-factory/form-label-field/form-label-field-meta";
+
 
 interface ICompanyFormComponentProps {
     company?: Company;
     onCancel: (event: any) => void;
-    onSubmitSuccess?: () => void;
+    onSubmitSuccess?: (jsonResponse: ObjectRestApiJsonResponse<Company>) => void;
 
     /** redux */
-    createCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) => void;
+    createCompany: (companyFormData: Company, successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void, finalCallback?: Function) => void;
     updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) => void;
 }
 
@@ -46,6 +49,11 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
                 fieldName: "name",
                 label: "Organization Name*",
                 autoFocus: true
+            }),
+
+            new FormLabelFieldMeta({
+                fieldName: "labels",
+                label: "Label",
             }),
 
             new FormAddressFieldMeta({
@@ -76,10 +84,10 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
                 <FormFactory
                     model={Company}
                     initialInstance={this.props.company}
-        
+
                     formFieldPropsList={this.formFieldPropsList}
                     actionButtonPropsList={this.actionButtonPropsList}
-        
+
                     createInstanceTriggerAction={this.props.createCompany}
                     updateInstanceTriggerAction={this.props.updateCompany}
 
@@ -94,24 +102,37 @@ const mapStateToProps = (store: IRootState) => ({});
 
 const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
     return {
-        createCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) =>
+        createCompany: (companyFormData: Company, successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void, finalCallback?: Function) => (
+            // create company object in pool redux
             dispatch(
-                CompanyActions[CrudType.CREATE][RequestStatus.TRIGGERED].action(
+                CompanyActionCreators[CrudType.CREATE][RequestStatus.TRIGGERED].action(
                     companyFormData,
-                    successCallback,
+                    (jsonResponse: ISingleRestApiResponse<Company>) => {
+                        // create ref in grouped redux
+                        dispatch(
+                            // no api calls, so don't dispatch TRIGGER action, just SUCCESS action
+                            GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[Company.getLabel(jsonResponse)]][CrudType.CREATE][RequestStatus.SUCCESS].action({ uuid: jsonResponse.uuid })
+                        );
+                        // Only TRIGGER/SUCCESS has success callback. Since this is CREATE/SUCCESS, we can only call the func here. This is necessary because the form component rely on this callback to carry out order-critical operations, like page transition after create, etc.
+                        successCallback && successCallback(jsonResponse);
+                    },
                     undefined,
-                    finalCallback,
-                )
-            ),
-        updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) =>
-            dispatch(
-                CompanyActions[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
-                    companyFormData,
-                    successCallback,
-                    undefined,
-                    finalCallback,
+                    finalCallback
                 )
             )
+        ),
+        updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function, updateFromCompany?: Company) => dispatch(
+            CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
+                companyFormData,
+                successCallback,
+                undefined,
+                finalCallback,
+                undefined,
+                {
+                    updateFromObject: updateFromCompany
+                }
+            )
+        )
     };
 };
 

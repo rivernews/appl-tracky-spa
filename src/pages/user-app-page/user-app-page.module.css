@@ -1,4 +1,14 @@
-.userAppPageHeader {
+.UserAppPageHeader {
+    background-color: var(--mdc-theme-primary);
+    color: var(--mdc-theme--text-primary-on-dark);
+    padding: 5px 0px 20px 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.companyListHeader {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -7,8 +17,4 @@
 .searchField {
     margin-top: 3vmin;
     width: 70vmin;
-}
-
-.userAppPageContent {
-
 }

@@ -1,18 +1,21 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 /** Redux */
-import { Company } from "../../store/data-model/company";
+import { Company } from "../../data-model/company/company";
 
 /** Components */
 import MaterialIcon from "@material/react-material-icon";
 // mdc-react icon button
 import '@material/react-icon-button/dist/icon-button.css';
 import IconButton from '@material/react-icon-button';
+// mdc-chips
+import { ChipSet, Chip } from '@material/react-chips';
+import "@material/react-chips/dist/chips.css";
 
 import Skeleton from 'react-loading-skeleton';
 
 import styles from './company-component.module.css';
+
 
 interface ICompanyComponentProps {
     company: Company;
@@ -29,6 +32,20 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
             <div className="CompanyComponent">
                 <div className={styles.companyTitleContainer}>
                     <h1>{company ? company.name : <Skeleton width="50vmin" />}</h1>
+
+                    {company ? (
+                        company.labels.length && company.labels[0].text ? (
+                            <ChipSet>
+                                <Chip label={company.labels[0].text} />
+                            </ChipSet>
+                        ) : (
+                            <ChipSet>
+                                <Chip label="None" />
+                            </ChipSet>
+                        )
+                    ) : (
+                        <Skeleton width="40px" />
+                    )}
 
                     {/* company link */}
                     {
@@ -49,7 +66,7 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
 
                     {/* company actions */}
                     {
-                        <div className="CompanyActions">
+                        <div className="CompanyActionCreators">
                             <IconButton disabled={this.props.actionButtonsDisabled} onClick={this.props.onEditIconClicked}>
                                 <MaterialIcon hasRipple icon="edit" />
                             </IconButton>

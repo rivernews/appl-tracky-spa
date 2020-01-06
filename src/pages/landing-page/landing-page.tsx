@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { withRouter, RouteComponentProps, Redirect } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch, AnyAction } from "redux";
-import { IRootState } from "../../store/types";
-import { IUpdateAuthState } from "../../store/auth/types";
+import { IRootState } from "../../state-management/types/root-types";
+import { IUpdateAuthState } from "../../state-management/types/auth-types";
 
 /** Components */
 import { SocialAuthButtonContainer } from "../../components/login/social-auth-button";

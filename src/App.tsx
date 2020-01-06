@@ -4,9 +4,9 @@ import React, { Component, Dispatch } from "react";
 /** Redux */
 import { AnyAction } from "redux";
 import { connect } from "react-redux";
-import { IRootState } from "./store/types";
-import { RequestedLoginAuth } from "./store/auth/actions";
-import { RequestedLoginMode } from "./store/auth/types";
+import { IRootState } from "./state-management/types/root-types";
+import { RequestedLoginAuth } from "./state-management/action-creators/auth-actions";
+import { RequestedLoginMode } from "./state-management/types/auth-types";
 
 /** Routes & pages */
 import { PageRoutesContainer } from "./pages/page-routes/page-routes";

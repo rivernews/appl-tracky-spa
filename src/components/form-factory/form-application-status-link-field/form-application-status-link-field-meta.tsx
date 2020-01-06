@@ -1,5 +1,5 @@
 // data model
-import { ApplicationStatusLink } from "../../../store/data-model/application-status-link";
+import { ApplicationStatusLink } from "../../../data-model/application-status-link";
 
 /** Components */
 import { FormBaseFieldMeta, IFieldBaseMetaProps } from "../form-base-field/form-base-field-meta";

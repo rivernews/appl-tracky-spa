@@ -4,9 +4,9 @@ import { withRouter, RouteComponentProps, Redirect } from "react-router-dom";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch, AnyAction } from "redux";
-import { IRootState } from "../../store/types";
-import { IUpdateAuthState, RequestedLoginMode } from "../../store/auth/types";
-import { RequestedLoginAuth } from "../../store/auth/actions";
+import { IRootState } from "../../state-management/types/root-types";
+import { IUpdateAuthState, RequestedLoginMode } from "../../state-management/types/auth-types";
+import { RequestedLoginAuth } from "../../state-management/action-creators/auth-actions";
 import { FormikValues } from "formik";
 
 /** Components */

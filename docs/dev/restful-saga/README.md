@@ -42,7 +42,7 @@ const initialCompanyState: ICompanyState = {
     ...
 }
 
-export const companyReducer = (companyStore = initialCompanyState, action: TCompanyActions): ICompanyState => {
+export const companyReducer = (companyStore = initialCompanyState, action: TCompanyActionCreators): ICompanyState => {
     return {
         ...companyStore,
         ...action.payload

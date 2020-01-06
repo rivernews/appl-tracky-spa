@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, memo } from "react";
 
 /** Redux */
 import { connect } from "react-redux";
-import { IRootState } from "../../store/types";
-import { IUpdateAuthState } from "../../store/auth/types";
+import { IRootState } from "../../state-management/types/root-types";
+import { IUpdateAuthState } from "../../state-management/types/auth-types";
 
 import { RequestStatus } from "../../utils/rest-api";
 
@@ -52,7 +52,7 @@ import { faGithub, faGithubAlt, faGithubSquare } from '@fortawesome/free-brands-
 import "@material/react-ripple/dist/ripple.css";
 // import {withRipple} from '@material/react-ripple';
 
-import "./page-routes.css";
+import pageTransitionStyles from "./page-routes-transition.module.css";
 import styles from "./page-routes.module.css";
 
 
@@ -99,7 +99,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
 
     render() {
         return (
-            <div className={`PageRoutesContainer`}>
+            <div>
                 {this.isCurrentPublicPage() ? (
                     <div className="PublicRoutesContainer">
                         {/** direct user to internal page if logged in */
@@ -176,8 +176,8 @@ class PageRoutes extends Component<IPageRoutesProps> {
                                 <TransitionGroup>
                                     <CSSTransition
                                         key={this.props.location.key}
-                                        classNames="page"
-                                        timeout={400}
+                                        classNames={{ ...pageTransitionStyles }}
+                                        timeout={500}
                                     >
                                         <Switch location={this.props.location}>
                                             <Route

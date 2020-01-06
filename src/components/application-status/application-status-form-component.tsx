@@ -4,17 +4,13 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 /** Redux */
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { IRootState } from "../../store/types";
-import { IObjectStore, IObjectAction } from "../../store/rest-api-redux-factory";
+import { IRootState } from "../../state-management/types/root-types";
+import { IObjectStore, IObjectAction } from "../../state-management/types/factory-types";
 // data models
-import {
-    ApplicationStatus,
-    ApplicationStatusActions
-} from "../../store/data-model/application-status";
-import {
-    ApplicationStatusLink,
-} from "../../store/data-model/application-status-link";
-import { Application } from "../../store/data-model/application";
+import { ApplicationStatus } from "../../data-model/application-status/application-status";
+import { ApplicationStatusLink } from "../../data-model/application-status-link";
+import { Application } from "../../data-model/application/application";
+import { ApplicationStatusActionCreators } from "../../state-management/action-creators/root-actions";
 
 /** Rest API */
 import { CrudType, RequestStatus } from "../../utils/rest-api";
@@ -23,13 +19,13 @@ import { CrudType, RequestStatus } from "../../utils/rest-api";
 import {
     FormFactory,
     FormActionButtonProps,
-    IFormFactoryProps,
     ActionButtonType
 } from "../form-factory/form-factory";
 import {FormInputFieldMeta } from "../form-factory/form-input-field/form-input-field-meta";
 import { InputFieldType, FormBaseFieldMeta } from "../form-factory/form-base-field/form-base-field-meta";
 // form fields
 import { FormApplicationStatusLinkFieldMeta } from "../form-factory/form-application-status-link-field/form-application-status-link-field-meta";
+
 
 interface IApplicationStatusFormComponentProps extends RouteComponentProps {
     applicationStatus?: ApplicationStatus; // for update form
@@ -129,7 +125,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<ApplicationStatus> 
             failureCallback?: Function,
         ) =>
             dispatch(
-                ApplicationStatusActions[CrudType.CREATE][
+                ApplicationStatusActionCreators[CrudType.CREATE][
                     RequestStatus.TRIGGERED
                 ].action(applicationStatusFormData, successCallback, undefined, failureCallback)
             )
@@ -140,7 +136,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<ApplicationStatus> 
             failureCallback?: Function,
         ) =>
             dispatch(
-                ApplicationStatusActions[CrudType.UPDATE][
+                ApplicationStatusActionCreators[CrudType.UPDATE][
                     RequestStatus.TRIGGERED
                 ].action(applicationStatusFormData, successCallback, undefined, failureCallback)
             )
