@@ -44,3 +44,11 @@ export enum labelTypes {
     INTERVIEWING = "Interviewing",
     ARCHIVED = "Archived",
 }
+
+export enum TabNames {
+    ALL = 0,
+    TARGET = 1,
+    APPLIED = 2,
+    INTERVIEWING = 3,
+    ARCHIVED = 4
+}

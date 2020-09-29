@@ -16,6 +16,7 @@ import { CSSTransition } from 'react-transition-group';
 import leftSlideStyles from './tab-transition-slide-left.module.css';
 import rightSlideStyles from './tab-transition-slide-right.module.css';
 import styles from './tab-container.module.css';
+import { TabNames } from "../../data-model/label";
 
 
 enum SlideDirection {
@@ -34,7 +35,7 @@ interface ITabContainerProps {
 
 export class TabContainer extends Component<ITabContainerProps, ITabContainerState> {
     state = {
-        activeIndex: 0,
+        activeIndex: TabNames.INTERVIEWING, // make interviewing the initial tab to be activated
         tabContentSlideDirection: SlideDirection.RIGHTWARD
     }
 
