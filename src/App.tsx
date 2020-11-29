@@ -10,6 +10,9 @@ import { RequestedLoginMode } from "./state-management/types/auth-types";
 
 /** Routes & pages */
 import { PageRoutesContainer } from "./pages/page-routes/page-routes";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+
 
 /** Locals */
 import "./App.css";
@@ -20,6 +23,8 @@ interface IAppProps {
     retrieveLoginAuth: () => void;
 }
 
+const theme = createMuiTheme();
+
 class App extends Component<IAppProps> {
     componentDidMount() {
         this.props.retrieveLoginAuth();
@@ -28,7 +33,10 @@ class App extends Component<IAppProps> {
     render() {
         return (
             <div className="App">
-                <PageRoutesContainer />
+                <CssBaseline />
+                <MuiThemeProvider theme={theme}>
+                    <PageRoutesContainer />
+                </MuiThemeProvider>
             </div>
         );
     }

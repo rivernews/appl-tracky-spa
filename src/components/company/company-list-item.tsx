@@ -5,9 +5,13 @@ import { Company } from "../../data-model/company/company";
 import { Application } from "../../data-model/application/application";
 
 /** Components */
-import Card, { CardPrimaryContent } from "@material/react-card";
 import '@material/react-card/dist/card.css';
 import List, { ListItem, ListItemText } from "@material/react-list";
+import MaterialUIListItem from "@material-ui/core/ListItem";
+import MaterialUIButton from "@material-ui/core/Button";
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Checkbox from '@material-ui/core/Checkbox';
+
 import '@material/react-list/dist/list.css';
 // mdc-chips
 import { ChipSet, Chip } from '@material/react-chips';
@@ -16,6 +20,7 @@ import "@material/react-chips/dist/chips.css";
 import Skeleton from 'react-loading-skeleton';
 
 import styles from './company-list-item.module.css';
+import { Typography } from "@material-ui/core";
 
 
 interface ICompanyListItemProps {
@@ -25,14 +30,18 @@ interface ICompanyListItemProps {
 }
 
 const CompanyListItem = (props: ICompanyListItemProps) => {
-    const onClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const onClick = () => {
         props.onClick && props.company && props.onClick(props.company.uuid);
     }
 
     return (
-        <Card className={styles.companyCard} onClick={onClick}>
-            <CardPrimaryContent className={styles.companyCardContent}>
-                <h1>{props.company ? props.company.name : <Skeleton duration={1.1} width={`50vmin`} />}</h1>
+        <MaterialUIListItem className={false ? styles.companyCard : ''}>
+            <div className={styles.companyCardContent}>
+                <MaterialUIButton onClick={onClick}>
+                    <Typography variant="h5">
+                        {props.company ? props.company.name : <Skeleton duration={1.1} width={`50vmin`} />}
+                    </Typography>
+                </MaterialUIButton>
 
                 {props.company ? (
                     props.company.labels.length && props.company.labels[0].text ? (
@@ -63,8 +72,13 @@ const CompanyListItem = (props: ICompanyListItemProps) => {
                             )
                     }
                 </List>
-            </CardPrimaryContent>
-        </Card>
+                <ListItemSecondaryAction>
+                    <Checkbox 
+                        edge="end"
+                    />
+                </ListItemSecondaryAction>
+            </div>
+        </MaterialUIListItem>
     );
 }
 

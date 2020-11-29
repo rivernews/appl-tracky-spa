@@ -19,6 +19,7 @@ import { Application } from "../../data-model/application/application";
 import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
+import MaterialUIList from "@material-ui/core/List";
 import Button from "@material/react-button";
 
 // mdc-react input
@@ -161,7 +162,7 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                                     />
                                 </TextField>
                             </div>
-                            <div>
+                            <MaterialUIList>
                                 {
                                     displayingCompanies.map(
                                         (company, index) =>
@@ -173,7 +174,7 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                                             />
                                     )
                                 }
-                            </div>
+                            </MaterialUIList>
                         </TabContent>)
 
                         const groupCompanyTabs = Object.values(labelTypes).map((labelText: labelTypes, index) => {
