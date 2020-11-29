@@ -1,5 +1,6 @@
 /** redux */
-import { createStore, applyMiddleware, compose } from "redux";
+import { createStore, applyMiddleware } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
 import { IRootState } from "../types/root-types";
 import { createRootReducer } from "../reducers/root-reducers";
 
@@ -10,7 +11,6 @@ import { routerMiddleware } from 'connected-react-router';
 /** middleware */
 // saga
 import { sagaMiddleware, runSagaMiddleaware } from "../sagas/root-saga";
-
 
 
 export const history = createBrowserHistory({
@@ -32,7 +32,10 @@ const preloadedState = {
 export const store = createStore<IRootState, any, any, any>(
     createRootReducer(history),
     preloadedState,
-    compose(
+    
+    // for redux debugging (only enabled in development)
+    // https://extension.remotedev.io/#usage
+    composeWithDevTools(
         applyMiddleware(
             routerMiddleware(history),
             sagaMiddleware,
