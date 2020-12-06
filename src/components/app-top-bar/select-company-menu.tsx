@@ -44,7 +44,7 @@ export const SelectCompanyMenu = () => {
         setAnchorEl(event.currentTarget);
     }, [])
 
-    const onDropdownListSelect = useCallback(() => {
+    const closeDropdownList = useCallback(() => {
         setAnchorEl(null);
     }, [])
 
@@ -69,10 +69,11 @@ export const SelectCompanyMenu = () => {
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
+                onClose={closeDropdownList}
             >
                 {Object.values(labelTypes).map((label, index) => {
                     return <div key={index}>
-                        <CompanyStatusDropdownListItem label={label} onSelect={onDropdownListSelect} />
+                        <CompanyStatusDropdownListItem label={label} onSelect={closeDropdownList} />
                     </div>
                 })}
             </Menu>
