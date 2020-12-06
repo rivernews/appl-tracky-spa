@@ -44,7 +44,6 @@ export const RequestedLogoutAuth = (): IRequestedLogoutAuthAction => {
 };
 
 export const SuccessLoginAuth = (userName: string, expireDateTime: string, apiToken: string, avatarUrl: string, isLocal: boolean): ISuccessAuthAction => {
-    process.env.NODE_ENV === 'development' && console.log("action username:", userName);
 
     return {
         type: AuthActionNames.SUCCESS_AUTH,

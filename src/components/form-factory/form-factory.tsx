@@ -95,15 +95,12 @@ export class FormFactory<DataModel> extends Component<
         }
 
         this.validationSchema = this.props.validationSchema || this.props.model.schema;
-        process.env.NODE_ENV === 'development' && console.log("this.validationSchema =", this.validationSchema);
     }
 
     onSubmit = (
         values: FormikValues,
         { setSubmitting }: { setSubmitting: Function }
     ) => {
-        process.env.NODE_ENV === 'development' && console.log("submit values =", values); setSubmitting(false);
-
         setSubmitting(true);
         let instanceData: any = {};
         for (let fieldProps of this.props.formFieldPropsList) {
@@ -124,15 +121,11 @@ export class FormFactory<DataModel> extends Component<
                 ...instanceData,
                 ...this.props.enforcedInstanceData
             })
-            process.env.NODE_ENV === 'development' && console.log("instanceData =", instanceData);
-            process.env.NODE_ENV === 'development' && console.log("instance =", instance);
 
             // dispatch API request
             if (!instance.uuid) {
-                process.env.NODE_ENV === 'development' && console.log("ready to send create instance");
                 this.props.createInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false));
             } else {
-                process.env.NODE_ENV === 'development' && console.log("ready to send update instance");
                 this.props.updateInstanceTriggerAction(instance, this.props.onSubmitSuccess, () => setSubmitting(false), this.props.initialInstance);
             }
         }
@@ -141,9 +134,6 @@ export class FormFactory<DataModel> extends Component<
             this.props.onSubmit(values, { setSubmitting });
         }
         else {
-            process.env.NODE_ENV === 'development' && console.log("this.props.initialInstance =", this.props.initialInstance);
-            process.env.NODE_ENV === 'development' && console.log("this.props.onSubmit =", this.props.onSubmit);
-            process.env.NODE_ENV === 'development' && console.log("this.props.model =", this.props.model);
             alert("Something is wrong with the form...!")
             throw Error("ERROR: form factory props not properly configured. See above props.")
         }

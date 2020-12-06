@@ -53,7 +53,6 @@ class ApplicationStatusComponent extends Component<
     };
 
     render() {
-        // console.log(`\n\n\n\napp=${JSON.stringify(this.props.application)}, status=${JSON.stringify(this.props.applicationStatus)}`);
         return (
             <div className="ApplicationStatusComponent">
                 {(this.state.isFormOpened || this.props.isOnlyForm) ? (
@@ -77,7 +76,6 @@ class ApplicationStatusComponent extends Component<
                     applicationStatus ? (
                         <IconButton
                             onClick={() => {
-                                process.env.NODE_ENV === 'development' && console.log("application status component: edit button clicked.")
                                 this.setState({ isFormOpened: true });
                             }}
                         >
@@ -95,7 +93,7 @@ class ApplicationStatusComponent extends Component<
                     applicationStatus ? (
                         <IconButton
                             onClick={() =>
-                                confirm(`Are you sure you want to delete this status? ${applicationStatus.text}`) && this.props.deleteApplicationStatus(
+                                window.confirm(`Are you sure you want to delete this status? ${applicationStatus.text}`) && this.props.deleteApplicationStatus(
                                     applicationStatus
                                 )
                             }

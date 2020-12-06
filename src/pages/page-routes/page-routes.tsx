@@ -1,4 +1,4 @@
-import React, { Component, memo } from "react";
+import React, { Component } from "react";
 
 /** Redux */
 import { connect } from "react-redux";

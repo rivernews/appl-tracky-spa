@@ -36,10 +36,28 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
             // CREATE
             if (objectAction.crudType === CrudType.CREATE) {
                 let newObject = <TObject<ObjectRestApiSchema>>objectAction.payload.formData;
+
                 return {
                     collection: {
                         ...objectStore.collection,
                         [newObject.uuid]: newObject
+                    },
+                    requestStatus: objectAction.payload.requestStatus
+                };
+            }
+            // BATCH CREATE
+            else if (objectAction.crudType === CrudType.BATCHCREATE) {
+                const newObjects = <Array<TObject<ObjectRestApiSchema>>>objectAction.payload.formData;
+                // turn into a collection so we can spread
+                const newObjectsCollection = newObjects.reduce((collection, object) => {
+                    collection[object.uuid] = object;
+                    return collection;
+                }, <IObjectList<ObjectRestApiSchema>>{});
+
+                return {
+                    collection: {
+                        ...objectStore.collection,
+                        ...newObjectsCollection
                     },
                     requestStatus: objectAction.payload.requestStatus
                 };
@@ -47,69 +65,86 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
 
             // LIST
             else if (objectAction.crudType === CrudType.LIST) {
-                const resObjectList = <Array<TObject<ObjectRestApiSchema>>>(
-                    objectAction.payload.formData
-                );
-                let newObjects: IObjectList<ObjectRestApiSchema> = {};
-                for (let object of resObjectList) {
-                    newObjects[object.uuid] = object;
+                const resObjects = <Array<TObject<ObjectRestApiSchema>>>objectAction.payload.formData;
+                // turn into a collection so we can spread
+                const newObjectsCollection: IObjectList<ObjectRestApiSchema> = {};
+                for (let object of resObjects) {
+                    newObjectsCollection[object.uuid] = object;
                 }
-                process.env.NODE_ENV === 'development' && console.log("Reducer: crud=list, action=", objectAction)
-                process.env.NODE_ENV === 'development' && console.log("initialState=", initialState)
-                process.env.NODE_ENV === 'development' && console.log("beforestore=", objectStore)
-                process.env.NODE_ENV === 'development' && console.log("newlistobjects=", newObjects)
 
                 const afterStore: IObjectStore<ObjectRestApiSchema> = {
                     collection: {
                         ...objectStore.collection,
-                        ...newObjects
+                        ...newObjectsCollection
                     },
                     requestStatus: objectAction.payload.requestStatus
                 };
-                process.env.NODE_ENV === 'development' && console.log("afterstore=", afterStore)
 
                 return afterStore;
             }
 
             // UPDATE
             else if (objectAction.crudType === CrudType.UPDATE) {
-                let newObject = <TObject<ObjectRestApiSchema>>objectAction.payload.formData;
+                let updatedObject = <TObject<ObjectRestApiSchema>>objectAction.payload.formData;
+
                 return {
                     collection: {
                         ...objectStore.collection,
-                        [newObject.uuid]: newObject
+                        // support partial update - only update attributes included by updatedObject
+                        [updatedObject.uuid]: {
+                            ...objectStore.collection[updatedObject.uuid],
+                            ...updatedObject
+                        }
+                    },
+                    requestStatus: objectAction.payload.requestStatus
+                };
+            }
+            // BATCH UPDATE
+            else if (objectAction.crudType === CrudType.BATCHUPDATE) {
+                let updatedObjects = <Array<TObject<ObjectRestApiSchema>>>objectAction.payload.formData;
+                // turn into a collection so we can spread
+                const updatedObjectsCollection = updatedObjects.reduce((collection, updatedObject) => {
+                    // support partial update - only update attributes included by updatedObject
+                    collection[updatedObject.uuid] = {
+                        ...objectStore.collection[updatedObject.uuid],
+                        ...updatedObject
+                    };
+                    return collection;
+                }, <IObjectList<ObjectRestApiSchema>>{});
+
+                return {
+                    collection: {
+                        ...objectStore.collection,
+                        ...updatedObjectsCollection
                     },
                     requestStatus: objectAction.payload.requestStatus
                 };
             }
 
-            // DELETE
+            // DELETE & BATCH DELETE
             else if (objectAction.crudType === CrudType.DELETE) {
                 let targetDeleteUuids: Array<string> = [];
-                if (!Array.isArray(objectAction.triggerFormData)) {
-                    const targetDeleteObject = <TObject<ObjectRestApiSchema>>objectAction.triggerFormData;
-                    process.env.NODE_ENV === 'development' && console.log("Reducer: delete, targetobj=", targetDeleteObject)
-                    targetDeleteUuids.push(targetDeleteObject.uuid);
-                }
-                else if (objectAction.triggerFormData.length) {
-                    if (typeof (objectAction.triggerFormData[0]) === "string" || objectAction.triggerFormData instanceof String) {
-                        targetDeleteUuids = objectAction.triggerFormData as Array<string>;
+                if (objectAction.triggerFormData) {
+                    if (!Array.isArray(objectAction.triggerFormData) && typeof objectAction.triggerFormData === 'object') {
+                        const targetDeleteObject = <TObject<ObjectRestApiSchema>>objectAction.triggerFormData;
+                        targetDeleteUuids.push(targetDeleteObject.uuid);
                     }
-                    else {
-                        const targetDeleteObjectList = <Array<TObject<ObjectRestApiSchema>>>objectAction.triggerFormData;
-
-                        process.env.NODE_ENV === 'development' && console.log("Reducer: delete, targetobjList=", targetDeleteObjectList);
-
-                        targetDeleteUuids = targetDeleteObjectList.map(targetDeleteObject => targetDeleteObject.uuid);
+                    else if (objectAction.triggerFormData.length) {
+                        if (typeof (objectAction.triggerFormData[0]) === "string") {
+                            targetDeleteUuids = objectAction.triggerFormData as Array<string>;
+                        }
+                        else {
+                            const targetDeleteObjectList = <Array<TObject<ObjectRestApiSchema>>>objectAction.triggerFormData;
+    
+                            targetDeleteUuids = targetDeleteObjectList.map(targetDeleteObject => targetDeleteObject.uuid);
+                        }
                     }
                 }
 
-                process.env.NODE_ENV === 'development' && console.log("Reducer: delete, beforestore=", objectStore)
                 const afterStore = {
                     collection: omit(objectStore.collection, targetDeleteUuids),
                     requestStatus: objectAction.payload.requestStatus
                 }
-                process.env.NODE_ENV === 'development' && console.log("Reducer: delete, afterstore", afterStore)
 
                 return afterStore;
             }

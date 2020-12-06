@@ -11,19 +11,17 @@ import { RequestedLoginMode } from "./state-management/types/auth-types";
 /** Routes & pages */
 import { PageRoutesContainer } from "./pages/page-routes/page-routes";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-
+import { MuiThemeProvider } from "@material-ui/core/styles";
 
 /** Locals */
 import "./App.css";
 import "./ckeditor.css";
+import { lightTheme } from "./components/themes";
 
 
 interface IAppProps {
     retrieveLoginAuth: () => void;
 }
-
-const theme = createMuiTheme();
 
 class App extends Component<IAppProps> {
     componentDidMount() {
@@ -34,7 +32,7 @@ class App extends Component<IAppProps> {
         return (
             <div className="App">
                 <CssBaseline />
-                <MuiThemeProvider theme={theme}>
+                <MuiThemeProvider theme={lightTheme}>
                     <PageRoutesContainer />
                 </MuiThemeProvider>
             </div>

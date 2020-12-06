@@ -37,23 +37,13 @@ class AddComPage extends Component<IAddComPageProps> {
         const company: Company | undefined = (this.props.match.params.uuid && this.props.company.collection[this.props.match.params.uuid])
             ? this.props.company.collection[this.props.match.params.uuid]
             : undefined;
-        process.env.NODE_ENV === 'development' && console.log(
-            "com form page: params is",
-            this.props.match.params.uuid,
-            "company is",
-            company
-        );
         return (
             <div className="AddComPage">
                 <h1>{!company ? "Add an Organization" : `Update Organization`}</h1>
                 <CompanyFormComponentContainer
                     company={company}
                     onSubmitSuccess={(jsonResponse) => {
-                        process.env.NODE_ENV === 'development' && console.log("com form page: onSubmitSuccess");
-                        
                         const uuid = (jsonResponse as ISingleRestApiResponse<Company>).uuid;
-
-                        process.env.NODE_ENV === 'development' && console.log("new company:", jsonResponse);
 
                         company ? (
                             // case: update company, let user be able to go back to update form

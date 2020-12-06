@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 /** Redux & data models */
 import { Company } from "../../data-model/company/company";
@@ -10,7 +10,6 @@ import List, { ListItem, ListItemText } from "@material/react-list";
 import MaterialUIListItem from "@material-ui/core/ListItem";
 import MaterialUIButton from "@material-ui/core/Button";
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Checkbox from '@material-ui/core/Checkbox';
 
 import '@material/react-list/dist/list.css';
 // mdc-chips
@@ -21,6 +20,7 @@ import Skeleton from 'react-loading-skeleton';
 
 import styles from './company-list-item.module.css';
 import { Typography } from "@material-ui/core";
+import CompanyListItemCheckBox from "./company-list-item-checkbox";
 
 
 interface ICompanyListItemProps {
@@ -73,9 +73,7 @@ const CompanyListItem = (props: ICompanyListItemProps) => {
                     }
                 </List>
                 <ListItemSecondaryAction>
-                    <Checkbox 
-                        edge="end"
-                    />
+                    {props.company?.uuid ? <CompanyListItemCheckBox company={props.company} /> : null}
                 </ListItemSecondaryAction>
             </div>
         </MaterialUIListItem>

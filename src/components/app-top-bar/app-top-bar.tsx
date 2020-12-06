@@ -27,6 +27,7 @@ import { useSelector } from 'react-redux';
 import { IRootState } from '../../state-management/types/root-types';
 
 import styles from './app-top-bar.module.css';
+import { SelectCompanyMenu } from './select-company-menu';
 
 
 export const AppTopBar = () => {
@@ -38,6 +39,8 @@ export const AppTopBar = () => {
         location.pathname === '/home/' ? history.replace('/home/') : history.push('/home/');
     }, [])
 
+    const selectCompanyList = useSelector((state: IRootState) => state.selectCompany.selectCompanyList);
+
     return (<>
         <TopAppBar>
             <TopAppBarRow>
@@ -47,6 +50,13 @@ export const AppTopBar = () => {
                     </TopAppBarIcon> */}
                     <TopAppBarTitle className={styles.topAppBarTitle} onClick={goHome}>Appl Tracky</TopAppBarTitle>
                 </TopAppBarSection>
+
+                {selectCompanyList.length ? (
+                    <TopAppBarSection align="start">
+                        <SelectCompanyMenu />
+                    </TopAppBarSection>
+                ) : null}
+
                 <TopAppBarSection align='end' role='toolbar'>
                     <TopAppBarIcon navIcon tabIndex={0}>
                         <Link to="/home/">

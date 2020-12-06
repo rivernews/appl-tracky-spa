@@ -3,7 +3,6 @@ import { all } from "redux-saga/effects";
 import { authLoginSaga, authLogoutSaga } from "./auth-sagas";
 // rest api
 import { labelTypesMapToCompanyGroupTypes, companyGroupTypes} from "../../data-model/company/company";
-import { labelTypes } from '../../data-model/label';
 import { RestApiSagaFactory } from './saga-factory';
 import { CompanyActionCreators, ApplicationActionCreators, ApplicationStatusActionCreators, GroupedCompanyActionCreators } from '../action-creators/root-actions';
 import { companyDoneUpdateSuccessSagaHandler, groupedCompanyListSuccessSagaHandler, companyOverrideDeleteSuccessSagaHandler } from './company-custom-saga';
@@ -11,6 +10,7 @@ import { CompanyNormalizeManifest } from '../../data-model/company/company-norma
 import { applicationDoneCreateSuccessSagaHandler, applicationDoneDeleteSuccessSagaHandler } from './applicaiton-custom-saga';
 import { ApplicationNormalizeManifest } from '../../data-model/application/application-normalize-schema';
 import { applicationStatusDoneCreateSuccessSagaHandler, applicationStatusDoneDeleteSuccessSagaHandler } from './application-status-custom-saga';
+import { selectCompanyApplySaga } from './select-company-saga';
 
 
 // saga for company
@@ -72,6 +72,9 @@ const rootSaga = function*() {
 
         ...ApplicationSagas.map((saga) => saga()),
         ...ApplicationStatusSagas.map((saga) => saga()),
+
+        selectCompanyApplySaga(),
+
         // add new saga here
         // ...
     ]);

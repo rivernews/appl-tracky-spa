@@ -41,10 +41,10 @@
     "react-loading-skeleton": "^1.2.0",
     "react-redux": ">7.1.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "2.1.5",
+    "react-scripts": ">3.3.0",
     "react-transition-group": "^4.3.0",
     "redux-saga": "^1.1.1",
-    "typescript": "3.3.3333",
+    "typescript": "^3.7.5",
     "yup": "^0.27.0"
   },
   "scripts": {

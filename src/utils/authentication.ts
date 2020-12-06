@@ -131,7 +131,6 @@ class Authentication {
                 });
     
                 if (!res.ok) {
-                    process.env.NODE_ENV === 'development' && console.log("INFO: server res =", res);
                     throw Error(res.statusText)
                 }
     
@@ -179,9 +178,6 @@ class Authentication {
     };
 
     serverLogout = async () => {
-        process.env.NODE_ENV === "development" &&
-            console.log("server logout...");
-        
         // no server-side invalidate implement at this point (a common case for JWT, however)
 
         this.apiCallToken = "";

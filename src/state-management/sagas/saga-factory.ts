@@ -18,7 +18,6 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
         const sagaHandler = function* (
             triggerAction: IObjectAction<ObjectRestApiSchema>
         ) {
-            process.env.NODE_ENV === 'development' && console.log(`Saga: action intercepted; aync=trigger, crud=${crudKeyword}, obj=${objectName}; ready to call api`);
             let formData: ObjectRestApiSchema | Array<ObjectRestApiSchema> | undefined = triggerAction.payload.formData;
             const absoluteUrl = triggerAction.absoluteUrl;
 
@@ -39,8 +38,6 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                     }
                 );
 
-                process.env.NODE_ENV === 'development' && console.log("Saga: res from server", jsonResponse);
-
                 if (jsonResponse.status && jsonResponse.status >= 400) {
                     console.error("Server error, see message in res.");
                     throw new Error("Server error, see message in res.");
@@ -48,7 +45,6 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
 
                 // if there is .next in res, then it's paginated data and we should perform a next request to next page data
                 if (jsonResponse.next) {
-                    process.env.NODE_ENV === 'development' && console.log("Saga: res contains next url, so we will also trigger list request for next=", jsonResponse.next);
                     yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
                         undefined, undefined, undefined, undefined, jsonResponse.next
                     ));
@@ -61,7 +57,6 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                 } = undefined;
 
                 if (sagaFactoryOptions.normalizeManifest) {
-                    process.env.NODE_ENV === 'development' && console.log("Saga: receive normalizeManifest");
 
                     const normalizeObjectEntityKey = sagaFactoryOptions.normalizeManifest.objectEntityKey;
 
@@ -76,14 +71,10 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                     else {
                         dataSource = jsonResponse.results as Array<ObjectRestApiSchema>;
                     }
-                    process.env.NODE_ENV === 'development' && console.log("Saga: jsonResponse is", jsonResponse);
-                    process.env.NODE_ENV === 'development' && console.log("Saga: formData is", formData);
-                    process.env.NODE_ENV === 'development' && console.log("Saga: data source is", dataSource);
 
                     // normalize all data once for all
                     const normalizeDataSourceSchema = Array.isArray(dataSource) ? (sagaFactoryOptions.normalizeManifest.listSchema) : (sagaFactoryOptions.normalizeManifest.schema);
                     const normalizeDataSource = normalize(dataSource, normalizeDataSourceSchema);
-                    process.env.NODE_ENV === 'development' && console.log("Saga: normalized data source is", normalizeDataSource);
 
                     // place noramlized data to variables to fit in existing framework
                     normalizeData = Object.values(normalizeDataSource.entities[normalizeObjectEntityKey]);
@@ -96,21 +87,18 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                     else {
                         jsonResponse.results = normalizeData;
                     }
-                    process.env.NODE_ENV === 'development' && console.log("Saga: data to dispatch SUCCESS action", crudKeyword === CrudType.DELETE ? formData : jsonResponse);
 
                     // prepare relational data for later use
                     relationalNormalizeData = Object.keys(sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap).filter(key => normalizeDataSource.entities.hasOwnProperty(key)).reduce((accumulate, relationalEntityKey) => ({
                         ...accumulate,
                         [relationalEntityKey]: Object.values(normalizeDataSource.entities[relationalEntityKey])
                     }), {});
-                    process.env.NODE_ENV === 'development' && console.log("relational normalize data for SUCCESS action", relationalNormalizeData);
                 }
 
                 // handle success state --
 
                 // dispatch relational object actions, if normalize is needed (normalize manifest specified)
                 if (sagaFactoryOptions.normalizeManifest && relationalNormalizeData) {
-                    process.env.NODE_ENV === 'development' && console.log('Saga: about to dispatch relational, normalized objects');
 
                     switch (crudKeyword) {
                         case CrudType.UPDATE:
@@ -136,8 +124,6 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                                 ) : {
                                         results: relationalNormalizeData[relationalEntityKey]
                                     };
-
-                                process.env.NODE_ENV === 'development' && console.log(`Saga: relational action dispatch; crud=${crudKeyword}, entity=${relationalEntityKey}, dispatchResponseData for action is`, dispatchResponseData);
 
                                 const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions;
 
@@ -200,14 +186,12 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                 else {
                     // default handler
                     if (crudKeyword === CrudType.DELETE) {
-                        process.env.NODE_ENV === 'development' && console.log("Saga: ready to dispatch delete action, formData =", formData)
                         yield put(
                             ObjectRestApiActions[CrudType.DELETE][
                                 RequestStatus.SUCCESS
                             ].action(undefined, formData)
                         );
                     } else {
-                        process.env.NODE_ENV === 'development' && console.log("Saga: ready to dispatch success action, jsonResponse =", jsonResponse)
                         yield put(
                             ObjectRestApiActions[crudKeyword][
                                 RequestStatus.SUCCESS
@@ -252,7 +236,6 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
 
         // saga listener
         const saga = function* () {
-            process.env.NODE_ENV === 'development' && console.log(`Saga: action intercepted; async=trigger, crud=${crudKeyword}, obj=${objectName}`);
 
             // queue style 
             const objectTriggerActionChannel = yield actionChannel(

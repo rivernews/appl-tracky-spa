@@ -58,7 +58,6 @@ type IUserComAppPageProps = IUserComAppPageNoGroupCompanyProps & {
 class UserComAppPage extends Component<IUserComAppPageProps> {
     componentDidMount() {
         const companyUuid = this.props.match.params.uuid;
-        process.env.NODE_ENV === 'development' && console.log("mount, got uuid from route?", companyUuid);
     }
 
     goBackToCompanyListPage = () => {
@@ -68,7 +67,7 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
     onCompanyDelete = () => {
         if (this.props.match.params.uuid) {
             const company = this.props.companyStore.collection[this.props.match.params.uuid];
-            confirm(`Are you sure you want to delete company ${company.name}?`) && this.props.deleteCompany(company, this.goBackToCompanyListPage);
+            window.confirm(`Are you sure you want to delete company ${company.name}?`) && this.props.deleteCompany(company, this.goBackToCompanyListPage);
             return;
         }
 

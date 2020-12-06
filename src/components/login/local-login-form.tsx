@@ -38,7 +38,6 @@ export const LoginForm = (props: ILoginFormProps) => {
         { setSubmitting }: { setSubmitting: Function }
     ) => {
         setSubmitting(true);
-        process.env.NODE_ENV === 'development' && console.log("values =", values);
 
         props.onSubmit(values, setSubmitting);
     };
