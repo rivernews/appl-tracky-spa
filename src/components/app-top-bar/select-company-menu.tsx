@@ -21,6 +21,7 @@ interface ICompanyStatusDropdownListItem {
 
 const CompanyStatusDropdownListItem = ({ label, onSelect }: ICompanyStatusDropdownListItem) => {
     const dispatch = useDispatch();
+    const stagedStatus = useSelector((state: IRootState) => state.selectCompany.destinationStatus);
 
     const onDropdownListItemSelected = useCallback(() => {
         dispatch(SetDestinationStatus(label));
@@ -28,7 +29,7 @@ const CompanyStatusDropdownListItem = ({ label, onSelect }: ICompanyStatusDropdo
     }, [dispatch, onSelect, label])
 
     return (
-        <MenuItem onClick={onDropdownListItemSelected}>{label}</MenuItem>
+        <MenuItem selected={stagedStatus === label} onClick={onDropdownListItemSelected}>{label}</MenuItem>
     )
 }
 
