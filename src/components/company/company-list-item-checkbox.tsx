@@ -1,9 +1,10 @@
 import Checkbox from "@material-ui/core/Checkbox";
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Company } from "../../data-model/company/company";
 import { labelTypes } from "../../data-model/label";
 import { AddSelectCompany, RemoveSelectCompany } from "../../state-management/action-creators/select-company-actions";
+import { IRootState } from "../../state-management/types/root-types";
 
 
 interface ICompanyListItemCheckBoxProps {
@@ -12,6 +13,7 @@ interface ICompanyListItemCheckBoxProps {
 
 const CompanyListItemCheckBox = ({ company: { uuid: companyId, labels } }: ICompanyListItemCheckBoxProps) => {
     const dispatch = useDispatch();
+    const selectCompanyCollection = useSelector((state: IRootState) => state.selectCompany.selectCompanyCollection);
     
     const onCheckBoxChange = useCallback((event) => {
         if (event.target.checked) {
@@ -26,6 +28,7 @@ const CompanyListItemCheckBox = ({ company: { uuid: companyId, labels } }: IComp
     return (
         <Checkbox
             edge="end"
+            checked={selectCompanyCollection.has(companyId)}
             onChange={onCheckBoxChange}
         />
     )

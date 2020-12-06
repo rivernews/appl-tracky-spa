@@ -1,12 +1,12 @@
-import { relative } from "path";
 import { Reducer, Action } from "redux";
+import { IReference } from "../../data-model/base-model";
 import { labelTypes } from "../../data-model/label";
 import { RequestStatus } from "../../utils/rest-api";
 import { ISelectCompanyState, SelectCompanyActionNames, TSelectCompanyActions } from "../types/select-company-types";
 
 const initialSelectCompanyState: ISelectCompanyState = {
-    selectCompanyList: [],
-    destinationStatus: labelTypes.APPLIED,
+    selectCompanyCollection: new Map<IReference, labelTypes>(),
+    destinationStatus: labelTypes.TARGET,
     requestStatus: RequestStatus.SUCCESS
 }
 
@@ -17,20 +17,23 @@ export const selectCompanyReducer: Reducer<ISelectCompanyState> = (state = initi
             return initialSelectCompanyState;
         
         case SelectCompanyActionNames.ADD_SELECT_COMPANY:
-            const foundCompanyId = state.selectCompanyList.find(([companyId,]) => companyId === selectCompanyAction.companyId);
-            if (foundCompanyId) {
+            const isFound = state.selectCompanyCollection.has(selectCompanyAction.companyId);
+            if (isFound) {
                 return state;
             } else {
                 return {
                     ...state,
-                    selectCompanyList: [...state.selectCompanyList, [selectCompanyAction.companyId, selectCompanyAction.companyStatus] ]
+                    selectCompanyCollection: new Map([...state.selectCompanyCollection, [selectCompanyAction.companyId, selectCompanyAction.companyStatus]])
                 }
             }
         
         case SelectCompanyActionNames.REMOVE_SELECT_COMPANY:
             return {
                 ...state,
-                selectCompanyList: state.selectCompanyList.filter(([companyId,]) => companyId !== selectCompanyAction.companyId)
+                selectCompanyCollection: new Map(
+                    [...state.selectCompanyCollection]
+                        .filter(([uuid,]) => uuid !== selectCompanyAction.companyId)
+                )
             }
         
         case SelectCompanyActionNames.SET_DESTINATION_STATUS:

@@ -25,7 +25,7 @@ const CompanyStatusDropdownListItem = ({ label, onSelect }: ICompanyStatusDropdo
     const onDropdownListItemSelected = useCallback(() => {
         dispatch(SetDestinationStatus(label));
         onSelect && onSelect();
-    }, [dispatch, onSelect])
+    }, [dispatch, onSelect, label])
 
     return (
         <MenuItem onClick={onDropdownListItemSelected}>{label}</MenuItem>
@@ -36,7 +36,7 @@ export const SelectCompanyMenu = () => {
     const dispatch = useDispatch();
     const selectCompanyApplyRequestStatus = useSelector((state: IRootState) => state.selectCompany.requestStatus);
     const stagedStatus = useSelector((state: IRootState) => state.selectCompany.destinationStatus);
-    const selectCompanyList = useSelector((state: IRootState) => state.selectCompany.selectCompanyList);
+    const selectCompanyCollection = useSelector((state: IRootState) => state.selectCompany.selectCompanyCollection);
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -49,8 +49,8 @@ export const SelectCompanyMenu = () => {
     }, [])
 
     const onApply = useCallback(() => {
-        dispatch(ApplyAllSelectCompanyChangesStatus(selectCompanyList, stagedStatus));
-    }, [dispatch, stagedStatus, selectCompanyList])
+        dispatch(ApplyAllSelectCompanyChangesStatus(stagedStatus));
+    }, [dispatch, stagedStatus])
 
     const onCancel = useCallback(() => {
         dispatch(CancelAllSelectCompany());
@@ -59,7 +59,7 @@ export const SelectCompanyMenu = () => {
     
     return (
         <MuiThemeProvider theme={darkTheme}>
-            Move {selectCompanyList.length} companies to 
+            Move {selectCompanyCollection.size} companies to 
 
             <Button aria-controls="simple-menu" aria-haspopup="true" onClick={onDropdownListClick}>
                 {stagedStatus} <ArrowDropDownIcon />
@@ -69,10 +69,9 @@ export const SelectCompanyMenu = () => {
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
-                // onClose={onDropdownListItemSelected}
             >
                 {Object.values(labelTypes).map((label, index) => {
-                    return <div  key={index}>
+                    return <div key={index}>
                         <CompanyStatusDropdownListItem label={label} onSelect={onDropdownListSelect} />
                     </div>
                 })}
@@ -80,7 +79,7 @@ export const SelectCompanyMenu = () => {
             <Button onClick={onApply} disabled={selectCompanyApplyRequestStatus === RequestStatus.REQUESTING} size="small" variant="contained">
                 Apply
             </Button>
-            <Button onClick={onCancel} size="small" variant="contained">
+            <Button onClick={onCancel} disabled={selectCompanyApplyRequestStatus === RequestStatus.REQUESTING} size="small" variant="contained">
                 Cancel
             </Button>
         </MuiThemeProvider>

@@ -1,4 +1,3 @@
-import { IReference } from "../../data-model/base-model"
 import { labelTypes } from "../../data-model/label"
 import { RequestStatus } from "../../utils/rest-api"
 import { IAddSelectCompanyAction, IApplyAllSelectCompanyChangesAction, ICancelAllSelectCompanyAction, IRemoveSelectCompanyAction, ISetApplyAllSelectCompanyRequestStatusAction, ISetDestinationStatusAction, SelectCompanyActionNames } from "../types/select-company-types"
@@ -31,10 +30,9 @@ export const SetDestinationStatus = (status: labelTypes): ISetDestinationStatusA
     }
 }
 
-export const ApplyAllSelectCompanyChangesStatus = (selectCompanyList: Array<[IReference, labelTypes]>, destinationStatus: labelTypes): IApplyAllSelectCompanyChangesAction => {
+export const ApplyAllSelectCompanyChangesStatus = (destinationStatus: labelTypes): IApplyAllSelectCompanyChangesAction => {
     return {
         type: SelectCompanyActionNames.APPLY_ALL_CHANGES,
-        selectCompanyList,
         destinationStatus
     }
 }

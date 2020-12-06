@@ -4,7 +4,7 @@ import { labelTypes } from "../../data-model/label";
 import { RequestStatus } from "../../utils/rest-api";
 
 export interface ISelectCompanyState {
-    selectCompanyList: Array<[IReference, labelTypes]>;
+    selectCompanyCollection: Map<IReference, labelTypes>;
     destinationStatus: labelTypes;
     requestStatus: RequestStatus;
 }
@@ -40,7 +40,6 @@ export interface ISetDestinationStatusAction extends Action<SelectCompanyActionN
 
 export interface IApplyAllSelectCompanyChangesAction extends Action<SelectCompanyActionNames.APPLY_ALL_CHANGES> {
     type: typeof SelectCompanyActionNames.APPLY_ALL_CHANGES;
-    selectCompanyList: Array<[IReference, labelTypes]>;
     destinationStatus: labelTypes;
 }
 

@@ -1,23 +1,21 @@
-import { put, call, takeEvery, all } from "redux-saga/effects";
+import { put, call, takeEvery, all, select } from "redux-saga/effects";
 import { IReference } from "../../data-model/base-model";
 import { Company, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
 import { labelTypes } from "../../data-model/label";
 import { CrudType, RequestStatus, RestApiService } from "../../utils/rest-api";
 import { CompanyActionCreators, GroupedCompanyActionCreators } from "../action-creators/root-actions";
 import { SetApplyAllSelectCompanyRequestStatus } from "../action-creators/select-company-actions";
-import { SelectCompanyActionNames, IApplyAllSelectCompanyChangesAction } from "../types/select-company-types";
+import { IRootState } from "../types/root-types";
+import { SelectCompanyActionNames, IApplyAllSelectCompanyChangesAction, ISelectCompanyState } from "../types/select-company-types";
 
 function* selectCompanyApplySagaHandler(
     applyAllAction: IApplyAllSelectCompanyChangesAction
 ) {
-    const {
-        selectCompanyList, destinationStatus
-    } = applyAllAction;
+    const { destinationStatus } = applyAllAction;
+    const selectCompanyState: ISelectCompanyState = yield select((state: IRootState) => state.selectCompany);
+    const selectCompanyCollection = selectCompanyState.selectCompanyCollection;
 
-    // use below to dispatch actions
-    // yield put(SomeActionCreatorFuncHere)
-
-    const partialUpdateCompanies = selectCompanyList.map(([uuid]) => {
+    const partialUpdateCompanies = [...selectCompanyCollection].map(([uuid]) => {
         return {
             uuid,
             labels: [{ text: destinationStatus }]
@@ -46,7 +44,7 @@ function* selectCompanyApplySagaHandler(
 
     // move company uuids out of company buckets
     const removeGroupsMapping = new Map<labelTypes, Set<IReference>>();
-    selectCompanyList.forEach(([uuid, label]) => {
+    selectCompanyCollection.forEach((label, uuid) => {
         if (label !== destinationStatus) {
             const removeGroupSet = removeGroupsMapping.get(label) || new Set<IReference>();
             removeGroupSet.add(uuid);

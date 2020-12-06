@@ -37,9 +37,9 @@ export const AppTopBar = () => {
 
     const goHome = useCallback(() => {
         location.pathname === '/home/' ? history.replace('/home/') : history.push('/home/');
-    }, [])
+    }, [history, location.pathname])
 
-    const selectCompanyList = useSelector((state: IRootState) => state.selectCompany.selectCompanyList);
+    const selectCompanyCollection = useSelector((state: IRootState) => state.selectCompany.selectCompanyCollection);
 
     return (<>
         <TopAppBar>
@@ -51,7 +51,7 @@ export const AppTopBar = () => {
                     <TopAppBarTitle className={styles.topAppBarTitle} onClick={goHome}>Appl Tracky</TopAppBarTitle>
                 </TopAppBarSection>
 
-                {selectCompanyList.length ? (
+                {selectCompanyCollection.size ? (
                     <TopAppBarSection align="start">
                         <SelectCompanyMenu />
                     </TopAppBarSection>
@@ -84,7 +84,7 @@ export const AppTopBar = () => {
                                     <img style={{
                                         "height": "100%",
                                         "borderRadius": "50%",
-                                    }} src={auth.avatarUrl} />
+                                    }} src={auth.avatarUrl} alt="user avatar" />
                                 )}
                         </Link>
                     </TopAppBarIcon>
