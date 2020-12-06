@@ -71,6 +71,8 @@ export enum AuthActionNames {
     // ...
 }
 
+export const AuthActionNamesValue = Object.values(AuthActionNames);
+
 export interface IUpdateAuthAction extends Action<AuthActionNames.UPDATE_AUTH> {
     type: typeof AuthActionNames.UPDATE_AUTH;
     payload: IUpdateAuthState;

@@ -11,10 +11,13 @@ export enum RequestStatus {
 
 export enum CrudType {
     CREATE = "create",
+    BATCHCREATE = "batchcreate",
     READ = "read",
     LIST = "list",
     UPDATE = "update",
-    DELETE = "delete"
+    BATCHUPDATE = "batchupdate",
+    // DELETE includes indivual delete and batch delete
+    DELETE = "delete",
 }
 
 export enum RestMethod {
@@ -27,13 +30,16 @@ export enum RestMethod {
 export const CrudMapToRest = (crudType: CrudType): RestMethod => {
     switch (crudType) {
         case CrudType.CREATE:
+        case CrudType.BATCHCREATE:
             return RestMethod.POST;
         case CrudType.READ:
             return RestMethod.GET;
         case CrudType.LIST:
             return RestMethod.GET;
         case CrudType.UPDATE:
+        case CrudType.BATCHUPDATE:
             return RestMethod.PATCH;
+        // DELETE includes indivual delete and batch delete
         case CrudType.DELETE:
             return RestMethod.DELETE;
 
@@ -105,7 +111,6 @@ export class RestApi {
     };
 
     post = <Schema>({ data, objectName, endpointUrl }: IRequestParams<Schema>) => {
-        process.env.NODE_ENV === 'development' && console.log(`restapi:post fired`);
         return fetch(
             this.getRelativeUrl({
                 endpointUrl,
@@ -171,13 +176,11 @@ export class RestApi {
                 url = `${this.state.apiBaseUrl}${objectName}/`;
             }
         }
-        process.env.NODE_ENV === 'development' && console.log(`restapi: url: ${url}, objname=${objectName}`);
         return url;
     };
 
     private setApiAuthHeaders = (): RequestInit => {
 
-        process.env.NODE_ENV === 'development' && console.log("api: set header: got credentials?", AuthenticationService.apiCallToken);
         return {
             mode: "cors",
             credentials: AuthenticationService.apiCallToken ? "include" : "omit",

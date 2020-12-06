@@ -28,7 +28,7 @@ interface IFormBaseDyanmicFieldControllsProps {
 const FormBaseDynamicFieldControlls = (props: IFormBaseDyanmicFieldControllsProps) => {
 
     const deleteField = () => {
-        confirm(`Are you sure you want to delete this dynamic field?`) && props.formikArrayHelpers.remove(props.index);
+        window.confirm(`Are you sure you want to delete this dynamic field?`) && props.formikArrayHelpers.remove(props.index);
     }
 
     return (

@@ -13,6 +13,7 @@ import { labelTypesMapToCompanyGroupTypes, companyGroupTypes, Company } from "..
 
 /** router */
 import { History } from "history";
+import { selectCompanyReducer } from "./select-company-reducers";
 
 
 // create reducer for each data model
@@ -72,9 +73,6 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             rootStateChecked = rootState;
         }
 
-        process.env.NODE_ENV === 'development' && console.log("beforeRootStore", rootState);
-        process.env.NODE_ENV === 'development' && console.log("reducer: incoming action", action);
-
         const afterStore = { 
             ...rootState,
             router: connectRouter(history)(rootStateChecked.router, action as LocationChangeAction),
@@ -95,13 +93,13 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
 
             application: ApplicationReducer(rootStateChecked.application, action),
             applicationStatus: ApplicationStatusReducer(rootStateChecked.applicationStatus, action),
+
+            selectCompany: selectCompanyReducer(rootStateChecked.selectCompany, action),
             
             // add new reducer here
             // ...
         }
         
-        process.env.NODE_ENV === 'development' && console.log("afterRootStore", afterStore);
-
         return afterStore;
     }
 

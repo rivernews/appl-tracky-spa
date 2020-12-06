@@ -9,7 +9,7 @@ import {
     SuccessLogoutAuth,
     FailureAuth
 } from "../action-creators/auth-actions";
-import { resetAllStoreAction, GroupedCompanyActionCreators, CompanyActionCreators } from "../action-creators/root-actions";
+import { resetAllStoreAction, GroupedCompanyActionCreators } from "../action-creators/root-actions";
 import { labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
 import { labelTypes } from "../../data-model/label";
 // redux-saga
@@ -24,7 +24,6 @@ function* authLoginSagaHandler(
     requestedLoginAuthAction: IRequestedLoginAuthAction
 ) {
     // RequestAuth action triggered & injecting side effects here...
-    process.env.NODE_ENV === 'development' && console.log("auth saga: initialize");
     
     const {
         loginMode, 
@@ -36,8 +35,6 @@ function* authLoginSagaHandler(
         // TODO: define interface typing for api response
 
         const jsonResponse = yield call(AuthenticationService.serverLogin, loginMode, params);
-
-        process.env.NODE_ENV === 'development' && console.log("auth saga: server login, jsonRes=", jsonResponse);
 
         // In prefill login case, if cannot restore/refresh login session
         if (!jsonResponse.token) {
@@ -56,12 +53,15 @@ function* authLoginSagaHandler(
         // yield put(
         //     CompanyActionCreators[CrudType.LIST][RequestStatus.TRIGGERED].action()
         // );
+
+        // fetch companies that do not have label status yet, treat them as `target` and put them in target group
         yield put(
             GroupedCompanyActionCreators["targetCompany"][CrudType.LIST][RequestStatus.TRIGGERED].action(
                 {}, undefined, undefined, undefined,
                 `${RestApiService.state.apiBaseUrl}companies/?labels__isnull=True`
             )
         );
+        // fetch companies filter by their label status
         for (let labelText of Object.values(labelTypes)) {
             yield put(
                 GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]][CrudType.LIST][RequestStatus.TRIGGERED].action(
@@ -86,7 +86,6 @@ function* authLogoutSagaHandler(
     requestedLogoutAuthAction: IRequestedLogoutAuthAction
 ) {
     // RequestAuth action triggered & injecting side effects here...
-    process.env.NODE_ENV === 'development' && console.log("auth logout saga: fired");
     try {
         yield call(AuthenticationService.serverLogout);
 
@@ -96,7 +95,6 @@ function* authLogoutSagaHandler(
         return;
     }
 
-    process.env.NODE_ENV === 'development' && console.log("auth logout saga: navigating");
     yield put(SuccessLogoutAuth());
     // yield put(push("/"));
 

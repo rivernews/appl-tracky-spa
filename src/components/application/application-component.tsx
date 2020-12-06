@@ -115,7 +115,6 @@ export class ApplicationComponent extends Component<
                 <h2>{this.props.application ? "Edit Application" : "New Application"}</h2>
                 <ApplicationFormComponentContainer
                     onCancel={event => {
-                        process.env.NODE_ENV === 'development' && console.log("onCancel clicked");
                         this.setState({
                             isFormOpened: false
                         });
@@ -202,7 +201,7 @@ export class ApplicationComponent extends Component<
                             <IconButton
                                 disabled={this.props.disableApplicationActionButtons}
                                 onClick={() =>
-                                    confirm(`Are you sure you want to delete ${application.position_title}?`) && this.props.deleteApplication(application)
+                                    window.confirm(`Are you sure you want to delete ${application.position_title}?`) && this.props.deleteApplication(application)
                                 }
                             >
                                 <MaterialIcon hasRipple icon="delete" />

@@ -1,4 +1,4 @@
-import React, { Component, memo } from "react";
+import React, { Component } from "react";
 
 /** Redux */
 import { connect } from "react-redux";
@@ -16,44 +16,32 @@ import {
     withRouter,
     RouteComponentProps
 } from "react-router-dom";
-// pages
-import { LandingPageContainer } from "../landing-page/landing-page";
-import { LocalLoginPageContainer } from "../login-page/local-login-page";
-import { UserAppPageContainer } from "../user-app-page/user-app-page";
-import { AddComPageContainer } from "../add-com-page/add-com-page";
-import { UserComAppPageContainer } from "../user-com-app-page/user-com-app-page";
-import { UserProfilePageContainer } from "../user-profile-page/user-profile-page";
+import {
+    TopAppBarFixedAdjust,
+} from '@material/react-top-app-bar';
+
 // transition effects
 import {
     TransitionGroup,
     CSSTransition
 } from "react-transition-group";
 
-/** MDC React */
-import TopAppBar, {
-    TopAppBarFixedAdjust,
-    TopAppBarIcon,
-    TopAppBarRow,
-    TopAppBarSection,
-    TopAppBarTitle,
-} from '@material/react-top-app-bar';
-import "@material/react-top-app-bar/dist/top-app-bar.css";
+// pages
+import { LandingPageContainer } from "../landing-page/landing-page";
+import { LocalLoginPageContainer } from "../login-page/local-login-page";
+import { UserAppPageContainer } from "../../pages/user-app-page/user-app-page";
+import { AddComPageContainer } from "../../pages/add-com-page/add-com-page";
+import { UserComAppPageContainer } from "../../pages/user-com-app-page/user-com-app-page";
+import { UserProfilePageContainer } from "../../pages/user-profile-page/user-profile-page";
+
+import pageTransitionStyles from "./page-routes-transition.module.css";
 
 import LinearProgress from '@material/react-linear-progress';
 import '@material/react-linear-progress/dist/linear-progress.css';
 
-import '@material/react-material-icon/dist/material-icon.css';
-import MaterialIcon from "@material/react-material-icon";
-
-// font awesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faGithubAlt, faGithubSquare } from '@fortawesome/free-brands-svg-icons'
-
 import "@material/react-ripple/dist/ripple.css";
-// import {withRipple} from '@material/react-ripple';
 
-import pageTransitionStyles from "./page-routes-transition.module.css";
-import styles from "./page-routes.module.css";
+import { AppTopBar } from "../../components/app-top-bar/app-top-bar";
 
 
 const publicPageSet = new Set([
@@ -75,10 +63,6 @@ interface IPageRoutesProps extends RouteComponentProps<IPageRoutesRouterParams> 
 
 
 class PageRoutes extends Component<IPageRoutesProps> {
-    goHome = () => {
-        this.props.location.pathname === '/home/' ? this.props.history.replace('/home/') : this.props.history.push('/home/');
-    }
-
     goInternal = (): string => {
         if (!this.props.location.search) {
             return "/home/";
@@ -119,51 +103,9 @@ class PageRoutes extends Component<IPageRoutesProps> {
                             {/** protect private routes, but let people come back the internal page they want to access after they login */
                                 !this.props.auth.isLogin && <Redirect to={`/?next=${this.props.location.pathname}`} />}
 
-                            <TopAppBar>
-                                <TopAppBarRow>
-                                    <TopAppBarSection align="start">
-                                        {/* <TopAppBarIcon>
-                                            <MaterialIcon hasRipple icon='menu' />
-                                        </TopAppBarIcon> */}
-                                        <TopAppBarTitle className={styles.topAppBarTitle} onClick={this.goHome}>Appl Tracky</TopAppBarTitle>
-                                    </TopAppBarSection>
-                                    <TopAppBarSection align='end' role='toolbar'>
-                                        <TopAppBarIcon navIcon tabIndex={0}>
-                                            <Link to="/home/">
-                                                <MaterialIcon
-                                                    hasRipple
-                                                    key="itemHome"
-                                                    icon="home"
-                                                />
-                                            </Link>
-                                        </TopAppBarIcon>
-                                        <TopAppBarIcon navIcon tabIndex={1}>
-                                            <a target="_blank" href="//github.com/rivernews/appl-tracky-spa">
-                                                <FontAwesomeIcon icon={faGithub} size="lg" />
-                                            </a>
-                                        </TopAppBarIcon>
-                                        <TopAppBarIcon navIcon tabIndex={2}>
-                                            <Link to="/profile/">
-                                                {!this.props.auth.avatarUrl ? (
-                                                    <MaterialIcon
-                                                        hasRipple
-                                                        key="itemProfile"
-                                                        icon="account_circle"
-                                                    />
-                                                ) : (
-                                                        <img style={{
-                                                            "height": "100%",
-                                                            "borderRadius": "50%",
-                                                        }} src={this.props.auth.avatarUrl} />
-                                                    )}
-                                            </Link>
-                                        </TopAppBarIcon>
-                                    </TopAppBarSection>
-                                </TopAppBarRow>
-                            </TopAppBar>
+                            <AppTopBar />
 
                             <TopAppBarFixedAdjust>
-
                                 <LinearProgress
                                     indeterminate={this.props.auth.requestStatus === RequestStatus.REQUESTING}
 

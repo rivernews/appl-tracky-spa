@@ -23,17 +23,14 @@ export class SocialAuthLoginButton extends Component<
     ISocialAuthLoginButtonProps
 > {
     onLoginButtonClicked = (clickEvent: any, renderProps: any) => {
-        process.env.NODE_ENV === 'development' && console.log("login button clicked", clickEvent, renderProps);
         renderProps.onClick(clickEvent);
     };
 
     onAuthSuccess = (authResponse?: any) => {
-        process.env.NODE_ENV === 'development' && console.log("login button auth success");
         this.props.onSuccess(authResponse);
     };
 
     onAuthFailure = (error: any) => {
-        process.env.NODE_ENV === 'development' && console.log("login button auth failed");
         if (this.props.onFailure) {
             this.props.onFailure(error);
         }

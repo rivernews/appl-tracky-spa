@@ -33,7 +33,6 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
             absoluteUrl?: string,
             triggerActionOptions?: ITriggerActionOptions<ObjectRestApiSchema>
         ): IObjectAction<ObjectRestApiSchema> => {
-            process.env.NODE_ENV === 'development' && console.log(`action:fired, trigger, ${crudKeyword}`);
             return {
                 type:
                     ObjectRestApiActions[crudKeyword][RequestStatus.TRIGGERED]
@@ -95,13 +94,18 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
                     }
                 };
             } else {
+                const formData = 
+                    // if not coming from API request, i.e., saga manually called batchCreateAction(objects)
+                    // then we just use it as-is
+                    Array.isArray(jsonResponse) ? jsonResponse as TObject<ObjectRestApiSchema>[] :
+                    // otherwise, it's a API response, which nests objects in `.results`
+                    (<IListRestApiResponse<ObjectRestApiSchema>>(jsonResponse)).results;
+                
                 return {
                     ...newState,
                     payload: {
                         requestStatus: RequestStatus.SUCCESS,
-                        formData: (<IListRestApiResponse<ObjectRestApiSchema>>(
-                            jsonResponse
-                        )).results
+                        formData
                     }
                 };
             }

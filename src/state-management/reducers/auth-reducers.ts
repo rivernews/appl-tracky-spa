@@ -4,7 +4,7 @@ import {
     /** store */
     IUpdateAuthState, 
     /** action */
-    AuthActionNames, TAuthActions 
+    AuthActionNames, TAuthActions, AuthActionNamesValue 
 } from "../types/auth-types";
 
 import { RequestStatus } from "../../utils/rest-api";
@@ -24,6 +24,10 @@ const initialAuthState: IUpdateAuthState = {
 export const authReducer: Reducer<IUpdateAuthState> = (authStore = initialAuthState, action: Action)  => {
     // add reducer for new actions here
     // ...
+
+    if (!(AuthActionNamesValue.includes(action.type))) {
+        return authStore;
+    }
 
     const authAction = action as TAuthActions;
 
