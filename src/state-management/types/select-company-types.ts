@@ -1,10 +1,11 @@
 import { Action } from "redux";
 import { IReference } from "../../data-model/base-model";
+import { Company } from "../../data-model/company/company";
 import { labelTypes } from "../../data-model/label";
 import { RequestStatus } from "../../utils/rest-api";
 
 export interface ISelectCompanyState {
-    selectCompanyCollection: Map<IReference, labelTypes>;
+    selectCompanyCollection: Map<IReference, Company>;
     destinationStatus: labelTypes;
     requestStatus: RequestStatus;
 }
@@ -24,8 +25,7 @@ export interface ICancelAllSelectCompanyAction extends Action<SelectCompanyActio
 
 export interface IAddSelectCompanyAction extends Action<SelectCompanyActionNames.ADD_SELECT_COMPANY> {
     type: typeof SelectCompanyActionNames.ADD_SELECT_COMPANY;
-    companyId: string;
-    companyStatus: labelTypes
+    company: Company
 }
 
 export interface IRemoveSelectCompanyAction extends Action<SelectCompanyActionNames.REMOVE_SELECT_COMPANY> {
