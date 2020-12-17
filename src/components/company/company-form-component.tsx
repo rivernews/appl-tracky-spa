@@ -24,6 +24,7 @@ import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-
 import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
 import { FormAddressFieldMeta } from "../form-factory/form-address-field/form-address-field-meta";
 import { FormLabelFieldMeta } from "../form-factory/form-label-field/form-label-field-meta";
+import { FormRichTextFieldMeta } from "../form-factory/form-rich-text-field/form-rich-text-field-meta";
 
 
 interface ICompanyFormComponentProps {
@@ -64,6 +65,11 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
             new FormLinkFieldMeta({
                 fieldName: "home_page",
                 label: "Organization Website"
+            }),
+
+            new FormRichTextFieldMeta({
+                fieldName: "notes",
+                label: "Quick Notes (Company Background, Culture, etc)",
             }),
         ];
 

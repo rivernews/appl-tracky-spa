@@ -74,7 +74,11 @@ class ApplicationFormComponent extends Component<
             }),
             new FormRichTextFieldMeta({
                 fieldName: "notes",
-                label: "Notes",
+                label: "Quick Notes",
+            }),
+            new FormRichTextFieldMeta({
+                fieldName: "job_description_notes",
+                label: "Job Description Notes",
             }),
         ];
         this.actionButtonPropsList = [

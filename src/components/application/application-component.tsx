@@ -139,7 +139,7 @@ export class ApplicationComponent extends Component<
         return (
             <div className="application-component-display">
                 {/* application display view */}
-                <h3>{application ? application.position_title : <Skeleton />}
+                <h2>{application ? application.position_title : <Skeleton />}
                     {/* external link icon */}
                     {
                         application ? (
@@ -212,9 +212,11 @@ export class ApplicationComponent extends Component<
                                 </IconButton>
                             )
                     }
-                </h3>
+                </h2>
 
+                {/* general notes */}
                 <div className="applicationNotesRichText">
+                    <h3>Quick Notes</h3>
                     {application ? (application.notes ? (
                         <CKEditor
                             editor={BalloonEditor}
@@ -231,6 +233,29 @@ export class ApplicationComponent extends Component<
                                 <div><Skeleton width="70vmin" /></div>
                                 <div><Skeleton width="30vmin" /></div>
                                 <div><Skeleton width="50vmin" /></div>
+                            </div>
+                        )}
+                </div>
+
+                {/* job description notes */}
+                <div className="applicationNotesRichText">
+                    <h3>Job Description Notes</h3>
+                    {application ? (application.job_description_notes ? (
+                        <CKEditor
+                            editor={BalloonEditor}
+                            disabled={true}
+                            data={application.job_description_notes}
+                        />
+
+                    ) : (
+                            <p>
+                                No job description notes yet.
+                            </p>
+                        )) : (
+                            <div>
+                                <div><Skeleton width="60vmin" /></div>
+                                <div><Skeleton width="30vmin" /></div>
+                                <div><Skeleton width="80vmin" /></div>
                             </div>
                         )}
                 </div>

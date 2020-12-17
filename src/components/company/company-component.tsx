@@ -4,6 +4,9 @@ import React, { Component } from "react";
 import { Company } from "../../data-model/company/company";
 
 /** Components */
+import CKEditor from '@shaungc/custom-ckeditor5-react';
+import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+
 import MaterialIcon from "@material/react-material-icon";
 // mdc-react icon button
 import '@material/react-icon-button/dist/icon-button.css';
@@ -77,6 +80,24 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                     }
                 </div>
                 <div className={styles.companyTitleCaption}>{company ? company.hq_location.place_name : <Skeleton />}{company ? company.hq_location.full_address : <Skeleton />}</div>
+
+                {/* notes for company */}
+                <div>
+                    <h2>Quick Notes (Company Background, Culture, etc)</h2>
+                    {company ? (
+                        company.notes ? (
+                            <CKEditor
+                                editor={BalloonEditor}
+                                disabled={true}
+                                data={company.notes}
+                            />
+                        ) : <p>No company quick notes yet</p>
+                    ) : 
+                    <>
+                        <div><Skeleton width="70vmin" /></div>
+                        <div><Skeleton width="30vmin" /></div>
+                    </>}
+                </div>
             </div>
         );
     }

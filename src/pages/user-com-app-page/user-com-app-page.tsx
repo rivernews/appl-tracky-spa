@@ -56,10 +56,6 @@ type IUserComAppPageProps = IUserComAppPageNoGroupCompanyProps & {
 }
 
 class UserComAppPage extends Component<IUserComAppPageProps> {
-    componentDidMount() {
-        const companyUuid = this.props.match.params.uuid;
-    }
-
     goBackToCompanyListPage = () => {
         this.props.history.replace('/home/');
     }
