@@ -73,7 +73,7 @@ interface IUserAppPageState {
 }
 
 class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
-    state = {
+    state: IUserAppPageState = {
         searchText: '',
         isFiltering: false,
         filteredCompanyList: [],
@@ -127,7 +127,16 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
         const allCompanies = Object.values(this.props.company.collection);
 
         // for searching feature
-        const displayingCompanies = this.props.company.requestStatus !== RequestStatus.REQUESTING ? this.state.isFiltering ? this.state.filteredCompanyList : allCompanies : Array.from(Array(5));
+        const displayingCompanies = (
+            this.props.company.requestStatus !== RequestStatus.REQUESTING ? this.state.isFiltering ? this.state.filteredCompanyList : allCompanies : Array.from(Array(5))
+        );
+        displayingCompanies.sort((companyA: Company | undefined, companyB: Company | undefined) => {
+            if (companyA && companyB) {
+                // descending order, latest goes first
+                return new Date(companyB.modified_at).getTime() - new Date(companyA.modified_at).getTime();
+            }
+            return 0;
+        });
 
         return (
             <div>
@@ -188,20 +197,27 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                                             Object.values(this.props[labelTypesMapToCompanyGroupTypes[labelText]].collection).map(
                                                 (companyRef, index) => {
                                                     const company = this.props.company.collection[companyRef.uuid];
-                                                    const applications = company ? (company.applications as Array<IReference>).map((applicationUuid) => {
-                                                        return this.props.application.collection[applicationUuid];
-                                                    }) : undefined;
-
-                                                    return (
-                                                        <CompanyListItem
-                                                            key={company ? company.uuid : index}
-                                                            company={company}
-                                                            applications={applications}
-                                                            onClick={company ? this.onCompanyClick : undefined}
-                                                        />
-                                                    )
+                                                    return company;
                                                 }
                                             )
+                                            .sort((companyA, companyB) => {
+                                                // descending order, latest goes first
+                                                return new Date(companyB.modified_at).getTime() - new Date(companyA.modified_at).getTime();
+                                            })
+                                            .map((company, index) => {
+                                                const applications = company ? (company.applications as Array<IReference>).map((applicationUuid) => {
+                                                    return this.props.application.collection[applicationUuid];
+                                                }) : undefined;
+
+                                                return (
+                                                    <CompanyListItem
+                                                        key={company ? company.uuid : index}
+                                                        company={company}
+                                                        applications={applications}
+                                                        onClick={company ? this.onCompanyClick : undefined}
+                                                    />
+                                                )
+                                            })
                                         }
                                     </div>
                                 </TabContent>

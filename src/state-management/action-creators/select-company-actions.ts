@@ -1,3 +1,4 @@
+import { Company } from "../../data-model/company/company"
 import { labelTypes } from "../../data-model/label"
 import { RequestStatus } from "../../utils/rest-api"
 import { IAddSelectCompanyAction, IApplyAllSelectCompanyChangesAction, ICancelAllSelectCompanyAction, IRemoveSelectCompanyAction, ISetApplyAllSelectCompanyRequestStatusAction, ISetDestinationStatusAction, SelectCompanyActionNames } from "../types/select-company-types"
@@ -8,11 +9,10 @@ export const CancelAllSelectCompany = (): ICancelAllSelectCompanyAction => {
     }
 }
 
-export const AddSelectCompany = (companyId: string, companyStatus: labelTypes): IAddSelectCompanyAction => {
+export const AddSelectCompany = (company: Company): IAddSelectCompanyAction => {
     return {
         type: SelectCompanyActionNames.ADD_SELECT_COMPANY,
-        companyId,
-        companyStatus
+        company
     }
 }
 

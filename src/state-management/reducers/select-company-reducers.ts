@@ -1,11 +1,12 @@
 import { Reducer, Action } from "redux";
 import { IReference } from "../../data-model/base-model";
+import { Company } from "../../data-model/company/company";
 import { labelTypes } from "../../data-model/label";
 import { RequestStatus } from "../../utils/rest-api";
 import { ISelectCompanyState, SelectCompanyActionNames, TSelectCompanyActions } from "../types/select-company-types";
 
 const initialSelectCompanyState: ISelectCompanyState = {
-    selectCompanyCollection: new Map<IReference, labelTypes>(),
+    selectCompanyCollection: new Map<IReference, Company>(),
     destinationStatus: labelTypes.TARGET,
     requestStatus: RequestStatus.SUCCESS
 }
@@ -17,13 +18,13 @@ export const selectCompanyReducer: Reducer<ISelectCompanyState> = (state = initi
             return initialSelectCompanyState;
         
         case SelectCompanyActionNames.ADD_SELECT_COMPANY:
-            const isFound = state.selectCompanyCollection.has(selectCompanyAction.companyId);
+            const isFound = state.selectCompanyCollection.has(selectCompanyAction.company.uuid);
             if (isFound) {
                 return state;
             } else {
                 return {
                     ...state,
-                    selectCompanyCollection: new Map([...state.selectCompanyCollection, [selectCompanyAction.companyId, selectCompanyAction.companyStatus]])
+                    selectCompanyCollection: new Map([...state.selectCompanyCollection, [selectCompanyAction.company.uuid, selectCompanyAction.company]])
                 }
             }
         

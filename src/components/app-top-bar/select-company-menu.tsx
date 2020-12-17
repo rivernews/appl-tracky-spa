@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IRootState } from "../../state-management/types/root-types";
 
@@ -11,8 +11,56 @@ import { labelTypes } from "../../data-model/label";
 import { ApplyAllSelectCompanyChangesStatus, CancelAllSelectCompany, SetDestinationStatus } from "../../state-management/action-creators/select-company-actions";
 import { RequestStatus } from "../../utils/rest-api";
 
-import { MuiThemeProvider } from "@material-ui/core/styles";
+import { MuiThemeProvider, makeStyles } from "@material-ui/core/styles";
 import { darkTheme } from "../themes";
+import Chip from "@material-ui/core/Chip";
+import Typography from "@material-ui/core/Typography";
+
+
+const  useCompanyDropdownListStyle = makeStyles({
+    chip: {
+        marginRight: '.5rem'
+    }
+})
+
+const CompanyDropdownList = () => {
+    const classes = useCompanyDropdownListStyle();
+    const selectCompanyCollection = useSelector((state: IRootState) => state.selectCompany.selectCompanyCollection);
+    const [menuAnchorElement, setMenuAnchorElement] = useState<null | HTMLElement>(null);
+
+    const onMenuClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+        setMenuAnchorElement(event.currentTarget);
+    }, [])
+
+    const closeMenu = useCallback(() => {
+        setMenuAnchorElement(null);
+    }, [])
+
+    return (
+        <>
+            <Button onClick={onMenuClick} size="small">{selectCompanyCollection.size} companies</Button>
+            <Menu anchorEl={menuAnchorElement} keepMounted open={Boolean(menuAnchorElement)} onClose={closeMenu}>
+                {[...selectCompanyCollection].map(([uuid, company], index) => {
+                    // only support single label/status on company for now
+                    const label = company.labels.length ? company.labels[0].text : null;
+                    return (
+                        <MenuItem key={index} dense>
+                            {label ? (
+                                <Chip className={classes.chip} label={company.labels[0].text} size="small" 
+                                    color={label === labelTypes.INTERVIEWING ? 'secondary' :
+                                        label === labelTypes.TARGET ? 'primary' : 'default'}
+                                />
+                            ) : null}
+                            <Typography noWrap>
+                                {company.name} 
+                            </Typography>
+                        </MenuItem>
+                    )
+                })}
+            </Menu>
+        </>
+    )
+}
 
 interface ICompanyStatusDropdownListItem {
     label: labelTypes;
@@ -21,6 +69,7 @@ interface ICompanyStatusDropdownListItem {
 
 const CompanyStatusDropdownListItem = ({ label, onSelect }: ICompanyStatusDropdownListItem) => {
     const dispatch = useDispatch();
+    const stagedStatus = useSelector((state: IRootState) => state.selectCompany.destinationStatus);
 
     const onDropdownListItemSelected = useCallback(() => {
         dispatch(SetDestinationStatus(label));
@@ -28,7 +77,7 @@ const CompanyStatusDropdownListItem = ({ label, onSelect }: ICompanyStatusDropdo
     }, [dispatch, onSelect, label])
 
     return (
-        <MenuItem onClick={onDropdownListItemSelected}>{label}</MenuItem>
+        <MenuItem selected={stagedStatus === label} onClick={onDropdownListItemSelected}>{label}</MenuItem>
     )
 }
 
@@ -36,7 +85,6 @@ export const SelectCompanyMenu = () => {
     const dispatch = useDispatch();
     const selectCompanyApplyRequestStatus = useSelector((state: IRootState) => state.selectCompany.requestStatus);
     const stagedStatus = useSelector((state: IRootState) => state.selectCompany.destinationStatus);
-    const selectCompanyCollection = useSelector((state: IRootState) => state.selectCompany.selectCompanyCollection);
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -44,7 +92,7 @@ export const SelectCompanyMenu = () => {
         setAnchorEl(event.currentTarget);
     }, [])
 
-    const onDropdownListSelect = useCallback(() => {
+    const closeDropdownList = useCallback(() => {
         setAnchorEl(null);
     }, [])
 
@@ -59,7 +107,7 @@ export const SelectCompanyMenu = () => {
     
     return (
         <MuiThemeProvider theme={darkTheme}>
-            Move {selectCompanyCollection.size} companies to 
+            Move <CompanyDropdownList /> to 
 
             <Button aria-controls="simple-menu" aria-haspopup="true" onClick={onDropdownListClick}>
                 {stagedStatus} <ArrowDropDownIcon />
@@ -69,10 +117,11 @@ export const SelectCompanyMenu = () => {
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
+                onClose={closeDropdownList}
             >
                 {Object.values(labelTypes).map((label, index) => {
                     return <div key={index}>
-                        <CompanyStatusDropdownListItem label={label} onSelect={onDropdownListSelect} />
+                        <CompanyStatusDropdownListItem label={label} onSelect={closeDropdownList} />
                     </div>
                 })}
             </Menu>

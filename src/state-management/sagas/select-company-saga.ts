@@ -44,8 +44,11 @@ function* selectCompanyApplySagaHandler(
 
     // move company uuids out of company buckets
     const removeGroupsMapping = new Map<labelTypes, Set<IReference>>();
-    selectCompanyCollection.forEach((label, uuid) => {
-        if (label !== destinationStatus) {
+    selectCompanyCollection.forEach((company, uuid) => {
+        if (!(company.labels.length && company.labels[0].text === destinationStatus)) {
+            // only support single label/status for now; default to target for companies without a label/status
+            const label = company.labels.length ? company.labels[0].text : labelTypes.TARGET;
+            
             const removeGroupSet = removeGroupsMapping.get(label) || new Set<IReference>();
             removeGroupSet.add(uuid);
             removeGroupsMapping.set(label, removeGroupSet);
