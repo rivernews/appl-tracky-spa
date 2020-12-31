@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Application } from "../../data-model/application/application";
 import { IRootState } from "../../state-management/types/root-types";
-import { IObjectAction, IObjectStore } from "../../state-management/types/factory-types";
+import { IObjectAction, IObjectStore, JsonResponseType } from "../../state-management/types/factory-types";
 import { Dispatch } from "redux";
 
 /** data model */
@@ -56,7 +56,7 @@ interface IApplicationComponentProps {
 
     deleteApplication: (
         applicationToDelete: Application,
-        callback?: Function
+        callback?: (jsonResponse: JsonResponseType<Application>) => void,
     ) => void;
 }
 
@@ -307,12 +307,15 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
     return {
         deleteApplication: (
             applicationToDelete: Application,
-            callback?: Function
+            callback?: (jsonResponse: JsonResponseType<Application>) => void
         ) =>
             dispatch(
                 ApplicationActionCreators[CrudType.DELETE][
                     RequestStatus.TRIGGERED
-                ].action(applicationToDelete, callback)
+                ].action({
+                    objectClassInstance: applicationToDelete, 
+                    successCallback: callback
+                })
             )
     };
 };

@@ -60,7 +60,7 @@ export interface IFormFactoryProps<IDataModel> {
     ) => void;
     updateInstanceTriggerAction?: (
         instance: IDataModel,
-        successCallback?: Function,
+        successCallback?: (jsonResponse: JsonResponseType<IDataModel>) => void,
         finalCallback?: Function,
         updateFromCompany?: IDataModel
     ) => void;

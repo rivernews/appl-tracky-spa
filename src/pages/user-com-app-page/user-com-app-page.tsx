@@ -10,7 +10,8 @@ import { IRootState } from "../../state-management/types/root-types";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 import {
     IObjectStore,
-    IObjectAction
+    IObjectAction,
+    JsonResponseType
 } from "../../state-management/types/factory-types";
 import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes } from "../../data-model/company/company";
 import { Application } from "../../data-model/application/application";
@@ -44,11 +45,11 @@ interface IUserComAppPageNoGroupCompanyProps
 
     createApplication: (
         applicationFormData: Application,
-        callback?: Function
+        callback?: (jsonResponse: JsonResponseType<Application>) => void
     ) => void;
 
-    deleteCompany: (companyToDelete: Company, callback?: Function) => void;
-    updateCompany: (companyToUpdate: Company, callback?: Function) => void;
+    deleteCompany: (companyToDelete: Company, callback?: (jsonResponse: JsonResponseType<Company>) => void) => void;
+    updateCompany: (companyToUpdate: Company, callback?: (jsonResponse: JsonResponseType<Company>) => void) => void;
 }
 
 type IUserComAppPageProps = IUserComAppPageNoGroupCompanyProps & {
@@ -194,32 +195,35 @@ const mapStateToProps = (store: IRootState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
+const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application | Company>>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
         createApplication: (
             applicationFormData: Application,
-            callback?: Function
+            callback?: (jsonResponse: JsonResponseType<Application>) => void
         ) =>
             dispatch(
                 ApplicationActionCreators[CrudType.CREATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationFormData, callback)
+                ].action({
+                    objectClassInstance: applicationFormData,
+                    successCallback: callback
+                })
             )
         ,
-        deleteCompany: (companyToDelete: Company, callback?: Function) =>
+        deleteCompany: (companyToDelete: Company, successCallback?: (jsonResponse: JsonResponseType<Company>) => void) =>
             dispatch(
-                CompanyActionCreators[CrudType.DELETE][RequestStatus.TRIGGERED].action(
-                    companyToDelete,
-                    callback
-                )
+                CompanyActionCreators[CrudType.DELETE][RequestStatus.TRIGGERED].action({
+                    objectClassInstance: companyToDelete,
+                    successCallback
+                })
             ),
-        updateCompany: (companyToUpdate: Company, callback?: Function) =>
+        updateCompany: (companyToUpdate: Company, successCallback?: (jsonResponse: JsonResponseType<Company>) => void) =>
             dispatch(
-                CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
-                    companyToUpdate,
-                    callback
-                )
+                CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action({
+                    objectClassInstance: companyToUpdate,
+                    successCallback
+                })
             )
     };
 };

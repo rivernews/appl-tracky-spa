@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
 import {
-    IObjectAction, IObjectStore,
+    IObjectAction, IObjectStore, JsonResponseType,
 } from "../../state-management/types/factory-types";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 import { ApplicationStatusActionCreators } from "../../state-management/action-creators/root-actions";
@@ -36,7 +36,7 @@ interface IApplicationStatusComponentProps extends RouteComponentProps {
     applicationStatusStore: IObjectStore<ApplicationStatus>;
     deleteApplicationStatus: (
         applicationStatusToDelete: ApplicationStatus,
-        callback?: Function
+        callback?: (jsonResponse: JsonResponseType<ApplicationStatus>) => void
     ) => void;
 }
 
@@ -202,12 +202,15 @@ const mapDispatchToProps = (
     return {
         deleteApplicationStatus: (
             applicationStatusToDelete: ApplicationStatus,
-            callback?: Function
+            callback?: (jsonResponse: JsonResponseType<ApplicationStatus>) => void
         ) =>
             dispatch(
                 ApplicationStatusActionCreators[CrudType.DELETE][
                     RequestStatus.TRIGGERED
-                ].action(applicationStatusToDelete, callback)
+                ].action({
+                    objectClassInstance: applicationStatusToDelete,
+                    successCallback: callback
+                })
             )
     };
 };

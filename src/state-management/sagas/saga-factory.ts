@@ -1,4 +1,4 @@
-import { IObjectBase, IObjectRestApiReduxFactoryActions, JsonResponseType, ITriggerActionOptions, IObjectAction, ISuccessSagaHandlerArgs, ISagaFactoryOptions } from "../types/factory-types";
+import { IObjectBase, IObjectRestApiReduxFactoryActions, JsonResponseType, ITriggerActionOptions, IObjectAction, ISuccessSagaHandlerArgs, ISagaFactoryOptions, TObject } from "../types/factory-types";
 
 import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, ISingleRestApiResponse, IListRestApiResponse, IRequestParams, RestApiService, CrudMapToRest } from "../../utils/rest-api";
 import { SagaIterator } from "redux-saga";
@@ -8,7 +8,7 @@ import { normalize } from "normalizr";
 
 export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
     /** should have uuid */ objectName: string,
-    ObjectRestApiActions: IObjectRestApiReduxFactoryActions,
+    ObjectRestApiActions: IObjectRestApiReduxFactoryActions<ObjectRestApiSchema>,
     sagaFactoryOptions: ISagaFactoryOptions<ObjectRestApiSchema>
 ): Array<() => SagaIterator> => {
     const crudKeywords = Object.values(CrudType) as Array<CrudType>;
@@ -18,7 +18,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
         const sagaHandler = function* (
             triggerAction: IObjectAction<ObjectRestApiSchema>
         ) {
-            let formData: ObjectRestApiSchema | Array<ObjectRestApiSchema> | undefined = triggerAction.payload.formData;
+            let formData = triggerAction.payload.formData as ObjectRestApiSchema | Array<ObjectRestApiSchema> | undefined;
             const absoluteUrl = triggerAction.absoluteUrl;
 
             yield put(
@@ -45,9 +45,9 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
 
                 // if there is .next in res, then it's paginated data and we should perform a next request to next page data
                 if (jsonResponse.next) {
-                    yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
-                        undefined, undefined, undefined, undefined, jsonResponse.next
-                    ));
+                    yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action({
+                        absoluteUrl: jsonResponse.next
+                    }));
                 }
 
                 // normalize primary object data (for relational object normalizing, will do it later) if  normalize manifest speciified
@@ -125,7 +125,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                                         results: relationalNormalizeData[relationalEntityKey]
                                     };
 
-                                const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions;
+                                const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions<IObjectBase>;
 
                                 yield put(
                                     relationalActions[crudKeyword][RequestStatus.SUCCESS].action(dispatchResponseData)
@@ -148,12 +148,12 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                             // here we are only cleaning up / cascade delete the frontend redux store
 
                             for (const relationalEntityKey in sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap) {
-                                const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions;
+                                const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions<IObjectBase>;
 
                                 // relational objects should apply DELETE action -- this is a bulk deletion, not single delete
                                 const dispatchDeleteData = relationalNormalizeData[relationalEntityKey] ? relationalNormalizeData[relationalEntityKey] : (
                                     formData && !Array.isArray(formData) && formData.hasOwnProperty(relationalEntityKey) ? (<ObjectRestApiSchema>formData)[relationalEntityKey as keyof ObjectRestApiSchema] : []
-                                );
+                                ) as Array<TObject<IObjectBase>>;
 
                                 yield put(
                                     relationalActions[CrudType.DELETE][RequestStatus.SUCCESS].action(undefined, dispatchDeleteData)

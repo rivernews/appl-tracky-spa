@@ -29,7 +29,7 @@ const groupedCompanyActionCreatorsHelper = () => {
     }, {});
 }
 export const GroupedCompanyActionCreators = groupedCompanyActionCreatorsHelper() as {
-    [key in companyGroupTypes]: IObjectRestApiReduxFactoryActions
+    [key in companyGroupTypes]: IObjectRestApiReduxFactoryActions<Company>
 };
 
 
