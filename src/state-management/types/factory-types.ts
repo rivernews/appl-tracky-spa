@@ -7,7 +7,8 @@ import {
     IListRestApiResponse,
 } from "../../utils/rest-api";
 import { Schema } from "normalizr";
-import { IReference, IRelationship } from "../../data-model/base-model";
+import { IReference } from "../../data-model/base-model";
+import { IGraphQLQueryListResponse } from "../../utils/graphql-api";
 
 
 /** state & store */
@@ -88,7 +89,10 @@ export interface IObjectAction<Schema> extends Action {
     finalCallback?: Function;
 
     // for custumized api call
-    absoluteUrl?: string
+    // only for TRIGGER action
+    absoluteUrl?: string;
+    graphqlFunctionName?: string;
+    graphqlArgs?: any;
 
     // misc options that when dispatch action can pass additional parameters
     triggerActionOptions?: ITriggerActionOptions<Schema>
@@ -113,6 +117,10 @@ export interface IObjectActionCreatorArgs<ObjectApiSchema> {
     finalCallback?: Function,
     absoluteUrl?: string,
     triggerActionOptions?: ITriggerActionOptions<ObjectApiSchema>
+
+    // if specified, use graphql client instead of rest api client for fetching
+    graphqlFunctionName?: string;
+    graphqlArgs?: any;
 }
 
 
@@ -125,9 +133,9 @@ export interface IRestApiReduxFactory<Schema> {
 }
 
 
-export type ObjectRestApiJsonResponse<Schema> = IListRestApiResponse<TObject<Schema>> | ISingleRestApiResponse<TObject<Schema>>
-// TODO: remove any
-export type JsonResponseType<Schema> = ObjectRestApiJsonResponse<Schema> | any;
+export type ObjectRestApiJsonResponse<Schema> = IListRestApiResponse<TObject<Schema>> | ISingleRestApiResponse<TObject<Schema>>;
+
+export type JsonResponseType<Schema> = ObjectRestApiJsonResponse<Schema> | IGraphQLQueryListResponse<Schema>;
 
 export interface ISuccessSagaHandlerArgs<Schema> {
     data?: Array<TObject<Schema>> | TObject<Schema>

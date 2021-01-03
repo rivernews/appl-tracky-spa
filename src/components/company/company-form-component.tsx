@@ -6,7 +6,7 @@ import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
 import { CrudType, RequestStatus, ISingleRestApiResponse } from "../../utils/rest-api";
 import {
-    IObjectAction, ObjectRestApiJsonResponse
+    IObjectAction, JsonResponseType, ObjectRestApiJsonResponse
 } from "../../state-management/types/factory-types";
 // data models
 import { Company, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
@@ -113,7 +113,8 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
             dispatch(
                 CompanyActionCreators[CrudType.CREATE][RequestStatus.TRIGGERED].action({
                     objectClassInstance: companyFormData,
-                    successCallback: (jsonResponse: ISingleRestApiResponse<Company>) => {
+                    successCallback: (jsonResponse: JsonResponseType<Company>) => {
+                        jsonResponse = jsonResponse as ISingleRestApiResponse<Company>;
                         // create ref in grouped redux
                         dispatch(
                             // no api calls, so don't dispatch TRIGGER action, just SUCCESS action
@@ -134,7 +135,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
         ) => dispatch(
             CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action({
                 objectClassInstance: companyFormData,
-                successCallback,
+                successCallback: successCallback as ((jsonResponse: JsonResponseType<Company>) => void),
                 finalCallback,
                 triggerActionOptions: {
                     updateFromObject: updateFromCompany

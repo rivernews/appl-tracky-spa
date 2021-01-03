@@ -20,6 +20,8 @@ export enum CrudType {
     DELETE = "delete",
 }
 
+export const CrudKeywords = Object.values(CrudType) as Array<CrudType>;
+
 export enum RestMethod {
     POST = "post",
     GET = "get",
@@ -57,8 +59,8 @@ export interface IRequestParams<Schema> {
 
 export interface IListRestApiResponse<Schema> {
     count: number;
-    next: any;
-    previous: any;
+    next: string;
+    previous: string;
     results: Array<TObject<Schema>>;
 }
 

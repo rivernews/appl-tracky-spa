@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { CrudType, ISingleRestApiResponse, RequestStatus } from "../../utils/rest-api";
 import {
     IObjectStore,
     IObjectAction,
@@ -39,12 +39,12 @@ interface IApplicationFormComponentProps {
     applicationStore: IObjectStore<Application>;
     createApplication: (
         applicationFormData: Application,
-        successCallback?: (jsonResponse: JsonResponseType<Application>) => void,
+        successCallback?: (jsonResponse: ISingleRestApiResponse<Application>) => void,
         finalCallback?: Function,
     ) => void;
     updateApplication: (
         applicationFormData: Application,
-        successCallback?: (jsonResponse: JsonResponseType<Application>) => void,
+        successCallback?: (jsonResponse: ISingleRestApiResponse<Application>) => void,
         finalCallback?: Function,
     ) => void;
 }
@@ -126,7 +126,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
     return {
         createApplication: (
             applicationFormData: Application,
-            successCallback?: (jsonResponse: JsonResponseType<Application>) => void,
+            successCallback?: (jsonResponse: ISingleRestApiResponse<Application>) => void,
             finalCallback?: Function,
         ) =>
             dispatch(
@@ -134,14 +134,14 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
                     RequestStatus.TRIGGERED
                 ].action({
                     objectClassInstance: applicationFormData, 
-                    successCallback, 
+                    successCallback: successCallback as ( (jsonResponse: JsonResponseType<Application>) => void ), 
                     finalCallback
                 })
             )
         ,
         updateApplication: (
             applicationFormData: Application,
-            successCallback?: (jsonResponse: JsonResponseType<Application>) => void,
+            successCallback?: (jsonResponse: ISingleRestApiResponse<Application>) => void,
             finalCallback?: Function,
         ) =>
             dispatch(
@@ -149,7 +149,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
                     RequestStatus.TRIGGERED
                 ].action({
                     objectClassInstance: applicationFormData,
-                    successCallback,
+                    successCallback: successCallback as ( (jsonResponse: JsonResponseType<Application>) => void ), 
                     finalCallback
                 })
             )
