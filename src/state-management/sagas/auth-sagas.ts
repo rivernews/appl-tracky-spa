@@ -59,7 +59,7 @@ function* authLoginSagaHandler(
             GroupedCompanyActionCreators["targetCompany"][CrudType.LIST][RequestStatus.TRIGGERED].action({
                 graphqlFunctionName: 'fetchDashboardCompanyData',
                 graphqlArgs: {
-                    labels_Isnull: true
+                    labels__isnull: true
                 }
             })
         );
@@ -70,7 +70,7 @@ function* authLoginSagaHandler(
                 GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]][CrudType.LIST][RequestStatus.TRIGGERED].action({
                     graphqlFunctionName: 'fetchDashboardCompanyData',
                     graphqlArgs: {
-                        labels_Text: labelText
+                        labels__text: labelText
                     }
                 })
             );

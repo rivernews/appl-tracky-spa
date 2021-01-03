@@ -123,7 +123,7 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
         const allCompanies = Object.values(this.props.company.collection);
 
         // for searching feature
-        const displayingCompanies = (
+        const displayingCompanies: Array<Company> = (
             this.props.company.requestStatus !== RequestStatus.REQUESTING ? this.state.isFiltering ? this.state.filteredCompanyList : allCompanies : Array.from(Array(5))
         );
         displayingCompanies.sort((companyA: Company | undefined, companyB: Company | undefined) => {
@@ -170,12 +170,15 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                             <MaterialUIList>
                                 {
                                     displayingCompanies.map(
-                                        (company, index) =>
-                                            <CompanyListItem
-                                                key={company ? company.uuid : index}
-                                                company={company}
-                                                applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
-                                            />
+                                        (company, index) => {
+                                            return (
+                                                <CompanyListItem
+                                                    key={company ? company.uuid : index}
+                                                    company={company}
+                                                    applications={company?.applications ? (company.applications as Array<IReference>).map((applicationUuid) => this.props.application.collection[applicationUuid]) : undefined}
+                                                />
+                                            )
+                                        }
                                     )
                                 }
                             </MaterialUIList>

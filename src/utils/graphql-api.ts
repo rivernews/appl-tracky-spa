@@ -22,8 +22,8 @@ interface IPaginatedQueryArgs {
 }
 
 interface ICompaniesQueryArgs extends IPaginatedQueryArgs {
-    labels_Text?: labelTypes;
-    labels_Isnull?: boolean;
+    labels__text?: labelTypes;
+    labels__isnull?: boolean;
 }
 
 export type IGraphQLQueryArgs = ICompaniesQueryArgs;
@@ -84,7 +84,7 @@ export class GraphQLApi {
         return this.apolloClient.query<IGraphQLQueryResult<Company>>({
             query: gql`
                 query {
-                    companies(first:50, orderBy: "-modified_at", after: "${after}" ${signatureArgs}) {
+                    companies(first:50, order_by: "-modified_at", after: "${after}" ${signatureArgs}) {
                         totalCount
                         count
                         pageInfo {
@@ -100,7 +100,7 @@ export class GraphQLApi {
                                 }
                                 applications {
                                     uuid
-                                    positionTitle
+                                    position_title
                                 }
                             }
                         }
