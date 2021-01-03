@@ -54,10 +54,10 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                     {
                         company ? (
                             <IconButton
-                                disabled={company.home_page.url == "#"}
-                                isLink={company.home_page.url != "#"} // isLink=true will make `disabled` useless, a bug
+                                disabled={company.home_page?.url == "#"}
+                                isLink={company.home_page?.url != "#"} // isLink=true will make `disabled` useless, a bug
                                 target="_blank"
-                                href={company.home_page.url && company.home_page.url.includes('//') ? company.home_page.url : `//${company.home_page.url}`}>
+                                href={company.home_page?.url && company.home_page.url.includes('//') ? company.home_page.url : `//${company.home_page?.url}`}>
                                 <MaterialIcon hasRipple icon="launch" />
                             </IconButton>
                         ) : (
@@ -79,7 +79,7 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                         </div>
                     }
                 </div>
-                <div className={styles.companyTitleCaption}>{company ? company.hq_location.place_name : <Skeleton />}{company ? company.hq_location.full_address : <Skeleton />}</div>
+                <div className={styles.companyTitleCaption}>{company?.hq_location ? company.hq_location.place_name : <Skeleton />}{company?.hq_location ? company.hq_location.full_address : <Skeleton />}</div>
 
                 {/* notes for company */}
                 <div>

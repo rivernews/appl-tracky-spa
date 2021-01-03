@@ -144,10 +144,10 @@ export class ApplicationComponent extends Component<
                     {
                         application ? (
                             <IconButton
-                                disabled={application.job_description_page.url == "#"}
-                                isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
+                                disabled={application.job_description_page?.url == "#"}
+                                isLink={application.job_description_page?.url != "#"} target="_blank" href={application.job_description_page?.url && application.job_description_page.url.includes("//") ?
                                     application.job_description_page.url :
-                                    `//${application.job_description_page.url}`}
+                                    `//${application.job_description_page?.url}`}
                             >
                                 <MaterialIcon hasRipple icon="launch" />
                             </IconButton>
@@ -162,10 +162,10 @@ export class ApplicationComponent extends Component<
                     {
                         application ? (
                             <IconButton
-                                disabled={application.job_source.url == "#"}
-                                isLink={application.job_source.url != "#"} target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
+                                disabled={application.job_source?.url == "#"}
+                                isLink={application.job_source?.url != "#"} target="_blank" href={application.job_source?.url && application.job_source.url.includes("//") ?
                                     application.job_source.url :
-                                    `//${application.job_source.url}`}
+                                    `//${application.job_source?.url}`}
                             >
                                 <MaterialIcon hasRipple icon="language" />
                             </IconButton>
