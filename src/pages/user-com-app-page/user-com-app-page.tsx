@@ -1,24 +1,23 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { RouteComponentProps } from "react-router";
 
 /** Redux */
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
 // rest api
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { CrudType, RequestStatus, RestApiService } from "../../utils/rest-api";
 import {
     IObjectStore,
-    IObjectAction
+    IObjectAction,
+    JsonResponseType
 } from "../../state-management/types/factory-types";
 import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes } from "../../data-model/company/company";
 import { Application } from "../../data-model/application/application";
 import { ApplicationStatus } from "../../data-model/application-status/application-status";
 
 /** Components */
-// mdc react icon
-import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
@@ -29,7 +28,7 @@ import { CompanyComponent } from "../../components/company/company-component";
 
 import styles from "./user-com-app-page.module.css";
 import { IReference } from "../../data-model/base-model";
-import { CompanyActionCreators, ApplicationActionCreators } from "../../state-management/action-creators/root-actions";
+import { CompanyActionCreators, ApplicationActionCreators, GroupedCompanyActionCreators } from "../../state-management/action-creators/root-actions";
 
 
 interface IUserComAppPageParams {
@@ -44,59 +43,86 @@ interface IUserComAppPageNoGroupCompanyProps
 
     createApplication: (
         applicationFormData: Application,
-        callback?: Function
+        callback?: (jsonResponse: JsonResponseType<Application>) => void
     ) => void;
 
-    deleteCompany: (companyToDelete: Company, callback?: Function) => void;
-    updateCompany: (companyToUpdate: Company, callback?: Function) => void;
+    deleteCompany: (companyToDelete: Company, callback?: (jsonResponse: JsonResponseType<Company>) => void) => void;
+    updateCompany: (companyToUpdate: Company, callback?: (jsonResponse: JsonResponseType<Company>) => void) => void;
 }
 
 type IUserComAppPageProps = IUserComAppPageNoGroupCompanyProps & {
     [key in companyGroupTypes]: IObjectStore<Company>
 }
 
-class UserComAppPage extends Component<IUserComAppPageProps> {
-    componentDidMount() {
-        const companyUuid = this.props.match.params.uuid;
+export const UserComAppPage = (props: IUserComAppPageProps) => {
+    const companyUuid = props.match.params.uuid;
+    const company = props.companyStore.collection[companyUuid];
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (companyUuid) {
+            if (company && !company.modified_at && props.companyStore.requestStatus !== RequestStatus.REQUESTING) {
+                dispatch(
+                    CompanyActionCreators[CrudType.READ][RequestStatus.TRIGGERED].action({
+                        absoluteUrl: `${RestApiService.state.apiBaseUrl}companies/${companyUuid}/`,
+                        // TODO: optimize whenever necessary so that we don't need to fetch everything upon login
+                        // when we're only visiting the detial page; still, a paginated solution in home page would be better
+                        //
+                        // Currently, no need to dispatch grouped company because auth-saga will fetch everything upon login 
+                        //
+                        // successCallback: (company) => {
+                        //     console.log('success group')
+                        //     company = company as Company;
+                        //     const label = company.labels ? company.labels[0].text : labelTypes.TARGET;
+                        //     dispatch(
+                        //         GroupedCompanyActionCreators[
+                        //             labelTypesMapToCompanyGroupTypes[label]
+                        //         ][CrudType.READ][RequestStatus.SUCCESS].action(company)
+                        //     );
+                        // }
+                    })
+                )
+            }
+        }
+    }, [company, companyUuid])
+
+
+    const goBackToCompanyListPage = () => {
+        props.history.replace('/home/');
     }
 
-    goBackToCompanyListPage = () => {
-        this.props.history.replace('/home/');
-    }
-
-    onCompanyDelete = () => {
-        if (this.props.match.params.uuid) {
-            const company = this.props.companyStore.collection[this.props.match.params.uuid];
-            window.confirm(`Are you sure you want to delete company ${company.name}?`) && this.props.deleteCompany(company, this.goBackToCompanyListPage);
+    const onCompanyDelete = () => {
+        if (props.match.params.uuid) {
+            window.confirm(`Are you sure you want to delete company ${company.name}?`) && props.deleteCompany(company, goBackToCompanyListPage);
             return;
         }
 
         console.error("Attempted to delete but company obj has no uuid");
     }
 
-    onCompanyEdit = () => {
-        if (this.props.match.params.uuid) {
-            const company = this.props.companyStore.collection[this.props.match.params.uuid];
-            this.props.history.push(`/com-form/${company.uuid}/`);
+    const onCompanyEdit = () => {
+        if (props.match.params.uuid) {
+            const company = props.companyStore.collection[props.match.params.uuid];
+            props.history.push(`/com-form/${company.uuid}/`);
             return;
         }
 
         console.error("Attempted to edit but no company uuid provided");
     }
 
-    renderPage() {
-        if (!this.props.match.params.uuid) {
+    const renderPage = () => {
+        if (!props.match.params.uuid) {
             return;
         }
 
-        const company = this.props.companyStore.collection[this.props.match.params.uuid];
+        const company = props.companyStore.collection[props.match.params.uuid];
         const applications = company ? company.applications as Array<IReference> : [];
 
         return (
             <div className={styles.UserCompanyPage}>
                 <Button
                     onClick={_ => {
-                        this.props.history.length > 1 ? this.props.history.goBack()  : this.props.history.push('/home/');
+                        props.history.length > 1 ? props.history.goBack()  : props.history.push('/home/');
                     }}
                 >
                     Back
@@ -104,9 +130,9 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
 
                 <CompanyComponent
                     company={company}
-                    onDeleteIconClicked={this.onCompanyDelete}
-                    onEditIconClicked={this.onCompanyEdit}
-                    actionButtonsDisabled={this.props.companyStore.requestStatus === RequestStatus.REQUESTING}
+                    onDeleteIconClicked={onCompanyDelete}
+                    onEditIconClicked={onCompanyEdit}
+                    actionButtonsDisabled={props.companyStore.requestStatus === RequestStatus.REQUESTING}
                 />
 
                 <h2>Your Applications</h2>
@@ -120,16 +146,15 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
 
                 {/* application list */}
                 {company ? applications.map((applicationRef, applicationsIndex) => {
-                    const application = this.props.applicationStore.collection[applicationRef as IReference];
-
-                    const applicationStatusList =  application ? (application.statuses as Array<IReference>).map((statusUuid) => this.props.applicationStatusStore.collection[statusUuid]) : undefined;
+                    const application = props.applicationStore.collection[applicationRef as IReference];
+                    const applicationStatusList =  application ? ((application.statuses || []) as Array<IReference>).map((statusUuid) => props.applicationStatusStore.collection[statusUuid]) : undefined;
                     return (
                         <ApplicationComponentController
                             key={applicationsIndex}
                             application={application}
                             company={company}
                             applicationStatusList={applicationStatusList}
-                            disableApplicationActionButtons={this.props.applicationStore.requestStatus === RequestStatus.REQUESTING}
+                            disableApplicationActionButtons={props.applicationStore.requestStatus === RequestStatus.REQUESTING}
                         />
                     )
                 }) : (
@@ -142,14 +167,14 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
         );
     }
 
-    renderController() {
-        if (!this.props.match.params.uuid) {
+    const renderController = () => {
+        if (!props.match.params.uuid) {
             return <h1>Company uuid not specified</h1>
         }
 
         // if such company in store, just take it
-        if (this.props.match.params.uuid in this.props.companyStore.collection) {
-            return this.renderPage();
+        if (props.match.params.uuid in props.companyStore.collection) {
+            return renderPage();
         }
 
         // need to really make sure company not found in database
@@ -157,8 +182,8 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
         let someStillRequesting: boolean = false;
         for (const companyGroupText of Object.values(labelTypesMapToCompanyGroupTypes)) {
             if (
-                this.props[companyGroupText].requestStatus !== RequestStatus.SUCCESS ||
-                this.props[companyGroupText].requestStatus !== RequestStatus.FAILURE
+                props[companyGroupText].requestStatus !== RequestStatus.SUCCESS ||
+                props[companyGroupText].requestStatus !== RequestStatus.FAILURE
             ) {
                 someStillRequesting = true;
                 break;
@@ -167,22 +192,20 @@ class UserComAppPage extends Component<IUserComAppPageProps> {
 
         if (
             !someStillRequesting &&
-            !(this.props.match.params.uuid in this.props.companyStore.collection)
+            !(props.match.params.uuid in props.companyStore.collection)
         ) {
             return <h1>Company not found</h1>
         }
 
-        return this.renderPage();
+        return renderPage();
     }
 
     // handle invalid company uuid given in url
-    render() {
-        return (
-            <div className="UserComAppPageContainer">
-                {this.renderController()}
-            </div>
-        );
-    }
+    return (
+        <div className="UserComAppPageContainer">
+            {renderController()}
+        </div>
+    );
 }
 
 const mapStateToProps = (store: IRootState) => {
@@ -198,32 +221,35 @@ const mapStateToProps = (store: IRootState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
+const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application | Company>>) => {
     // actionName = (newState for that action & its type) => dispatch(ActionCreatorFunction(newState))
     return {
         createApplication: (
             applicationFormData: Application,
-            callback?: Function
+            callback?: (jsonResponse: JsonResponseType<Application>) => void
         ) =>
             dispatch(
                 ApplicationActionCreators[CrudType.CREATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationFormData, callback)
+                ].action({
+                    objectClassInstance: applicationFormData,
+                    successCallback: callback
+                })
             )
         ,
-        deleteCompany: (companyToDelete: Company, callback?: Function) =>
+        deleteCompany: (companyToDelete: Company, successCallback?: (jsonResponse: JsonResponseType<Company>) => void) =>
             dispatch(
-                CompanyActionCreators[CrudType.DELETE][RequestStatus.TRIGGERED].action(
-                    companyToDelete,
-                    callback
-                )
+                CompanyActionCreators[CrudType.DELETE][RequestStatus.TRIGGERED].action({
+                    objectClassInstance: companyToDelete,
+                    successCallback
+                })
             ),
-        updateCompany: (companyToUpdate: Company, callback?: Function) =>
+        updateCompany: (companyToUpdate: Company, successCallback?: (jsonResponse: JsonResponseType<Company>) => void) =>
             dispatch(
-                CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
-                    companyToUpdate,
-                    callback
-                )
+                CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action({
+                    objectClassInstance: companyToUpdate,
+                    successCallback
+                })
             )
     };
 };

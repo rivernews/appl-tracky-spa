@@ -5,7 +5,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
-import { IObjectStore, IObjectAction } from "../../state-management/types/factory-types";
+import { IObjectStore, IObjectAction, JsonResponseType } from "../../state-management/types/factory-types";
 // data models
 import { ApplicationStatus } from "../../data-model/application-status/application-status";
 import { ApplicationStatusLink } from "../../data-model/application-status-link";
@@ -13,7 +13,7 @@ import { Application } from "../../data-model/application/application";
 import { ApplicationStatusActionCreators } from "../../state-management/action-creators/root-actions";
 
 /** Rest API */
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { CrudType, ISingleRestApiResponse, RequestStatus } from "../../utils/rest-api";
 
 /** Components */
 import {
@@ -37,12 +37,12 @@ interface IApplicationStatusFormComponentProps extends RouteComponentProps {
     applicationStatusStore: IObjectStore<ApplicationStatus>
     createApplicationStatus: (
         applicationStatusFormData: ApplicationStatus,
-        successCallback?: Function,
+        successCallback?: (jsonResponse: ISingleRestApiResponse<ApplicationStatus>) => void,
         finalCallback?: Function,
     ) => void;
     updateApplicationStatus: (
         applicationStatusFormData: ApplicationStatus,
-        successCallback?: Function,
+        successCallback?: (jsonResponse: ISingleRestApiResponse<ApplicationStatus>) => void,
         finalCallback?: Function,
     ) => void;
 }
@@ -121,24 +121,31 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<ApplicationStatus> 
     return {
         createApplicationStatus: (
             applicationStatusFormData: ApplicationStatus,
-            successCallback?: Function,
-            failureCallback?: Function,
+            successCallback?: (jsonResponse: ISingleRestApiResponse<ApplicationStatus>) => void,
+            finalCallback?: Function
         ) =>
             dispatch(
                 ApplicationStatusActionCreators[CrudType.CREATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationStatusFormData, successCallback, undefined, failureCallback)
+                ].action({
+                    objectClassInstance: applicationStatusFormData, 
+                    successCallback: (successCallback as ( (jsonResponse: JsonResponseType<ApplicationStatus>) => void )) ,
+                    finalCallback})
             )
         ,
         updateApplicationStatus: (
             applicationStatusFormData: ApplicationStatus,
-            successCallback?: Function,
-            failureCallback?: Function,
+            successCallback?: (jsonResponse: ISingleRestApiResponse<ApplicationStatus>) => void,
+            finalCallback?: Function
         ) =>
             dispatch(
                 ApplicationStatusActionCreators[CrudType.UPDATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationStatusFormData, successCallback, undefined, failureCallback)
+                ].action({
+                    objectClassInstance: applicationStatusFormData,
+                    successCallback: (successCallback as ( (jsonResponse: JsonResponseType<ApplicationStatus>) => void )),
+                    finalCallback
+                })
             )
         ,
     };

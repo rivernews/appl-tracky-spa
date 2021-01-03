@@ -33,7 +33,7 @@ export class SocialAuthLogoutButton extends Component<
                         <Button
                             onClick={this.props.onClick}
                             unelevated
-                            icon={<MaterialIcon hasRipple icon="eject" />}
+                            icon={<MaterialIcon icon="eject" />}
                             disabled={this.props.disabled}
                         >
                             Logout

@@ -21,27 +21,25 @@ import Skeleton from 'react-loading-skeleton';
 import styles from './company-list-item.module.css';
 import { Typography } from "@material-ui/core";
 import CompanyListItemCheckBox from "./company-list-item-checkbox";
+import { Link } from "react-router-dom";
 
 
 interface ICompanyListItemProps {
     company?: Company;
     applications?: Array<Application>
-    onClick?: (uuid: string) => void
 }
 
 const CompanyListItem = (props: ICompanyListItemProps) => {
-    const onClick = () => {
-        props.onClick && props.company && props.onClick(props.company.uuid);
-    }
-
     return (
         <MaterialUIListItem className={false ? styles.companyCard : ''}>
             <div className={styles.companyCardContent}>
-                <MaterialUIButton onClick={onClick}>
-                    <Typography variant="h5">
-                        {props.company ? props.company.name : <Skeleton duration={1.1} width={`50vmin`} />}
-                    </Typography>
-                </MaterialUIButton>
+                <Link to={`/com-app/${props?.company?.uuid}`}>
+                    <MaterialUIButton>
+                        <Typography variant="h5">
+                            {props.company ? props.company.name : <Skeleton duration={1.1} width={`50vmin`} />}
+                        </Typography>
+                    </MaterialUIButton>
+                </Link>
 
                 {props.company ? (
                     props.company.labels.length && props.company.labels[0].text ? (

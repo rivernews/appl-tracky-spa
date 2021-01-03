@@ -6,7 +6,7 @@ import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
 import { CrudType, RequestStatus, ISingleRestApiResponse } from "../../utils/rest-api";
 import {
-    IObjectAction, ObjectRestApiJsonResponse
+    IObjectAction, JsonResponseType, ObjectRestApiJsonResponse
 } from "../../state-management/types/factory-types";
 // data models
 import { Company, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
@@ -24,6 +24,7 @@ import { FormInputFieldMeta } from "../form-factory/form-input-field/form-input-
 import { FormLinkFieldMeta } from "../form-factory/form-link-field/form-link-field-meta";
 import { FormAddressFieldMeta } from "../form-factory/form-address-field/form-address-field-meta";
 import { FormLabelFieldMeta } from "../form-factory/form-label-field/form-label-field-meta";
+import { FormRichTextFieldMeta } from "../form-factory/form-rich-text-field/form-rich-text-field-meta";
 
 
 interface ICompanyFormComponentProps {
@@ -33,7 +34,7 @@ interface ICompanyFormComponentProps {
 
     /** redux */
     createCompany: (companyFormData: Company, successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void, finalCallback?: Function) => void;
-    updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function) => void;
+    updateCompany: (companyFormData: Company, successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void, finalCallback?: Function, updateFromCompany?: Company) => void;
 }
 
 class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
@@ -64,6 +65,11 @@ class CompanyFormComponent extends Component<ICompanyFormComponentProps> {
             new FormLinkFieldMeta({
                 fieldName: "home_page",
                 label: "Organization Website"
+            }),
+
+            new FormRichTextFieldMeta({
+                fieldName: "notes",
+                label: "Quick Notes (Company Background, Culture, etc)",
             }),
         ];
 
@@ -105,9 +111,10 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
         createCompany: (companyFormData: Company, successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void, finalCallback?: Function) => (
             // create company object in pool redux
             dispatch(
-                CompanyActionCreators[CrudType.CREATE][RequestStatus.TRIGGERED].action(
-                    companyFormData,
-                    (jsonResponse: ISingleRestApiResponse<Company>) => {
+                CompanyActionCreators[CrudType.CREATE][RequestStatus.TRIGGERED].action({
+                    objectClassInstance: companyFormData,
+                    successCallback: (jsonResponse: JsonResponseType<Company>) => {
+                        jsonResponse = jsonResponse as ISingleRestApiResponse<Company>;
                         // create ref in grouped redux
                         dispatch(
                             // no api calls, so don't dispatch TRIGGER action, just SUCCESS action
@@ -116,22 +123,24 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
                         // Only TRIGGER/SUCCESS has success callback. Since this is CREATE/SUCCESS, we can only call the func here. This is necessary because the form component rely on this callback to carry out order-critical operations, like page transition after create, etc.
                         successCallback && successCallback(jsonResponse);
                     },
-                    undefined,
                     finalCallback
-                )
+                })
             )
         ),
-        updateCompany: (companyFormData: Company, successCallback?: Function, finalCallback?: Function, updateFromCompany?: Company) => dispatch(
-            CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action(
-                companyFormData,
-                successCallback,
-                undefined,
+        updateCompany: (
+            companyFormData: Company,
+            successCallback?: (jsonResponse: ISingleRestApiResponse<Company>) => void,
+            finalCallback?: Function,
+            updateFromCompany?: Company
+        ) => dispatch(
+            CompanyActionCreators[CrudType.UPDATE][RequestStatus.TRIGGERED].action({
+                objectClassInstance: companyFormData,
+                successCallback: successCallback as ((jsonResponse: JsonResponseType<Company>) => void),
                 finalCallback,
-                undefined,
-                {
+                triggerActionOptions: {
                     updateFromObject: updateFromCompany
                 }
-            )
+            })
         )
     };
 };

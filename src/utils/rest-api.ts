@@ -20,6 +20,8 @@ export enum CrudType {
     DELETE = "delete",
 }
 
+export const CrudKeywords = Object.values(CrudType) as Array<CrudType>;
+
 export enum RestMethod {
     POST = "post",
     GET = "get",
@@ -57,15 +59,17 @@ export interface IRequestParams<Schema> {
 
 export interface IListRestApiResponse<Schema> {
     count: number;
-    next: any;
-    previous: any;
+    next: string;
+    previous: string;
     results: Array<TObject<Schema>>;
 }
 
 export type ISingleRestApiResponse<Schema> = TObject<Schema>;
 
 export function IsSingleRestApiResponseTypeGuard<Schema>(
-    response: ISingleRestApiResponse<Schema> | IListRestApiResponse<Schema>
+    response: ISingleRestApiResponse<Schema> | IListRestApiResponse<Schema> |
+        // used by GroupedCompanyActionCreators
+        { uuid: string }
 ): response is ISingleRestApiResponse<Schema> {
     return (<ISingleRestApiResponse<Schema>>response).uuid !== undefined;
 }

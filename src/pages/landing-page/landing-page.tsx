@@ -74,7 +74,7 @@ class LandingPage extends Component<ILandingPageProps> {
                             onClick={this.onStaffLoginClick}
                             unelevated
                             icon={
-                                <MaterialIcon hasRipple icon="account_circle" />
+                                <MaterialIcon icon="account_circle" />
                             }
                         >
                             Sign in
@@ -92,7 +92,7 @@ class LandingPage extends Component<ILandingPageProps> {
                             target="_blank"
                             unelevated
                             icon={
-                                <MaterialIcon hasRipple icon="code" />
+                                <MaterialIcon icon="code" />
                             }
                         >
                             Github Repository

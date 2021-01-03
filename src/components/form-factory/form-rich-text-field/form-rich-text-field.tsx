@@ -1,13 +1,10 @@
 import React, { Component } from "react";
 
 /** Components */
-// mdc react icon
-import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
-import TextField, { Input } from "@material/react-text-field";
 // formik
 import {
     Field, FieldProps,
@@ -20,6 +17,7 @@ import { IFormRichTextFieldProps } from "./form-rich-text-field-meta";
 import CKEditor from '@shaungc/custom-ckeditor5-react';
 // import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
 import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+import Typography from "@material-ui/core/Typography";
 
 
 export class FormRichTextField extends Component<IFormRichTextFieldProps> {
@@ -31,7 +29,7 @@ export class FormRichTextField extends Component<IFormRichTextFieldProps> {
                     render={({ field, form }: FieldProps<number | string>) => {
                         return (
                             <>
-                                <h4>{this.props.label}</h4>
+                                <Typography variant="overline">{this.props.label}</Typography>
                                 <CKEditor
                                     editor={BalloonEditor}
                                     data={field.value}

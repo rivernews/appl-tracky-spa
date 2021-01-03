@@ -2,8 +2,6 @@ import React, { Component } from "react";
 
 /** Components */
 import { GoogleLogin } from "react-google-login";
-// mdc react icon
-import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
@@ -50,7 +48,6 @@ export class SocialAuthLoginButton extends Component<
                             }
                             unelevated
                             icon={
-                                // <MaterialIcon hasRipple icon="account_circle" />
                                 <FontAwesomeIcon icon={faGoogle} />
                             }
                             disabled={this.props.disabled}

@@ -8,6 +8,7 @@ import {
 } from "../../utils/rest-api";
 import { Schema } from "normalizr";
 import { IReference } from "../../data-model/base-model";
+import { IGraphQLQueryArgs, IGraphQLQueryListResponse } from "../../utils/graphql-api";
 
 
 /** state & store */
@@ -29,11 +30,46 @@ export interface IObjectStore<Schema> {
 
 /** action */
 
-export type IObjectRestApiReduxFactoryActions = {
-    [restfulKeyword: string]: {
-        [asyncKeyword: string]: {
+export interface IObjectRestApiReduxFactoryActions<ObjectApiSchema>  {
+    [crudType: string]: {
+        [RequestStatus.TRIGGERED]: {
             actionTypeName: string;
-            action: Function;
+            action:
+                (args:IObjectActionCreatorArgs<ObjectApiSchema>) => IObjectAction<ObjectApiSchema>;
+            saga?: () => SagaIterator;
+        };
+
+        [RequestStatus.REQUESTING]: {
+            actionTypeName: string;
+            action: () => IObjectAction<ObjectApiSchema>;
+            saga?: () => SagaIterator;
+        };
+
+        [RequestStatus.SUCCESS]: {
+            actionTypeName: string;
+            action(
+                jsonResponse?:
+                    ObjectRestApiJsonResponse<ObjectApiSchema> |
+                    // used by GroupedCompanyActionCreators
+                    IObjectBase |
+                    // used by batch operation e.g. `BATCHCREATE`, `BATCHUPDATE`
+                    Array<IObjectBase> |
+                    // used by GroupedCompanyActionCreators
+                    { results: Array<ObjectApiSchema> | Array<IObjectBase>},
+                triggerFormData?: TObject<ObjectApiSchema> | Array<TObject<ObjectApiSchema>> |
+                    // used by GroupedCompanyActionCreators (DELETE, ...)
+                    IObjectBase |
+                    // used by batch delete (see `select-company-saga.ts`)
+                    Array<IObjectBase> |
+                    // used by GroupedCompanyActionCreators
+                    string[]
+            ): IObjectAction<ObjectApiSchema>;
+            saga?: () => SagaIterator;
+        };
+
+        [RequestStatus.FAILURE]: {
+            actionTypeName: string;
+            action: (error: any) => IObjectAction<ObjectApiSchema>;
             saga?: () => SagaIterator;
         };
     };
@@ -53,31 +89,53 @@ export interface IObjectAction<Schema> extends Action {
     finalCallback?: Function;
 
     // for custumized api call
-    absoluteUrl?: string
+    // only for TRIGGER action
+    absoluteUrl?: string;
+    graphqlFunctionName?: string;
+    graphqlArgs?: IGraphQLQueryArgs;
 
     // misc options that when dispatch action can pass additional parameters
     triggerActionOptions?: ITriggerActionOptions<Schema>
     
     payload: {
-        formData?: TObject<Schema> | Array<TObject<Schema>>;
+        formData?:
+            TObject<Schema> | 
+            // used by GroupedCompanyActionCreators
+            IObjectBase |
+            Array<TObject<Schema>>;
         requestStatus: RequestStatus;
         error?: any;
     };
+}
+
+export interface IObjectActionCreatorArgs<ObjectApiSchema> {
+    objectClassInstance?: ObjectApiSchema |
+        // used by GroupedCompanyActionCreators
+        IObjectBase,
+    successCallback?: (jsonResponse: JsonResponseType<ObjectApiSchema>) => void,
+    failureCallback?: (error: any) => void,
+    finalCallback?: Function,
+    absoluteUrl?: string,
+    triggerActionOptions?: ITriggerActionOptions<ObjectApiSchema>
+
+    // if specified, use graphql client instead of rest api client for fetching
+    graphqlFunctionName?: string;
+    graphqlArgs?: IGraphQLQueryArgs;
 }
 
 
 /** factory API */
 
 export interface IRestApiReduxFactory<Schema> {
-    actions: IObjectRestApiReduxFactoryActions;
+    actions: IObjectRestApiReduxFactoryActions<Schema>;
     storeReducer: Reducer<IObjectStore<Schema>>
     sagas: Array<() => SagaIterator>;
 }
 
 
-export type ObjectRestApiJsonResponse<Schema> = IListRestApiResponse<TObject<Schema>> | ISingleRestApiResponse<TObject<Schema>>
-// TODO: remove any
-export type JsonResponseType<Schema> = ObjectRestApiJsonResponse<Schema> | any;
+export type ObjectRestApiJsonResponse<Schema> = IListRestApiResponse<TObject<Schema>> | ISingleRestApiResponse<TObject<Schema>>;
+
+export type JsonResponseType<Schema> = ObjectRestApiJsonResponse<Schema> | IGraphQLQueryListResponse<Schema>;
 
 export interface ISuccessSagaHandlerArgs<Schema> {
     data?: Array<TObject<Schema>> | TObject<Schema>
@@ -106,11 +164,15 @@ export interface ISagaFactoryOptions<ObjectSchema> {
         objectEntityKey: string
 
         relationalEntityReduxActionsMap: {
-            [relationalEntityKeys: string]: IObjectRestApiReduxFactoryActions
+            // TODO: let caller specify each schema of relational objects
+            // to replace `any` here
+            
+            // make sure to check `RestApiSagaFactory` as well, need to specify schemas there too
+            [relationalEntityKeys: string]: IObjectRestApiReduxFactoryActions<any>
         }
     }
 }
 
 export interface ITriggerActionOptions<Schema> {
-    updateFromObject: TObject<Schema>
+    updateFromObject?: TObject<Schema>
 }

@@ -4,10 +4,13 @@ import React, { Component } from "react";
 import { Company } from "../../data-model/company/company";
 
 /** Components */
-import MaterialIcon from "@material/react-material-icon";
-// mdc-react icon button
-import '@material/react-icon-button/dist/icon-button.css';
-import IconButton from '@material/react-icon-button';
+import CKEditor from '@shaungc/custom-ckeditor5-react';
+import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import OpenInNewTabIcon from '@material-ui/icons/Launch';
+import IconButton from '@material-ui/core/IconButton';
 // mdc-chips
 import { ChipSet, Chip } from '@material/react-chips';
 import "@material/react-chips/dist/chips.css";
@@ -49,17 +52,16 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
 
                     {/* company link */}
                     {
-                        company ? (
+                        company?.home_page ? (
                             <IconButton
                                 disabled={company.home_page.url == "#"}
-                                isLink={company.home_page.url != "#"} // isLink=true will make `disabled` useless, a bug
                                 target="_blank"
                                 href={company.home_page.url && company.home_page.url.includes('//') ? company.home_page.url : `//${company.home_page.url}`}>
-                                <MaterialIcon hasRipple icon="launch" />
+                                <OpenInNewTabIcon />
                             </IconButton>
                         ) : (
                                 <IconButton disabled>
-                                    <MaterialIcon hasRipple icon="launch" />
+                                    <OpenInNewTabIcon />
                                 </IconButton>
                             )
                     }
@@ -68,15 +70,33 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                     {
                         <div className="CompanyActionCreators">
                             <IconButton disabled={this.props.actionButtonsDisabled} onClick={this.props.onEditIconClicked}>
-                                <MaterialIcon hasRipple icon="edit" />
+                                <EditIcon />
                             </IconButton>
                             <IconButton disabled={this.props.actionButtonsDisabled} onClick={this.props.onDeleteIconClicked}>
-                                <MaterialIcon hasRipple icon="delete" />
+                                <DeleteIcon />
                             </IconButton>
                         </div>
                     }
                 </div>
-                <div className={styles.companyTitleCaption}>{company ? company.hq_location.place_name : <Skeleton />}{company ? company.hq_location.full_address : <Skeleton />}</div>
+                <div className={styles.companyTitleCaption}>{company?.hq_location ? company.hq_location.place_name : <Skeleton />}{company?.hq_location ? company.hq_location.full_address : <Skeleton />}</div>
+
+                {/* notes for company */}
+                <div>
+                    <h2>Quick Notes (Company Background, Culture, etc)</h2>
+                    {company ? (
+                        company.notes ? (
+                            <CKEditor
+                                editor={BalloonEditor}
+                                disabled={true}
+                                data={company.notes}
+                            />
+                        ) : <p>No company quick notes yet</p>
+                    ) : 
+                    <>
+                        <div><Skeleton width="70vmin" /></div>
+                        <div><Skeleton width="30vmin" /></div>
+                    </>}
+                </div>
             </div>
         );
     }

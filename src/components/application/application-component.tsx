@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Application } from "../../data-model/application/application";
 import { IRootState } from "../../state-management/types/root-types";
-import { IObjectAction, IObjectStore } from "../../state-management/types/factory-types";
+import { IObjectAction, IObjectStore, JsonResponseType } from "../../state-management/types/factory-types";
 import { Dispatch } from "redux";
 
 /** data model */
@@ -15,12 +15,16 @@ import { Company } from "../../data-model/company/company";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 
 /** Components */
-// mdc react icon
-import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
 import Button from "@material/react-button";
-import IconButton from "@material/react-icon-button";
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import GlobeIcon from '@material-ui/icons/Language';
+import OpenInNewTabIcon from '@material-ui/icons/Launch';
+import PlusIcon from '@material-ui/icons/Add';
+import IconButton from '@material-ui/core/IconButton';
+
 import { ApplicationStatusComponentContainer } from "../application-status/application-status-component";
 import { ApplicationFormComponentContainer } from "./application-form-component";
 import {
@@ -56,7 +60,7 @@ interface IApplicationComponentProps {
 
     deleteApplication: (
         applicationToDelete: Application,
-        callback?: Function
+        callback?: (jsonResponse: JsonResponseType<Application>) => void,
     ) => void;
 }
 
@@ -84,7 +88,7 @@ export class ApplicationComponent extends Component<
                         });
                     }}
                     unelevated
-                    icon={<MaterialIcon hasRipple icon="add" />}
+                    icon={<PlusIcon />}
                 >
                     Add Application
                 </Button>
@@ -139,39 +143,33 @@ export class ApplicationComponent extends Component<
         return (
             <div className="application-component-display">
                 {/* application display view */}
-                <h3>{application ? application.position_title : <Skeleton />}
+                <h2>{application ? application.position_title : <Skeleton />}
                     {/* external link icon */}
                     {
-                        application ? (
+                        application?.job_description_page ? (
                             <IconButton
                                 disabled={application.job_description_page.url == "#"}
-                                isLink={application.job_description_page.url != "#"} target="_blank" href={application.job_description_page.url && application.job_description_page.url.includes("//") ?
-                                    application.job_description_page.url :
-                                    `//${application.job_description_page.url}`}
                             >
-                                <MaterialIcon hasRipple icon="launch" />
+                                <OpenInNewTabIcon />
                             </IconButton>
                         ) : (
                                 <IconButton disabled>
-                                    <MaterialIcon hasRipple icon="launch" />
+                                    <OpenInNewTabIcon />
                                 </IconButton>
                             )
                     }
 
                     {/* external link icon */}
                     {
-                        application ? (
+                        application?.job_source ? (
                             <IconButton
                                 disabled={application.job_source.url == "#"}
-                                isLink={application.job_source.url != "#"} target="_blank" href={application.job_source.url && application.job_source.url.includes("//") ?
-                                    application.job_source.url :
-                                    `//${application.job_source.url}`}
                             >
-                                <MaterialIcon hasRipple icon="language" />
+                                <GlobeIcon />
                             </IconButton>
                         ) : (
                                 <IconButton disabled>
-                                    <MaterialIcon hasRipple icon="language" />
+                                    <GlobeIcon />
                                 </IconButton>
                             )
                     }
@@ -187,11 +185,11 @@ export class ApplicationComponent extends Component<
                                     });
                                 }}
                             >
-                                <MaterialIcon hasRipple icon="edit" />
+                                <EditIcon />
                             </IconButton>
                         ) : (
                                 <IconButton disabled>
-                                    <MaterialIcon hasRipple icon="edit" />
+                                    <EditIcon />
                                 </IconButton>
                             )
                     }
@@ -204,17 +202,19 @@ export class ApplicationComponent extends Component<
                                     window.confirm(`Are you sure you want to delete ${application.position_title}?`) && this.props.deleteApplication(application)
                                 }
                             >
-                                <MaterialIcon hasRipple icon="delete" />
+                                <DeleteIcon />
                             </IconButton>
                         ) : (
                                 <IconButton disabled>
-                                    <MaterialIcon hasRipple icon="delete" />
+                                    <DeleteIcon />
                                 </IconButton>
                             )
                     }
-                </h3>
+                </h2>
 
+                {/* general notes */}
                 <div className="applicationNotesRichText">
+                    <h3>Quick Notes</h3>
                     {application ? (application.notes ? (
                         <CKEditor
                             editor={BalloonEditor}
@@ -231,6 +231,29 @@ export class ApplicationComponent extends Component<
                                 <div><Skeleton width="70vmin" /></div>
                                 <div><Skeleton width="30vmin" /></div>
                                 <div><Skeleton width="50vmin" /></div>
+                            </div>
+                        )}
+                </div>
+
+                {/* job description notes */}
+                <div className="applicationNotesRichText">
+                    <h3>Job Description Notes</h3>
+                    {application ? (application.job_description_notes ? (
+                        <CKEditor
+                            editor={BalloonEditor}
+                            disabled={true}
+                            data={application.job_description_notes}
+                        />
+
+                    ) : (
+                            <p>
+                                No job description notes yet.
+                            </p>
+                        )) : (
+                            <div>
+                                <div><Skeleton width="60vmin" /></div>
+                                <div><Skeleton width="30vmin" /></div>
+                                <div><Skeleton width="80vmin" /></div>
                             </div>
                         )}
                 </div>
@@ -282,12 +305,15 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
     return {
         deleteApplication: (
             applicationToDelete: Application,
-            callback?: Function
+            callback?: (jsonResponse: JsonResponseType<Application>) => void
         ) =>
             dispatch(
                 ApplicationActionCreators[CrudType.DELETE][
                     RequestStatus.TRIGGERED
-                ].action(applicationToDelete, callback)
+                ].action({
+                    objectClassInstance: applicationToDelete, 
+                    successCallback: callback
+                })
             )
     };
 };

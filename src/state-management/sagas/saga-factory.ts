@@ -1,25 +1,25 @@
-import { IObjectBase, IObjectRestApiReduxFactoryActions, JsonResponseType, ITriggerActionOptions, IObjectAction, ISuccessSagaHandlerArgs, ISagaFactoryOptions } from "../types/factory-types";
+import { IObjectBase, IObjectRestApiReduxFactoryActions, IObjectAction, ISuccessSagaHandlerArgs, ISagaFactoryOptions, TObject } from "../types/factory-types";
 
-import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, ISingleRestApiResponse, IListRestApiResponse, IRequestParams, RestApiService, CrudMapToRest } from "../../utils/rest-api";
+import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, CrudKeywords, IRequestParams, RestApiService, CrudMapToRest } from "../../utils/rest-api";
 import { SagaIterator } from "redux-saga";
 import { actionChannel, take, call, put } from "redux-saga/effects";
 import { normalize } from "normalizr";
+import { GraphQLApiService } from "../../utils/graphql-api";
 
 
 export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
     /** should have uuid */ objectName: string,
-    ObjectRestApiActions: IObjectRestApiReduxFactoryActions,
+    ObjectRestApiActions: IObjectRestApiReduxFactoryActions<ObjectRestApiSchema>,
     sagaFactoryOptions: ISagaFactoryOptions<ObjectRestApiSchema>
 ): Array<() => SagaIterator> => {
-    const crudKeywords = Object.values(CrudType) as Array<CrudType>;
-
-    const sagas = crudKeywords.map((crudKeyword) => {
+    
+    const sagas = CrudKeywords.map((crudKeyword) => {
 
         const sagaHandler = function* (
             triggerAction: IObjectAction<ObjectRestApiSchema>
         ) {
-            let formData: ObjectRestApiSchema | Array<ObjectRestApiSchema> | undefined = triggerAction.payload.formData;
-            const absoluteUrl = triggerAction.absoluteUrl;
+            let formData = triggerAction.payload.formData as ObjectRestApiSchema | Array<ObjectRestApiSchema> | undefined;
+            const { absoluteUrl, graphqlFunctionName, graphqlArgs } = triggerAction;
 
             yield put(
                 ObjectRestApiActions[crudKeyword][
@@ -29,25 +29,52 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
 
             try {
                 // api call
-                let jsonResponse: JsonResponseType<ObjectRestApiSchema> = yield call(
-                    (<(params: IRequestParams<ObjectRestApiSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)]),
-                    {
-                        data: formData,
-                        objectName,
-                        absoluteUrl,
-                    }
-                );
-
-                if (jsonResponse.status && jsonResponse.status >= 400) {
-                    console.error("Server error, see message in res.");
-                    throw new Error("Server error, see message in res.");
-                }
-
-                // if there is .next in res, then it's paginated data and we should perform a next request to next page data
-                if (jsonResponse.next) {
-                    yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action(
-                        undefined, undefined, undefined, undefined, jsonResponse.next
+                
+                // note that yield will always return `any`
+                let jsonResponse = !(graphqlFunctionName) ? 
+                    (yield call(
+                        <(params: IRequestParams<ObjectRestApiSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)],
+                        {
+                            data: formData,
+                            objectName,
+                            absoluteUrl,
+                        }
+                    )) :
+                    (yield call(
+                        GraphQLApiService.fetchDashboardCompanyData,
+                        graphqlArgs || {}
                     ));
+
+                // TODO: currently `status` not available, how to better handle error?
+                // if (jsonResponse.status && jsonResponse.status >= 400) {
+                //     console.error("Server error, see message in res.");
+                //     throw new Error("Server error, see message in res.");
+                // }
+                
+                // deal with pagination
+                //
+                // rest api
+                if (!graphqlFunctionName) {
+                    // if there is .next in res, then it's paginated data and we should perform a next request to next page data
+                    if (jsonResponse.next) {
+                        yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action({
+                            absoluteUrl: jsonResponse.next
+                        }));
+                    }
+                } else {
+                    // graphql api
+                    // if there is .pageInfo.endCursor, then use that for next page data
+                    if (jsonResponse.pageInfo.endCursor && jsonResponse.count < jsonResponse.totalCount) {
+                        yield put(
+                            ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action({
+                               graphqlFunctionName: 'fetchDashboardCompanyData',
+                               graphqlArgs: {
+                                   ...(graphqlArgs || {}),
+                                   after: jsonResponse.pageInfo.endCursor
+                               }
+                            })
+                        );
+                    }
                 }
 
                 // normalize primary object data (for relational object normalizing, will do it later) if  normalize manifest speciified
@@ -77,7 +104,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                     const normalizeDataSource = normalize(dataSource, normalizeDataSourceSchema);
 
                     // place noramlized data to variables to fit in existing framework
-                    normalizeData = Object.values(normalizeDataSource.entities[normalizeObjectEntityKey]);
+                    normalizeData = Object.values(normalizeDataSource.entities[normalizeObjectEntityKey] || {});
                     if (crudKeyword === CrudType.DELETE) {
                         formData = normalizeData.length === 1 ? normalizeData[0] : normalizeData;
                     }
@@ -108,6 +135,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                         case CrudType.LIST:
                         // relational objects should also apply LIST
                         case CrudType.CREATE:
+                        case CrudType.READ:
                             // when there's a fresh new object created, if there're relational objects present then will also apply LIST to them
                             for (const relationalEntityKey in sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap) {
                                 if (
@@ -115,20 +143,23 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                                     // so don't compare length; just compare its key existence
                                     !relationalNormalizeData[relationalEntityKey]
                                 ) {
-                                    process.env.NODE_ENV === 'development' && console.log('skip for relational key', relationalEntityKey)
+                                    // process.env.NODE_ENV === 'development' && console.log('skip for relational key', relationalEntityKey, relationalNormalizeData)
                                     continue;
                                 }
 
-                                const dispatchResponseData = IsSingleRestApiResponseTypeGuard(jsonResponse) ? (
-                                    relationalNormalizeData[relationalEntityKey][0]
-                                ) : {
+                                // normalizer will put related objects as Arrays in `relationalNormalizeData`,
+                                // even if the relational field is not an array field on parent object.
+                                // since we just need to store all related objects into their redux store bucket,
+                                // we use action of `CrudType.LIST` to push them all in redux, and don't care about single/array
+                                // we treat objects of all related types as array here
+                                const dispatchResponseData = {
                                         results: relationalNormalizeData[relationalEntityKey]
                                     };
-
-                                const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions;
+                                
+                                const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions<IObjectBase>;
 
                                 yield put(
-                                    relationalActions[crudKeyword][RequestStatus.SUCCESS].action(dispatchResponseData)
+                                    relationalActions[CrudType.LIST][RequestStatus.SUCCESS].action(dispatchResponseData)
                                 );
                             }
                             break;
@@ -148,12 +179,12 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                             // here we are only cleaning up / cascade delete the frontend redux store
 
                             for (const relationalEntityKey in sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap) {
-                                const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions;
+                                const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions<IObjectBase>;
 
                                 // relational objects should apply DELETE action -- this is a bulk deletion, not single delete
                                 const dispatchDeleteData = relationalNormalizeData[relationalEntityKey] ? relationalNormalizeData[relationalEntityKey] : (
                                     formData && !Array.isArray(formData) && formData.hasOwnProperty(relationalEntityKey) ? (<ObjectRestApiSchema>formData)[relationalEntityKey as keyof ObjectRestApiSchema] : []
-                                );
+                                ) as Array<TObject<IObjectBase>>;
 
                                 yield put(
                                     relationalActions[CrudType.DELETE][RequestStatus.SUCCESS].action(undefined, dispatchDeleteData)
@@ -216,6 +247,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                     triggerAction.successCallback(jsonResponse);
                 }
             } catch (error) {
+                console.error('o-oh! error in saga:', error)
                 // error state
                 yield put(
                     ObjectRestApiActions[crudKeyword][

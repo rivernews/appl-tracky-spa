@@ -17,7 +17,6 @@ import * as Yup from 'yup';
 // base field
 import { FormBaseFieldMeta } from "./form-base-field/form-base-field-meta";
 import { ISingleRestApiResponse } from "../../utils/rest-api";
-import { JsonResponseType } from "../../state-management/types/factory-types";
 
 
 export enum ActionButtonType {
@@ -34,7 +33,7 @@ export class FormActionButtonProps {
 }
 
 export interface IFormFactoryProps<IDataModel> {
-    onSubmitSuccess?: (jsonResponse: JsonResponseType<IDataModel>) => void;
+    onSubmitSuccess?: (jsonResponse: ISingleRestApiResponse<IDataModel>) => void;
 
     // pass in either `initialValues` or `initialInstance`, this is important for yup to render error message. If no initial info at all, yup will not display errors properly.
     // `initialValues` should be used only for customize form; for data model forms please use `initialInstance` so update & create form can be handled together
@@ -60,7 +59,7 @@ export interface IFormFactoryProps<IDataModel> {
     ) => void;
     updateInstanceTriggerAction?: (
         instance: IDataModel,
-        successCallback?: Function,
+        successCallback?: (jsonResponse: ISingleRestApiResponse<IDataModel>) => void,
         finalCallback?: Function,
         updateFromCompany?: IDataModel
     ) => void;

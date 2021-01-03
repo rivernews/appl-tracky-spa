@@ -12,6 +12,7 @@ interface IApplicationProps {
     job_source?: Link;
     labels?: any;
     notes?: string;
+    job_description_notes?: string;
     statuses?: Array<ApplicationStatus> | Array<IReference>;
 }
 
@@ -23,6 +24,7 @@ export class Application extends BaseModel {
     public job_source: Link;
     public labels: any;
     public notes: string;
+    public job_description_notes: string;
     public statuses: Array<ApplicationStatus> | Array<IReference>;
 
     constructor({
@@ -33,6 +35,7 @@ export class Application extends BaseModel {
         job_source = new Link({}),
         labels = {},
         notes = "",
+        job_description_notes = "",
         statuses = [],
         ...args
     }: IApplicationProps & IBaseModelProps) {
@@ -44,6 +47,7 @@ export class Application extends BaseModel {
         this.job_source = job_source;
         this.labels = labels;
         this.notes = notes;
+        this.job_description_notes = job_description_notes;
         this.statuses = statuses;
     }
 
@@ -53,6 +57,7 @@ export class Application extends BaseModel {
             job_description_page: Link.schema(),
             job_source: Link.schema(),
             notes: Yup.string(),
+            job_description_notes: Yup.string(),
         });
     }
 }

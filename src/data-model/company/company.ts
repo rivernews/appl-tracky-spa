@@ -12,6 +12,7 @@ interface ICompanyProps {
     name?: string;
     hq_location?: Address;
     home_page?: Link;
+    notes?: string;
     ratings?: any;
     applications?: Array<Application> | Array<IReference>;
 }
@@ -22,6 +23,7 @@ export class Company extends BaseModel {
     public name: string;
     public hq_location: Address;
     public home_page: Link;
+    public notes: string;
     public ratings: any;
     public applications: Array<Application> | Array<IReference>;
 
@@ -31,6 +33,7 @@ export class Company extends BaseModel {
         name = "",
         hq_location = new Address({}),
         home_page = new Link({}),
+        notes = "",
         ratings = {},
         applications = [],
         ...args
@@ -41,6 +44,7 @@ export class Company extends BaseModel {
         this.name = name;
         this.hq_location = hq_location;
         this.home_page = home_page;
+        this.notes = notes;
         this.ratings = ratings;
         this.applications = applications;
     }
@@ -49,6 +53,7 @@ export class Company extends BaseModel {
         return Yup.object<Company>().shape({
             name: Yup.string().required("Every company needs a name...!").max(100),
             home_page: Link.schema(),
+            notes: Yup.string(),
             hq_location: Address.schema()
         });
     }

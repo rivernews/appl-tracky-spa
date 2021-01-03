@@ -4,10 +4,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
-import { CrudType, RequestStatus } from "../../utils/rest-api";
+import { CrudType, ISingleRestApiResponse, RequestStatus } from "../../utils/rest-api";
 import {
     IObjectStore,
-    IObjectAction
+    IObjectAction,
+    JsonResponseType
 } from "../../state-management/types/factory-types";
 import { ApplicationActionCreators } from "../../state-management/action-creators/root-actions";
 
@@ -38,12 +39,12 @@ interface IApplicationFormComponentProps {
     applicationStore: IObjectStore<Application>;
     createApplication: (
         applicationFormData: Application,
-        successCallback?: Function,
+        successCallback?: (jsonResponse: ISingleRestApiResponse<Application>) => void,
         finalCallback?: Function,
     ) => void;
     updateApplication: (
         applicationFormData: Application,
-        successCallback?: Function,
+        successCallback?: (jsonResponse: ISingleRestApiResponse<Application>) => void,
         finalCallback?: Function,
     ) => void;
 }
@@ -74,7 +75,11 @@ class ApplicationFormComponent extends Component<
             }),
             new FormRichTextFieldMeta({
                 fieldName: "notes",
-                label: "Notes",
+                label: "Quick Notes",
+            }),
+            new FormRichTextFieldMeta({
+                fieldName: "job_description_notes",
+                label: "Job Description Notes",
             }),
         ];
         this.actionButtonPropsList = [
@@ -121,24 +126,32 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
     return {
         createApplication: (
             applicationFormData: Application,
-            successCallback?: Function,
+            successCallback?: (jsonResponse: ISingleRestApiResponse<Application>) => void,
             finalCallback?: Function,
         ) =>
             dispatch(
                 ApplicationActionCreators[CrudType.CREATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationFormData, successCallback, undefined, finalCallback)
+                ].action({
+                    objectClassInstance: applicationFormData, 
+                    successCallback: successCallback as ( (jsonResponse: JsonResponseType<Application>) => void ), 
+                    finalCallback
+                })
             )
         ,
         updateApplication: (
             applicationFormData: Application,
-            successCallback?: Function,
+            successCallback?: (jsonResponse: ISingleRestApiResponse<Application>) => void,
             finalCallback?: Function,
         ) =>
             dispatch(
                 ApplicationActionCreators[CrudType.UPDATE][
                     RequestStatus.TRIGGERED
-                ].action(applicationFormData, successCallback, undefined, finalCallback)
+                ].action({
+                    objectClassInstance: applicationFormData,
+                    successCallback: successCallback as ( (jsonResponse: JsonResponseType<Application>) => void ), 
+                    finalCallback
+                })
             )
         ,
     };
