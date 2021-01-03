@@ -34,7 +34,8 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
         // async success
         if (objectAction.payload.requestStatus === RequestStatus.SUCCESS) {
             // CREATE
-            if (objectAction.crudType === CrudType.CREATE) {
+            // or READ (single)
+            if (objectAction.crudType === CrudType.CREATE || objectAction.crudType === CrudType.READ) {
                 let newObject = <TObject<ObjectRestApiSchema>>objectAction.payload.formData;
 
                 return {

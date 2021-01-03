@@ -135,6 +135,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                         case CrudType.LIST:
                         // relational objects should also apply LIST
                         case CrudType.CREATE:
+                        case CrudType.READ:
                             // when there's a fresh new object created, if there're relational objects present then will also apply LIST to them
                             for (const relationalEntityKey in sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap) {
                                 if (
