@@ -80,10 +80,6 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
         activeTabIndex: 0
     };
 
-    onCompanyClick = (uuid: string) => {
-        setTimeout(() => this.props.history.push(`/com-app/${uuid}/`), 10);
-    }
-
     searchFieldTextIsEmpty = () => {
         return Utilities.normalizeText(this.state.searchText) === '';
     }
@@ -179,7 +175,6 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                                                 key={company ? company.uuid : index}
                                                 company={company}
                                                 applications={company ? Object.values(this.props.application.collection).filter((application) => application.user_company === company.uuid) : undefined}
-                                                onClick={company ? this.onCompanyClick : undefined}
                                             />
                                     )
                                 }
@@ -214,7 +209,6 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                                                         key={company ? company.uuid : index}
                                                         company={company}
                                                         applications={applications}
-                                                        onClick={company ? this.onCompanyClick : undefined}
                                                     />
                                                 )
                                             })
