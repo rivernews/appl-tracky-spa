@@ -34,7 +34,7 @@ const FormBaseDynamicFieldControlls = (props: IFormBaseDyanmicFieldControllsProp
     return (
         <div className="FormBaseDynamicFieldControlls">
             <IconButton type="button" onClick={deleteField}>
-                <MaterialIcon hasRipple icon="delete" />
+                <MaterialIcon icon="delete" />
             </IconButton>
         </div>
     )

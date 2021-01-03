@@ -19,7 +19,7 @@ const LocalLogoutButton = (props: ILocalLogoutButtonProps) => {
                 onClick={props.onClick}
                 unelevated
                 icon={
-                    <MaterialIcon hasRipple icon="account_circle" />
+                    <MaterialIcon icon="account_circle" />
                 }
                 disabled={props.disabled}
             >

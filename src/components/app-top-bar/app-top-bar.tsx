@@ -46,7 +46,7 @@ export const AppTopBar = () => {
             <TopAppBarRow>
                 <TopAppBarSection align="start">
                     {/* <TopAppBarIcon>
-                        <MaterialIcon hasRipple icon='menu' />
+                        <MaterialIcon icon='menu' />
                     </TopAppBarIcon> */}
                     <TopAppBarTitle className={styles.topAppBarTitle} onClick={goHome}>Appl Tracky</TopAppBarTitle>
                 </TopAppBarSection>
@@ -61,7 +61,6 @@ export const AppTopBar = () => {
                     <TopAppBarIcon navIcon tabIndex={0}>
                         <Link to="/home/">
                             <MaterialIcon
-                                hasRipple
                                 key="itemHome"
                                 icon="home"
                             />
@@ -76,7 +75,6 @@ export const AppTopBar = () => {
                         <Link to="/profile/">
                             {!auth.avatarUrl ? (
                                 <MaterialIcon
-                                    hasRipple
                                     key="itemProfile"
                                     icon="account_circle"
                                 />

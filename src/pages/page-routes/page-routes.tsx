@@ -39,8 +39,6 @@ import pageTransitionStyles from "./page-routes-transition.module.css";
 import LinearProgress from '@material/react-linear-progress';
 import '@material/react-linear-progress/dist/linear-progress.css';
 
-import "@material/react-ripple/dist/ripple.css";
-
 import { AppTopBar } from "../../components/app-top-bar/app-top-bar";
 
 

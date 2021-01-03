@@ -79,11 +79,11 @@ class ApplicationStatusComponent extends Component<
                                 this.setState({ isFormOpened: true });
                             }}
                         >
-                            <MaterialIcon hasRipple icon="edit" />
+                            <MaterialIcon icon="edit" />
                         </IconButton>
                     ) : (
                             <IconButton disabled>
-                                <MaterialIcon hasRipple icon="edit" />
+                                <MaterialIcon icon="edit" />
                             </IconButton>
                         )
                 }
@@ -98,11 +98,11 @@ class ApplicationStatusComponent extends Component<
                                 )
                             }
                         >
-                            <MaterialIcon hasRipple icon="delete" />
+                            <MaterialIcon icon="delete" />
                         </IconButton>
                     ) : (
                             <IconButton disabled>
-                                <MaterialIcon hasRipple icon="delete" />
+                                <MaterialIcon icon="delete" />
                             </IconButton>
                         )
                 }
@@ -159,7 +159,7 @@ class ApplicationStatusComponent extends Component<
                                 });
                             }}
                             unelevated
-                            icon={<MaterialIcon hasRipple icon="add" />}
+                            icon={<MaterialIcon icon="add" />}
                         >
                             Add New Status
                     </Button>

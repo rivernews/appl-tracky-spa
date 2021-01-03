@@ -142,7 +142,7 @@ class UserAppPage extends Component<IUserAppPageProps, IUserAppPageState> {
                         className="mdc-theme-secondary"
                         onClick={() => { this.props.history.push("/com-form/") }}
                         unelevated
-                        icon={<MaterialIcon hasRipple icon="add" />}
+                        icon={<MaterialIcon icon="add" />}
                         children="Add Organization"
                     />
                 </div>
