@@ -80,7 +80,6 @@ export class GraphQLApi {
                     return `${acc}, ${cur}: ${value}`;
             }
         }, '');
-        console.log(args, 'signatureArgs', signatureArgs)
 
         return this.apolloClient.query<IGraphQLQueryResult<Company>>({
             query: gql`
