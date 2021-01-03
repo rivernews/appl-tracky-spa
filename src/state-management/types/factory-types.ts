@@ -8,7 +8,7 @@ import {
 } from "../../utils/rest-api";
 import { Schema } from "normalizr";
 import { IReference } from "../../data-model/base-model";
-import { IGraphQLQueryListResponse } from "../../utils/graphql-api";
+import { IGraphQLQueryArgs, IGraphQLQueryListResponse } from "../../utils/graphql-api";
 
 
 /** state & store */
@@ -92,7 +92,7 @@ export interface IObjectAction<Schema> extends Action {
     // only for TRIGGER action
     absoluteUrl?: string;
     graphqlFunctionName?: string;
-    graphqlArgs?: any;
+    graphqlArgs?: IGraphQLQueryArgs;
 
     // misc options that when dispatch action can pass additional parameters
     triggerActionOptions?: ITriggerActionOptions<Schema>
@@ -120,7 +120,7 @@ export interface IObjectActionCreatorArgs<ObjectApiSchema> {
 
     // if specified, use graphql client instead of rest api client for fetching
     graphqlFunctionName?: string;
-    graphqlArgs?: any;
+    graphqlArgs?: IGraphQLQueryArgs;
 }
 
 

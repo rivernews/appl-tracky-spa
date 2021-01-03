@@ -1,14 +1,32 @@
-import { ApolloClient, ApolloLink, ApolloQueryResult, concat, createHttpLink, gql, InMemoryCache } from "@apollo/client"
+import { ApolloClient, ApolloLink, concat, createHttpLink, gql, InMemoryCache } from "@apollo/client"
 import { Company } from "../data-model/company/company";
+import { labelTypes } from "../data-model/label";
 import { AuthenticationService } from "./authentication"
 
-interface CompanyGraphQLQueryResult {
-    companies: {
-        edges: Array<{ node: Company }>,
-        count: number,
-        totalCount: number
+type IGraphQLQueryResult<Schema> = {
+    // TODO: add single response typing
+    [key in "companies"]: IGraphQLQueryListResponse<Schema>;
+}
+
+export interface IGraphQLQueryListResponse<Schema> {
+    edges: Array<{ node: Schema }>;
+    count: number;
+    totalCount: number;
+    pageInfo: {
+        endCursor: string
     }
 }
+
+interface IPaginatedQueryArgs {
+    after?: string;
+}
+
+interface ICompaniesQueryArgs extends IPaginatedQueryArgs {
+    labels_Text?: labelTypes;
+    labels_Isnull?: boolean;
+}
+
+export type IGraphQLQueryArgs = ICompaniesQueryArgs;
 
 export class GraphQLApi {
     state = {
@@ -49,11 +67,25 @@ export class GraphQLApi {
         }
     })
 
-    fetchDashboardCompanyData = () => {
-        return this.apolloClient.query<CompanyGraphQLQueryResult>({
+    fetchDashboardCompanyData = ({
+        after = '',
+        ...args
+    }: ICompaniesQueryArgs) => {
+        const signatureArgs = (Object.keys(args) as Array<keyof typeof args>).reduce((acc, cur) => {
+            const value = args[cur];
+            switch (typeof value) {
+                case 'string':
+                    return `${acc}, ${cur}: "${value}"`;
+                default:
+                    return `${acc}, ${cur}: ${value}`;
+            }
+        }, '');
+        console.log(args, 'signatureArgs', signatureArgs)
+
+        return this.apolloClient.query<IGraphQLQueryResult<Company>>({
             query: gql`
                 query {
-                    companies(first:2, orderBy: "-modified_at") {
+                    companies(first:50, orderBy: "-modified_at", after: "${after}" ${signatureArgs}) {
                         totalCount
                         count
                         pageInfo {
@@ -62,7 +94,15 @@ export class GraphQLApi {
                         }
                         edges {
                             node {
+                                uuid
                                 name
+                                labels {
+                                    text
+                                }
+                                applications {
+                                    uuid
+                                    positionTitle
+                                }
                             }
                         }
                     }

@@ -1,9 +1,10 @@
-import { IObjectBase, IObjectRestApiReduxFactoryActions, JsonResponseType, ITriggerActionOptions, IObjectAction, ISuccessSagaHandlerArgs, ISagaFactoryOptions, TObject } from "../types/factory-types";
+import { IObjectBase, IObjectRestApiReduxFactoryActions, IObjectAction, ISuccessSagaHandlerArgs, ISagaFactoryOptions, TObject } from "../types/factory-types";
 
-import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, ISingleRestApiResponse, IListRestApiResponse, IRequestParams, RestApiService, CrudMapToRest } from "../../utils/rest-api";
+import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, CrudKeywords, IRequestParams, RestApiService, CrudMapToRest } from "../../utils/rest-api";
 import { SagaIterator } from "redux-saga";
 import { actionChannel, take, call, put } from "redux-saga/effects";
 import { normalize } from "normalizr";
+import { GraphQLApiService } from "../../utils/graphql-api";
 
 
 export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
@@ -11,15 +12,14 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
     ObjectRestApiActions: IObjectRestApiReduxFactoryActions<ObjectRestApiSchema>,
     sagaFactoryOptions: ISagaFactoryOptions<ObjectRestApiSchema>
 ): Array<() => SagaIterator> => {
-    const crudKeywords = Object.values(CrudType) as Array<CrudType>;
-
-    const sagas = crudKeywords.map((crudKeyword) => {
+    
+    const sagas = CrudKeywords.map((crudKeyword) => {
 
         const sagaHandler = function* (
             triggerAction: IObjectAction<ObjectRestApiSchema>
         ) {
             let formData = triggerAction.payload.formData as ObjectRestApiSchema | Array<ObjectRestApiSchema> | undefined;
-            const absoluteUrl = triggerAction.absoluteUrl;
+            const { absoluteUrl, graphqlFunctionName, graphqlArgs } = triggerAction;
 
             yield put(
                 ObjectRestApiActions[crudKeyword][
@@ -29,25 +29,52 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
 
             try {
                 // api call
-                let jsonResponse: JsonResponseType<ObjectRestApiSchema> = yield call(
-                    (<(params: IRequestParams<ObjectRestApiSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)]),
-                    {
-                        data: formData,
-                        objectName,
-                        absoluteUrl,
+                
+                // note that yield will always return `any`
+                let jsonResponse = !(graphqlFunctionName) ? 
+                    (yield call(
+                        <(params: IRequestParams<ObjectRestApiSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)],
+                        {
+                            data: formData,
+                            objectName,
+                            absoluteUrl,
+                        }
+                    )) :
+                    (yield call(
+                        GraphQLApiService.fetchDashboardCompanyData,
+                        graphqlArgs || {}
+                    ));
+
+                // TODO: currently `status` not available, how to better handle error?
+                // if (jsonResponse.status && jsonResponse.status >= 400) {
+                //     console.error("Server error, see message in res.");
+                //     throw new Error("Server error, see message in res.");
+                // }
+                
+                // deal with pagination
+                //
+                // rest api
+                if (!graphqlFunctionName) {
+                    // if there is .next in res, then it's paginated data and we should perform a next request to next page data
+                    if (jsonResponse.next) {
+                        yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action({
+                            absoluteUrl: jsonResponse.next
+                        }));
                     }
-                );
-
-                if (jsonResponse.status && jsonResponse.status >= 400) {
-                    console.error("Server error, see message in res.");
-                    throw new Error("Server error, see message in res.");
-                }
-
-                // if there is .next in res, then it's paginated data and we should perform a next request to next page data
-                if (jsonResponse.next) {
-                    yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action({
-                        absoluteUrl: jsonResponse.next
-                    }));
+                } else {
+                    // graphql api
+                    // if there is .pageInfo.endCursor, then use that for next page data
+                    if (jsonResponse.pageInfo.endCursor) {
+                        yield put(
+                            ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action({
+                               graphqlFunctionName: 'fetchDashboardCompanyData',
+                               graphqlArgs: {
+                                   ...(graphqlArgs || {}),
+                                   after: jsonResponse.pageInfo.endCursor
+                               }
+                            })
+                        );
+                    }
                 }
 
                 // normalize primary object data (for relational object normalizing, will do it later) if  normalize manifest speciified

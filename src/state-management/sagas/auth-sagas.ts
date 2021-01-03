@@ -18,7 +18,6 @@ import { takeEvery, call, put } from "redux-saga/effects";
 /** api */
 import { AuthenticationService } from "../../utils/authentication";
 import { CrudType, RequestStatus, RestApiService } from "../../utils/rest-api";
-import { GraphQLApiService } from "../../utils/graphql-api";
 
 
 function* authLoginSagaHandler(
@@ -58,21 +57,24 @@ function* authLoginSagaHandler(
         // fetch companies that do not have label status yet, treat them as `target` and put them in target group
         yield put(
             GroupedCompanyActionCreators["targetCompany"][CrudType.LIST][RequestStatus.TRIGGERED].action({
-               absoluteUrl: `${RestApiService.state.apiBaseUrl}companies/?labels__isnull=True`
+                graphqlFunctionName: 'fetchDashboardCompanyData',
+                graphqlArgs: {
+                    labels_Isnull: true
+                }
             })
         );
+
         // fetch companies filter by their label status
         for (let labelText of Object.values(labelTypes)) {
             yield put(
                 GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]][CrudType.LIST][RequestStatus.TRIGGERED].action({
-                    absoluteUrl: `${RestApiService.state.apiBaseUrl}companies/?labels__text=${labelText}`
+                    graphqlFunctionName: 'fetchDashboardCompanyData',
+                    graphqlArgs: {
+                        labels_Text: labelText
+                    }
                 })
             );
         }
-        
-        // console.log('ready to graphql, auth token', AuthenticationService.apiCallToken);
-        // const graphqlResponse = yield call(GraphQLApiService.fetchDashboardCompanyData);
-        // console.log('graphql res', graphqlResponse);
 
     } catch (error) {
         console.warn(`auth saga error: ${JSON.stringify(error)}`);

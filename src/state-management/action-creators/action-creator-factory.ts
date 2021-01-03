@@ -24,7 +24,7 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
                         successCallback,
                         failureCallback,
                         finalCallback,
-                        absoluteUrl,
+                        absoluteUrl, graphqlFunctionName, graphqlArgs,
                         triggerActionOptions
                     }: IObjectActionCreatorArgs<ObjectRestApiSchema>): IObjectAction<ObjectRestApiSchema> => {
                         return {
@@ -33,7 +33,7 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
                             finalCallback,
                             successCallback,
                             failureCallback,
-                            absoluteUrl,
+                            absoluteUrl, graphqlFunctionName, graphqlArgs,
                             triggerActionOptions,
                             payload: {
                                 requestStatus: RequestStatus.TRIGGERED,
