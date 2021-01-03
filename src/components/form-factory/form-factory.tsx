@@ -17,7 +17,6 @@ import * as Yup from 'yup';
 // base field
 import { FormBaseFieldMeta } from "./form-base-field/form-base-field-meta";
 import { ISingleRestApiResponse } from "../../utils/rest-api";
-import { JsonResponseType, ObjectRestApiJsonResponse } from "../../state-management/types/factory-types";
 
 
 export enum ActionButtonType {
