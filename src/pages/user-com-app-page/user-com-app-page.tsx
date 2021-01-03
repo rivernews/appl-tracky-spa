@@ -60,20 +60,29 @@ export const UserComAppPage = (props: IUserComAppPageProps) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (company?.labels.length) {
-            console.log('dispatch trigger!', company)
-            dispatch(
-                GroupedCompanyActionCreators[
-                    labelTypesMapToCompanyGroupTypes[company.labels[0].text]
-                ][CrudType.READ][RequestStatus.SUCCESS].action(company)
-            );
-        }
-        else if (companyUuid) {
-            dispatch(
-                CompanyActionCreators[CrudType.READ][RequestStatus.TRIGGERED].action({
-                    absoluteUrl: `${RestApiService.state.apiBaseUrl}companies/${companyUuid}/`
-                })
-            )
+        if (companyUuid) {
+            if (company && !company.modified_at && props.companyStore.requestStatus !== RequestStatus.REQUESTING) {
+                dispatch(
+                    CompanyActionCreators[CrudType.READ][RequestStatus.TRIGGERED].action({
+                        absoluteUrl: `${RestApiService.state.apiBaseUrl}companies/${companyUuid}/`,
+                        // TODO: optimize whenever necessary so that we don't need to fetch everything upon login
+                        // when we're only visiting the detial page; still, a paginated solution in home page would be better
+                        //
+                        // Currently, no need to dispatch grouped company because auth-saga will fetch everything upon login 
+                        //
+                        // successCallback: (company) => {
+                        //     console.log('success group')
+                        //     company = company as Company;
+                        //     const label = company.labels ? company.labels[0].text : labelTypes.TARGET;
+                        //     dispatch(
+                        //         GroupedCompanyActionCreators[
+                        //             labelTypesMapToCompanyGroupTypes[label]
+                        //         ][CrudType.READ][RequestStatus.SUCCESS].action(company)
+                        //     );
+                        // }
+                    })
+                )
+            }
         }
     }, [company, companyUuid])
 
@@ -138,7 +147,6 @@ export const UserComAppPage = (props: IUserComAppPageProps) => {
                 {/* application list */}
                 {company ? applications.map((applicationRef, applicationsIndex) => {
                     const application = props.applicationStore.collection[applicationRef as IReference];
-
                     const applicationStatusList =  application ? ((application.statuses || []) as Array<IReference>).map((statusUuid) => props.applicationStatusStore.collection[statusUuid]) : undefined;
                     return (
                         <ApplicationComponentController
