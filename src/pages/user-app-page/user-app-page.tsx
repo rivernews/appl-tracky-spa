@@ -1,4 +1,4 @@
-import React, { Component, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
 import { Utilities } from "../../utils/utilities";
@@ -10,7 +10,7 @@ import { IRootState } from "../../state-management/types/root-types";
 import { IObjectAction, IObjectStore } from "../../state-management/types/factory-types";
 import { InputFieldType } from "../../components/form-factory/form-base-field/form-base-field-meta";
 // data models
-import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes } from "../../data-model/company/company";
+import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes, companyGroups } from "../../data-model/company/company";
 import { labelTypes } from "../../data-model/label";
 import { Application } from "../../data-model/application/application";
 
@@ -32,27 +32,13 @@ import { TabContent } from "../../components/tab/tab-content";
 import { CompanyListItem } from "../../components/company/company-list-item";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
 
-import {
-    Body1,
-    Body2,
-    // Button,
-    Caption,
-    Headline1,
-    Headline2,
-    Headline3,
-    Headline4,
-    Headline5,
-    Headline6,
-    Overline,
-    Subtitle1,
-    Subtitle2,
-} from '@material/react-typography';
+import { Headline3 } from '@material/react-typography';
 import '@material/react-typography/dist/typography.css';
 
 // styling
 import styles from "./user-app-page.module.css";
 import { IReference } from "../../data-model/base-model";
-import { GroupedCompanyActionCreators } from "../../state-management/action-creators/root-actions";
+import { GroupedCompanyActionCreators, SearchCompanyActionCreators } from "../../state-management/action-creators/root-actions";
 import { createStyles, makeStyles } from "@material-ui/core";
 
 
@@ -77,14 +63,14 @@ interface IUserAppPageProps extends RouteComponentProps {
     application: IObjectStore<Application>
 }
 
-interface ILoadMoreButtonProps {
+interface IGroupedCompanyLoadMoreButtonProps {
     labelText: labelTypes
 }
 
-const LoadMoreButton = ({ labelText }: ILoadMoreButtonProps) => {
+const GroupedCompanyLoadMoreButton = ({ labelText }: IGroupedCompanyLoadMoreButtonProps) => {
     const { graphqlEndCursor: endCursor, requestStatus } = useSelector((state: IRootState) => {
         return state[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]];
-    })
+    });
     const dispatch = useDispatch();
     const onClick = useCallback(() => {
         dispatch(
@@ -105,17 +91,47 @@ const LoadMoreButton = ({ labelText }: ILoadMoreButtonProps) => {
     )
 }
 
+interface ISearchCompanyLoadMoreButtonProps {
+    searchText: string
+    disabled?: boolean
+}
+
+const SearchCompanyLoadMoreButton = ({ searchText, disabled }: ISearchCompanyLoadMoreButtonProps) => {
+    const { graphqlEndCursor: endCursor, requestStatus } = useSelector((state: IRootState) => {
+        return state.searchCompany;
+    })
+    const dispatch = useDispatch();
+    const onClick = useCallback(() => {
+        dispatch(
+            SearchCompanyActionCreators[CrudType.LIST][RequestStatus.TRIGGERED].action({
+                graphqlFunctionName: 'fetchDashboardCompanyData',
+                graphqlArgs: {
+                    name__icontains: searchText,
+                    after: endCursor
+                }
+            })
+        );
+    }, [endCursor]);
+
+    return (
+        <Button color="primary" disableElevation variant="contained" onClick={onClick} disabled={requestStatus === RequestStatus.REQUESTING || disabled}>
+            Load More
+        </Button>
+    )
+}
+
 const UserAppPage = (props: IUserAppPageProps) => {
     const styleClasses = useStyles();
-
+    
+    const dispatch = useDispatch();
     const [searchText, setSearchText] = useState<string>('');
     const [isFiltering, setIsFiltering] = useState<boolean>(false);
-    const [filteredCompanyList, setFilteredCompanyList] = useState<Array<Company>>([]);
 
-    const endCursor = useSelector((state: IRootState) => state.interviewingCompany.graphqlEndCursor);
-    const dispatch = useDispatch();
+    // only fetch once when first visit home page;
+    // avoid re-fetch first pagination of group companies when leaving and re-visiting home page again
+    const anyGroupCompanyEndCursor = useSelector((state: IRootState) => state.interviewingCompany.graphqlEndCursor);
     useEffect(() => {
-        if (endCursor === undefined) {
+        if (anyGroupCompanyEndCursor === undefined) {
             // fetch companies that do not have label status yet, treat them as `target` and put them in target group
             dispatch(
                 GroupedCompanyActionCreators["targetCompany"][CrudType.LIST][RequestStatus.TRIGGERED].action({
@@ -126,7 +142,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                 })
             );
     
-            // fetch companies filter by their label status
+            // fetch companies by their label status, so each can be displayed separately in their tabs
             for (let labelText of Object.values(labelTypes)) {
                 dispatch(
                     GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]][CrudType.LIST][RequestStatus.TRIGGERED].action({
@@ -138,21 +154,10 @@ const UserAppPage = (props: IUserAppPageProps) => {
                 );
             }
         }
-    }, [endCursor])
+    }, [anyGroupCompanyEndCursor])
 
     const searchFieldTextIsEmpty = () => {
         return Utilities.normalizeText(searchText) === '';
-    }
-
-    const filterCompanyByName = (name: string) => {
-        const filteringName = Utilities.normalizeText(name);
-        const allCompanies = Object.values(props.company.collection);
-
-        setFilteredCompanyList(
-            allCompanies.filter((company: Company) => Utilities.normalizeText(company.name).includes(filteringName))
-        );
-        // always switch on filering mode when filtering is triggered
-        setIsFiltering(true);
     }
 
     const onSearchFieldChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -162,34 +167,49 @@ const UserAppPage = (props: IUserAppPageProps) => {
     // switch off filtering mode if field becomes empty
     useEffect(() => {
         if (searchFieldTextIsEmpty()) {
-            setIsFiltering(false);
+            if (isFiltering) {
+                setIsFiltering(false);
+            }
+        } else {
+            if (!isFiltering) {
+                setIsFiltering(true);
+            }
         }
     }, [searchText]);
 
+    const searchCompanyEndCursor = useSelector((state: IRootState) => state.searchCompany.graphqlEndCursor);
+
     const onSearchFieldKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key.toLowerCase() === 'enter') {
-            !searchFieldTextIsEmpty() && filterCompanyByName(searchText);
+            if (!searchFieldTextIsEmpty()) {
+                dispatch(
+                    SearchCompanyActionCreators[CrudType.LIST][RequestStatus.TRIGGERED].action({
+                        graphqlFunctionName: 'fetchDashboardCompanyData',
+                        graphqlArgs: {
+                            name__icontains: searchText,
+                            after: searchCompanyEndCursor
+                        }
+                    })
+                )
+            }
         }
     }
 
     const onSearchFieldClear = () => {
         setSearchText('');
         setIsFiltering(false);
+        // clear searchCompany redux (but don't delete company redux, which stores the actual company objects)
+        dispatch(
+            SearchCompanyActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action({
+                clearAll: true
+            })
+        )
     }
 
-    const allCompanies = Object.values(props.company.collection);
-
     // for searching feature
-    const displayingCompanies: Array<Company> = (
-        props.company.requestStatus !== RequestStatus.REQUESTING ? isFiltering ? filteredCompanyList : allCompanies : Array.from(Array(5))
-    );
-    displayingCompanies.sort((companyA: Company | undefined, companyB: Company | undefined) => {
-        if (companyA && companyB) {
-            // descending order, latest goes first
-            return new Date(companyB.modified_at).getTime() - new Date(companyA.modified_at).getTime();
-        }
-        return 0;
-    });
+    const searchCompanies = useSelector((state: IRootState) => {
+        return Object.values(state.searchCompany.collection).map(reference => props.company.collection[reference.uuid]);
+    })
 
     return (
         <div>
@@ -207,11 +227,11 @@ const UserAppPage = (props: IUserAppPageProps) => {
             </div>
             <TabContainer
                 render={() => {
-                    const allCompanyTab = (<TabContent label="All">
+                    const allCompanyTab = (<TabContent label="Search">
                         <div className={styles.companyListHeader}>
                             <TextField
                                 className={styles.searchField}
-                                label="Search Company Name"
+                                label="Google, UCLA, ... etc"
                                 outlined
                                 leadingIcon={<MaterialIcon role="button" icon="search" />}
                                 trailingIcon={searchText === '' ? undefined : <MaterialIcon role="button" icon="clear" />}
@@ -228,7 +248,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                         </div>
                         <MaterialUIList>
                             {
-                                displayingCompanies.map(
+                                searchCompanies.map(
                                     (company, index) => {
                                         return (
                                             <CompanyListItem
@@ -241,6 +261,9 @@ const UserAppPage = (props: IUserAppPageProps) => {
                                 )
                             }
                         </MaterialUIList>
+                        <div className={styleClasses.loadMoreButtonContainer}>
+                            <SearchCompanyLoadMoreButton searchText={searchText} disabled={!isFiltering} />
+                        </div>
                     </TabContent>)
 
                     const groupCompanyTabs = Object.values(labelTypes).map((labelText: labelTypes, index) => {
@@ -278,7 +301,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                                 </div>
                                 
                                 <div className={styleClasses.loadMoreButtonContainer}>
-                                    <LoadMoreButton labelText={labelText} />
+                                    <GroupedCompanyLoadMoreButton labelText={labelText} />
                                 </div>
                             </TabContent>
                         )
@@ -298,7 +321,7 @@ const mapStateToProps = (store: IRootState) => ({
     // prop: store.prop
     company: store.company,
 
-    ...(Object.values(labelTypesMapToCompanyGroupTypes).reduce((accumulated, labelText) => ({
+    ...(companyGroups.reduce((accumulated, labelText) => ({
         ...accumulated,
         [labelText]: store[labelText]
     }), {}) as {[key in companyGroupTypes]: IObjectStore<Company>}),
