@@ -17,9 +17,15 @@ import { Application } from "../../data-model/application/application";
 /** Components */
 // mdc react icon
 import MaterialIcon from "@material/react-material-icon";
+import SearchIcon from "@material-ui/icons/Search";
+import TargetIcon from "@material-ui/icons/AssistantPhoto";
+import AppliedIcon from "@material-ui/icons/Check";
+import InterviewingIcon from "@material-ui/icons/PhoneInTalk";
+import ArchivedIcon from "@material-ui/icons/Archive";
 // mdc react button
 import MaterialUIList from "@material-ui/core/List";
 import Button from '@material-ui/core/Button';
+import Badge from "@material-ui/core/Badge";
 
 // mdc-react input
 import "@material/react-text-field/dist/text-field.css";
@@ -48,6 +54,10 @@ const useStyles = makeStyles(() => {
             display: 'flex',
             justifyContent: 'center',
             margin: '5vh 0 10vh 0'
+        },
+        centerVertically: {
+            display: 'flex',
+            alignItems: 'center'
         }
     })
 })
@@ -180,18 +190,23 @@ const UserAppPage = (props: IUserAppPageProps) => {
     const searchCompanyEndCursor = useSelector((state: IRootState) => state.searchCompany.graphqlEndCursor);
 
     const onSearchFieldKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.key.toLowerCase() === 'enter') {
-            if (!searchFieldTextIsEmpty()) {
-                dispatch(
-                    SearchCompanyActionCreators[CrudType.LIST][RequestStatus.TRIGGERED].action({
-                        graphqlFunctionName: 'fetchDashboardCompanyData',
-                        graphqlArgs: {
-                            name__icontains: searchText,
-                            after: searchCompanyEndCursor
-                        }
-                    })
-                )
-            }
+        switch (event.key.toLowerCase()) {
+            case 'enter':
+                if (!searchFieldTextIsEmpty()) {
+                    dispatch(
+                        SearchCompanyActionCreators[CrudType.LIST][RequestStatus.TRIGGERED].action({
+                            graphqlFunctionName: 'fetchDashboardCompanyData',
+                            graphqlArgs: {
+                                name__icontains: searchText,
+                                after: searchCompanyEndCursor
+                            }
+                        })
+                    )
+                }
+                break;
+            case 'escape':
+                onSearchFieldClear();
+                break
         }
     }
 
@@ -227,7 +242,13 @@ const UserAppPage = (props: IUserAppPageProps) => {
             </div>
             <TabContainer
                 render={() => {
-                    const allCompanyTab = (<TabContent label="Search">
+                    const allCompanyTab = (<TabContent label={
+                        <Badge badgeContent={searchCompanies.length} color="secondary">
+                            <div className={styleClasses.centerVertically}>
+                                Search <SearchIcon /> 
+                            </div>
+                        </Badge>
+                    }>
                         <div className={styles.companyListHeader}>
                             <TextField
                                 className={styles.searchField}
@@ -243,6 +264,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                                     onKeyDown={onSearchFieldKeyDown}
                                     onChange={onSearchFieldChange}
                                     value={searchText}
+                                    autoFocus
                                 />
                             </TextField>
                         </div>
@@ -268,7 +290,23 @@ const UserAppPage = (props: IUserAppPageProps) => {
 
                     const groupCompanyTabs = Object.values(labelTypes).map((labelText: labelTypes, index) => {
                         return (
-                            <TabContent key={index} label={`${labelText} (${Object.keys(props[labelTypesMapToCompanyGroupTypes[labelText]].collection).length})`}>
+                            <TabContent key={index} label={
+                                <Badge badgeContent={Object.keys(props[labelTypesMapToCompanyGroupTypes[labelText]].collection).length}
+                                    color="secondary"
+                                >
+                                    <div className={styleClasses.centerVertically}>
+                                        {labelText}
+                                        {labelText === labelTypes.TARGET ?
+                                            <TargetIcon /> :
+                                            labelText === labelTypes.APPLIED ?
+                                            <AppliedIcon /> :
+                                            labelText === labelTypes.INTERVIEWING ?
+                                            <InterviewingIcon /> :
+                                            labelText === labelTypes.ARCHIVED ?
+                                            <ArchivedIcon /> : null}
+                                    </div>
+                                </Badge>
+                            }>
                                 <div className={styles.companyListHeader}>
                                     <h1>{labelText}</h1>
                                 </div>

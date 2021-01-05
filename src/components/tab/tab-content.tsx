@@ -4,7 +4,7 @@ import styles from "./tab-content.module.css";
 
 
 export interface ITabContentProps {
-    label: string
+    label: string | JSX.Element
 }
 
 export class TabContent extends Component<ITabContentProps> {
