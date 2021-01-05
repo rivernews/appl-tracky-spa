@@ -14,6 +14,7 @@ import { companyGroupTypes, Company, companyGroups } from "../../data-model/comp
 /** router */
 import { History } from "history";
 import { selectCompanyReducer } from "./select-company-reducers";
+import { userAppPageReducer } from "./user-app-page-reducers";
 
 
 // create reducer for each data model
@@ -61,9 +62,13 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             companyGroups.forEach((companyGroupText) => {
                 rootStateChecked[companyGroupText] = undefined;
             });
+            rootStateChecked.searchCompany = undefined
 
             rootStateChecked.application = undefined;
             rootStateChecked.applicationStatus = undefined;
+
+            rootStateChecked.selectCompany = undefined;
+            rootStateChecked.userAppPage = undefined;
             // add initial state for new sub-store here
             // ...
         } else if (action.type === RootActionNames.ResetAllStore) {
@@ -99,6 +104,7 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             applicationStatus: ApplicationStatusReducer(rootStateChecked.applicationStatus, action),
 
             selectCompany: selectCompanyReducer(rootStateChecked.selectCompany, action),
+            userAppPage: userAppPageReducer(rootStateChecked.userAppPage, action),
             
             // add new reducer here
             // ...

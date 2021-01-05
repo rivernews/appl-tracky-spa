@@ -7,6 +7,7 @@ import { ApplicationStatus } from "../../data-model/application-status/applicati
 
 import { RouterState } from 'connected-react-router' // this will add attribute "router: RouterState"
 import { ISelectCompanyState } from "./select-company-types";
+import { IUserAppPageState } from "./user-app-page-types";
 
 
 export type IRootState = {
@@ -16,8 +17,10 @@ export type IRootState = {
     application: IObjectStore<Application>;
     applicationStatus: IObjectStore<ApplicationStatus>;
 
-    selectCompany: ISelectCompanyState;
     searchCompany: IObjectStore<IObjectBase>;
+    
+    selectCompany: ISelectCompanyState;
+    userAppPage: IUserAppPageState;
     
     // add more state types here here (for each reducer)
     // ...
