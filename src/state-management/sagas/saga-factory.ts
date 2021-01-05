@@ -196,6 +196,8 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                         graphqlEndCursor: (crudKeyword === CrudType.LIST && graphqlFunctionName) ?
                             jsonResponse.pageInfo.endCursor :
                             undefined,
+                        clearPreviousCollection: triggerAction.triggerActionOptions?.clearPreviousCollection,
+                        
                         companyGroupType: (companyGroups as string[]).includes(objectName) ? objectName as companyGroupTypes : undefined,
                     });
                 }
@@ -210,6 +212,11 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                             })
                         );
                     } else {
+                        if (triggerAction.triggerActionOptions?.clearPreviousCollection) {
+                            yield put(
+                                ObjectRestApiActions[crudKeyword][RequestStatus.SUCCESS].action({ clearAll: true })
+                            )
+                        }
                         yield put(
                             ObjectRestApiActions[crudKeyword][
                                 RequestStatus.SUCCESS

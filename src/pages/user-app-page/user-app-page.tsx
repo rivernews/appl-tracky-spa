@@ -46,6 +46,7 @@ import styles from "./user-app-page.module.css";
 import { IReference } from "../../data-model/base-model";
 import { GroupedCompanyActionCreators, SearchCompanyActionCreators } from "../../state-management/action-creators/root-actions";
 import { createStyles, makeStyles } from "@material-ui/core";
+import { SetLastSearchTextOfUserAppPage } from "../../state-management/action-creators/user-app-page-actions";
 
 
 const useStyles = makeStyles(() => {
@@ -134,8 +135,20 @@ const UserAppPage = (props: IUserAppPageProps) => {
     const styleClasses = useStyles();
     
     const dispatch = useDispatch();
-    const [searchText, setSearchText] = useState<string>('');
+    const [lastSearchText, searchingRequestStatus] = useSelector((state: IRootState) => [
+        state.userAppPage.lastSearchText,
+        state.searchCompany.requestStatus
+    ]);
+    const [searchText, setSearchText] = useState<string>(lastSearchText);
     const [isFiltering, setIsFiltering] = useState<boolean>(false);
+
+    // memorize last search text
+    // so that when page mount again (re-visit), the search text still persist
+    useEffect(() => {
+        return () => {
+            dispatch(SetLastSearchTextOfUserAppPage(searchText));
+        }
+    }, [searchText])
 
     // only fetch once when first visit home page;
     // avoid re-fetch first pagination of group companies when leaving and re-visiting home page again
@@ -197,8 +210,13 @@ const UserAppPage = (props: IUserAppPageProps) => {
                         SearchCompanyActionCreators[CrudType.LIST][RequestStatus.TRIGGERED].action({
                             graphqlFunctionName: 'fetchDashboardCompanyData',
                             graphqlArgs: {
-                                name__icontains: searchText,
-                                after: searchCompanyEndCursor
+                                name__icontains: searchText
+                            },
+                            triggerActionOptions: {
+                                clearPreviousCollection: true
+                            },
+                            successCallback: () => {
+                                dispatch(SetLastSearchTextOfUserAppPage(searchText));
                             }
                         })
                     )
@@ -219,6 +237,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                 clearAll: true
             })
         )
+        dispatch(SetLastSearchTextOfUserAppPage(''));
     }
 
     // for searching feature
@@ -265,6 +284,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                                     onChange={onSearchFieldChange}
                                     value={searchText}
                                     autoFocus
+                                    disabled={searchingRequestStatus === RequestStatus.REQUESTING}
                                 />
                             </TextField>
                         </div>

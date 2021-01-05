@@ -178,6 +178,15 @@ export const searchCompanyListSuccessSagaHandler = function*(args: ISuccessSagaH
     }
 
     // place "references/pointers" to searchCompany redux
+    if (args.clearPreviousCollection) {
+        // means user changed a keyword to search instead of pressing 'load more' button
+        // we should clear out previous searchCompany results before we pour new results into redux
+        yield put(
+            SearchCompanyActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action({
+                clearAll: true
+            })
+        )
+    }
     yield put(
         SearchCompanyActionCreators[CrudType.LIST][RequestStatus.SUCCESS].action({
             jsonResponse: {

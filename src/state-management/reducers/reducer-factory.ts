@@ -80,7 +80,11 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
                         ...newObjectsCollection
                     },
                     requestStatus: objectAction.payload.requestStatus,
-                    graphqlEndCursor: objectAction.graphqlEndCursor,
+                    
+                    // if `graphqlEndCursor` not spedified, it means only the collection needed to be modified,
+                    // does not involve paginated API call, so do not update/overwrite end cursor
+                    // e.g. use case for company searching & dispatch search results into each company group
+                    graphqlEndCursor: objectAction.graphqlEndCursor !== undefined ? objectAction.graphqlEndCursor : objectStore.graphqlEndCursor,
                 };
 
                 return afterStore;

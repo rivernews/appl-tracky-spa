@@ -162,6 +162,7 @@ export interface ISuccessSagaHandlerArgs<Schema> {
     data?: Array<TObject<Schema>> | TObject<Schema>;
     updateFromObject?: TObject<Schema>;
     graphqlEndCursor?: string;
+    clearPreviousCollection?: boolean;
     
     // only apply for grouped company's saga
     companyGroupType?: companyGroupTypes;
@@ -200,4 +201,5 @@ export interface ISagaFactoryOptions<ObjectSchema> {
 
 export interface ITriggerActionOptions<Schema> {
     updateFromObject?: TObject<Schema>
+    clearPreviousCollection?: boolean;
 }
