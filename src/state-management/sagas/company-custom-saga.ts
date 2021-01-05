@@ -95,13 +95,18 @@ export const companyOverrideDeleteSuccessSagaHandler = function*(args: ISuccessS
 export const groupedCompanyListSuccessSagaHandler = function*(args: ISuccessSagaHandlerArgs<Company>) {
     // In redux factory saga, already ensure the right CRUD so no need to check crudType
 
-    if (!args.data || Array.isArray(args.data) && !args.data.length) {
+    if (!args.data || !Array.isArray(args.data)) {
+        return;
+    }
+
+    if (!args.companyGroupType) {
+        console.error('companyGroupType is not supplied');
         return;
     }
 
     const fetchedCompanyList: Array<Company> = Array.isArray(args.data) ? args.data : [args.data];
 
-    const currentLabelText = Company.getLabel(fetchedCompanyList[0]);
+    // const currentLabelText = Company.getLabel(fetchedCompanyList[0]);
 
     // place company objects in pool redux
     yield put(
@@ -115,6 +120,13 @@ export const groupedCompanyListSuccessSagaHandler = function*(args: ISuccessSaga
         uuid: company.uuid
     }));
     yield put(
-        GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[currentLabelText]][CrudType.LIST][RequestStatus.SUCCESS].action({ results: fetchedCompanyListUuids })
+        GroupedCompanyActionCreators[args.companyGroupType][CrudType.LIST][RequestStatus.SUCCESS].action(
+            { results: fetchedCompanyListUuids },
+            undefined,
+            // pass over endCursor for each company group for pagination
+            // no need to pass endCursor for `CompanyActionCreators` since company store only serve as saving complete company objects;
+            // the UI render (and thus pagination) will be based on each company group's store
+            args.graphqlEndCursor
+        )
     );
 }

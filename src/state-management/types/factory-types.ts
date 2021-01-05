@@ -9,6 +9,7 @@ import {
 import { Schema } from "normalizr";
 import { IReference } from "../../data-model/base-model";
 import { IGraphQLQueryArgs, IGraphQLQueryListResponse } from "../../utils/graphql-api";
+import { companyGroupTypes } from "../../data-model/company/company";
 
 
 /** state & store */
@@ -26,6 +27,7 @@ export interface IObjectStore<Schema> {
     requestStatus: RequestStatus;
     error?: any;
     collection: IObjectList<Schema>;
+    graphqlEndCursor?: string;
 }
 
 /** action */
@@ -35,7 +37,7 @@ export interface IObjectRestApiReduxFactoryActions<ObjectApiSchema>  {
         [RequestStatus.TRIGGERED]: {
             actionTypeName: string;
             action:
-                (args:IObjectActionCreatorArgs<ObjectApiSchema>) => IObjectAction<ObjectApiSchema>;
+                (args:IObjectTriggerActionArgs<ObjectApiSchema>) => IObjectAction<ObjectApiSchema>;
             saga?: () => SagaIterator;
         };
 
@@ -62,7 +64,8 @@ export interface IObjectRestApiReduxFactoryActions<ObjectApiSchema>  {
                     // used by batch delete (see `select-company-saga.ts`)
                     Array<IObjectBase> |
                     // used by GroupedCompanyActionCreators
-                    string[]
+                    string[],
+                graphqlEndCursor?: string
             ): IObjectAction<ObjectApiSchema>;
             saga?: () => SagaIterator;
         };
@@ -75,28 +78,32 @@ export interface IObjectRestApiReduxFactoryActions<ObjectApiSchema>  {
     };
 };
 
-export interface IObjectAction<Schema> extends Action {
+// TODO: may have separate typing for each TRIGGER, SUCCCESS, ... action in the future
+export type IObjectAction<Schema> = IObjectBaseAction<Schema>;
+
+export interface IObjectBaseAction<Schema> extends Action {
     type: string;
     crudType: CrudType;
 
-    // for deleteAction or other actions to obtain the original instance obj passed into trigger action
-    triggerFormData?: TObject<Schema> | Array<TObject<Schema>> | Array<IReference>;
-
+    // below are only for TRIGGER actions
+    //
     // for saga to perform additional side effect e.g. navigation
-    // only for triggerActions
     successCallback?: Function;
     failureCallback?: (error: any) => void;
     finalCallback?: Function;
-
-    // for custumized api call
-    // only for TRIGGER action
+    // for deleteAction or other actions to obtain the original instance obj passed into trigger action
+    triggerFormData?: TObject<Schema> | Array<TObject<Schema>> | Array<IReference>;
+    // for customized api call
     absoluteUrl?: string;
+    // for graphql API
     graphqlFunctionName?: string;
     graphqlArgs?: IGraphQLQueryArgs;
-
     // misc options that when dispatch action can pass additional parameters
     triggerActionOptions?: ITriggerActionOptions<Schema>
-    
+
+    // below are only for SUCCESS actions
+    graphqlEndCursor?: string;
+
     payload: {
         formData?:
             TObject<Schema> | 
@@ -108,7 +115,7 @@ export interface IObjectAction<Schema> extends Action {
     };
 }
 
-export interface IObjectActionCreatorArgs<ObjectApiSchema> {
+export interface IObjectTriggerActionArgs<ObjectApiSchema> {
     objectClassInstance?: ObjectApiSchema |
         // used by GroupedCompanyActionCreators
         IObjectBase,
@@ -138,8 +145,12 @@ export type ObjectRestApiJsonResponse<Schema> = IListRestApiResponse<TObject<Sch
 export type JsonResponseType<Schema> = ObjectRestApiJsonResponse<Schema> | IGraphQLQueryListResponse<Schema>;
 
 export interface ISuccessSagaHandlerArgs<Schema> {
-    data?: Array<TObject<Schema>> | TObject<Schema>
-    updateFromObject?: TObject<Schema>
+    data?: Array<TObject<Schema>> | TObject<Schema>;
+    updateFromObject?: TObject<Schema>;
+    graphqlEndCursor?: string;
+    
+    // only apply for grouped company's saga
+    companyGroupType?: companyGroupTypes;
 }
 
 export interface ISagaFactoryOptions<ObjectSchema> {

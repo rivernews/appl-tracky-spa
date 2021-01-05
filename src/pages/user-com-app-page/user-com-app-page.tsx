@@ -61,25 +61,10 @@ export const UserComAppPage = (props: IUserComAppPageProps) => {
 
     useEffect(() => {
         if (companyUuid) {
-            if (company && !company.modified_at && props.companyStore.requestStatus !== RequestStatus.REQUESTING) {
+            if ((!company || !company.modified_at) && props.companyStore.requestStatus !== RequestStatus.REQUESTING) {
                 dispatch(
                     CompanyActionCreators[CrudType.READ][RequestStatus.TRIGGERED].action({
                         absoluteUrl: `${RestApiService.state.apiBaseUrl}companies/${companyUuid}/`,
-                        // TODO: optimize whenever necessary so that we don't need to fetch everything upon login
-                        // when we're only visiting the detial page; still, a paginated solution in home page would be better
-                        //
-                        // Currently, no need to dispatch grouped company because auth-saga will fetch everything upon login 
-                        //
-                        // successCallback: (company) => {
-                        //     console.log('success group')
-                        //     company = company as Company;
-                        //     const label = company.labels ? company.labels[0].text : labelTypes.TARGET;
-                        //     dispatch(
-                        //         GroupedCompanyActionCreators[
-                        //             labelTypesMapToCompanyGroupTypes[label]
-                        //         ][CrudType.READ][RequestStatus.SUCCESS].action(company)
-                        //     );
-                        // }
                     })
                 )
             }

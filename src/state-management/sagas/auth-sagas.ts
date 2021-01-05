@@ -48,34 +48,6 @@ function* authLoginSagaHandler(
             jsonResponse.avatar_url,
             jsonResponse.isLocal
         ));
-
-        // initial fetch user data
-        // yield put(
-        //     CompanyActionCreators[CrudType.LIST][RequestStatus.TRIGGERED].action()
-        // );
-
-        // fetch companies that do not have label status yet, treat them as `target` and put them in target group
-        yield put(
-            GroupedCompanyActionCreators["targetCompany"][CrudType.LIST][RequestStatus.TRIGGERED].action({
-                graphqlFunctionName: 'fetchDashboardCompanyData',
-                graphqlArgs: {
-                    labels__isnull: true
-                }
-            })
-        );
-
-        // fetch companies filter by their label status
-        for (let labelText of Object.values(labelTypes)) {
-            yield put(
-                GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[labelText as labelTypes]][CrudType.LIST][RequestStatus.TRIGGERED].action({
-                    graphqlFunctionName: 'fetchDashboardCompanyData',
-                    graphqlArgs: {
-                        labels__text: labelText
-                    }
-                })
-            );
-        }
-
     } catch (error) {
         console.warn(`auth saga error: ${JSON.stringify(error)}`);
         yield put(FailureAuth(error));

@@ -1,4 +1,4 @@
-import { IObjectBase, TObject, IObjectRestApiReduxFactoryActions, IObjectAction, ObjectRestApiJsonResponse, IObjectActionCreatorArgs } from "../types/factory-types";
+import { IObjectBase, TObject, IObjectRestApiReduxFactoryActions, IObjectAction, ObjectRestApiJsonResponse, IObjectTriggerActionArgs } from "../types/factory-types";
 
 import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, ISingleRestApiResponse, IListRestApiResponse } from "../../utils/rest-api";
 
@@ -26,7 +26,7 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
                         finalCallback,
                         absoluteUrl, graphqlFunctionName, graphqlArgs,
                         triggerActionOptions
-                    }: IObjectActionCreatorArgs<ObjectRestApiSchema>): IObjectAction<ObjectRestApiSchema> => {
+                    }: IObjectTriggerActionArgs<ObjectRestApiSchema>): IObjectAction<ObjectRestApiSchema> => {
                         return {
                             type: triggerActionTypeName,
                             crudType: crudKeyword,
@@ -61,7 +61,8 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
                     (
                         /** api response */
                         jsonResponse: ObjectRestApiJsonResponse<ObjectRestApiSchema> | { uuid: string },
-                        triggerFormData?: TObject<ObjectRestApiSchema> | Array<TObject<ObjectRestApiSchema>>
+                        triggerFormData?: TObject<ObjectRestApiSchema> | Array<TObject<ObjectRestApiSchema>>,
+                        graphqlEndCursor?: string
                     ): IObjectAction<ObjectRestApiSchema> => {
                         let newState = {
                             type: successActionTypeName,
@@ -97,6 +98,7 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
                             
                             return {
                                 ...newState,
+                                graphqlEndCursor,
                                 payload: {
                                     requestStatus: RequestStatus.SUCCESS,
                                     formData

@@ -5,6 +5,7 @@ import { SagaIterator } from "redux-saga";
 import { actionChannel, take, call, put } from "redux-saga/effects";
 import { normalize } from "normalizr";
 import { GraphQLApiService } from "../../utils/graphql-api";
+import { companyGroupTypes, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
 
 
 export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
@@ -42,7 +43,9 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                     )) :
                     (yield call(
                         GraphQLApiService.fetchDashboardCompanyData,
-                        graphqlArgs || {}
+                        {
+                            ...graphqlArgs
+                        }
                     ));
 
                 // TODO: currently `status` not available, how to better handle error?
@@ -50,32 +53,6 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                 //     console.error("Server error, see message in res.");
                 //     throw new Error("Server error, see message in res.");
                 // }
-                
-                // deal with pagination
-                //
-                // rest api
-                if (!graphqlFunctionName) {
-                    // if there is .next in res, then it's paginated data and we should perform a next request to next page data
-                    if (jsonResponse.next) {
-                        yield put(ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action({
-                            absoluteUrl: jsonResponse.next
-                        }));
-                    }
-                } else {
-                    // graphql api
-                    // if there is .pageInfo.endCursor, then use that for next page data
-                    if (jsonResponse.pageInfo.endCursor && jsonResponse.count < jsonResponse.totalCount) {
-                        yield put(
-                            ObjectRestApiActions[CrudType.LIST][RequestStatus.TRIGGERED].action({
-                               graphqlFunctionName: 'fetchDashboardCompanyData',
-                               graphqlArgs: {
-                                   ...(graphqlArgs || {}),
-                                   after: jsonResponse.pageInfo.endCursor
-                               }
-                            })
-                        );
-                    }
-                }
 
                 // normalize primary object data (for relational object normalizing, will do it later) if  normalize manifest speciified
                 let normalizeData: undefined | Array<ObjectRestApiSchema> = undefined;
@@ -211,7 +188,11 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                         data: normalizeData ? normalizeData : (
                             crudKeyword === CrudType.DELETE ? formData : jsonResponse
                         ),
-                        updateFromObject: triggerAction.triggerActionOptions ? triggerAction.triggerActionOptions.updateFromObject : undefined
+                        updateFromObject: triggerAction.triggerActionOptions ? triggerAction.triggerActionOptions.updateFromObject : undefined,
+                        graphqlEndCursor: (crudKeyword === CrudType.LIST && graphqlFunctionName) ?
+                            jsonResponse.pageInfo.endCursor :
+                            undefined,
+                        companyGroupType: (Object.values(labelTypesMapToCompanyGroupTypes) as string[]).includes(objectName) ? objectName as companyGroupTypes : undefined,
                     });
                 }
                 else {
@@ -226,7 +207,13 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                         yield put(
                             ObjectRestApiActions[crudKeyword][
                                 RequestStatus.SUCCESS
-                            ].action(jsonResponse)
+                            ].action(
+                                jsonResponse,
+                                undefined,
+                                crudKeyword === CrudType.LIST && graphqlFunctionName ?
+                                    jsonResponse.pageInfo.endCursor :
+                                    undefined
+                            )
                         );
                     }
                 }
