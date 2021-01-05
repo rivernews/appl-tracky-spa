@@ -13,7 +13,7 @@ import {
     IObjectAction,
     JsonResponseType
 } from "../../state-management/types/factory-types";
-import { Company, labelTypesMapToCompanyGroupTypes, companyGroupTypes } from "../../data-model/company/company";
+import { Company, companyGroupTypes, companyGroups } from "../../data-model/company/company";
 import { Application } from "../../data-model/application/application";
 import { ApplicationStatus } from "../../data-model/application-status/application-status";
 
@@ -165,7 +165,7 @@ export const UserComAppPage = (props: IUserComAppPageProps) => {
         // need to really make sure company not found in database
         // will not show "not found" till all requesting finish
         let someStillRequesting: boolean = false;
-        for (const companyGroupText of Object.values(labelTypesMapToCompanyGroupTypes)) {
+        for (const companyGroupText of companyGroups) {
             if (
                 props[companyGroupText].requestStatus !== RequestStatus.SUCCESS ||
                 props[companyGroupText].requestStatus !== RequestStatus.FAILURE
@@ -197,7 +197,7 @@ const mapStateToProps = (store: IRootState) => {
     return {
         // prop: store.prop
         companyStore: store.company,
-        ...(Object.values(labelTypesMapToCompanyGroupTypes).reduce((accumulate, companyGroupText) => ({
+        ...(companyGroups.reduce((accumulate, companyGroupText) => ({
             ...accumulate,
             [companyGroupText]: store[companyGroupText]
         }), {})),
