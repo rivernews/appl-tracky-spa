@@ -26,9 +26,7 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
             !(objectAction && objectAction.payload && objectAction.payload.requestStatus) ||
             !(action.type.split("_")[2] === objectName.toUpperCase())
         ) {
-            return {
-                ...objectStore
-            };
+            return objectStore;
         }
 
         // async success
@@ -39,6 +37,7 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
                 let newObject = <TObject<ObjectRestApiSchema>>objectAction.payload.formData;
 
                 return {
+                    ...objectStore,
                     collection: {
                         ...objectStore.collection,
                         [newObject.uuid]: newObject
@@ -56,6 +55,7 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
                 }, <IObjectList<ObjectRestApiSchema>>{});
 
                 return {
+                    ...objectStore,
                     collection: {
                         ...objectStore.collection,
                         ...newObjectsCollection
@@ -74,11 +74,17 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
                 }
 
                 const afterStore: IObjectStore<ObjectRestApiSchema> = {
+                    ...objectStore,
                     collection: {
                         ...objectStore.collection,
                         ...newObjectsCollection
                     },
-                    requestStatus: objectAction.payload.requestStatus
+                    requestStatus: objectAction.payload.requestStatus,
+                    
+                    // if `graphqlEndCursor` not spedified, it means only the collection needed to be modified,
+                    // does not involve paginated API call, so do not update/overwrite end cursor
+                    // e.g. use case for company searching & dispatch search results into each company group
+                    graphqlEndCursor: objectAction.graphqlEndCursor !== undefined ? objectAction.graphqlEndCursor : objectStore.graphqlEndCursor,
                 };
 
                 return afterStore;
@@ -89,6 +95,7 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
                 let updatedObject = <TObject<ObjectRestApiSchema>>objectAction.payload.formData;
 
                 return {
+                    ...objectStore,
                     collection: {
                         ...objectStore.collection,
                         // support partial update - only update attributes included by updatedObject
@@ -114,6 +121,7 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
                 }, <IObjectList<ObjectRestApiSchema>>{});
 
                 return {
+                    ...objectStore,
                     collection: {
                         ...objectStore.collection,
                         ...updatedObjectsCollection
@@ -124,6 +132,10 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
 
             // DELETE & BATCH DELETE
             else if (objectAction.crudType === CrudType.DELETE) {
+                if (objectAction.clearAll) {
+                    return initialState;
+                }
+
                 let targetDeleteUuids: Array<string> = [];
                 if (objectAction.triggerFormData) {
                     if (!Array.isArray(objectAction.triggerFormData) && typeof objectAction.triggerFormData === 'object') {
@@ -143,6 +155,7 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
                 }
 
                 const afterStore = {
+                    ...objectStore,
                     collection: omit(objectStore.collection, targetDeleteUuids),
                     requestStatus: objectAction.payload.requestStatus
                 }

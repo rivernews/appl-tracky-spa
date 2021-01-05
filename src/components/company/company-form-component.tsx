@@ -118,7 +118,9 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Company>>) => {
                         // create ref in grouped redux
                         dispatch(
                             // no api calls, so don't dispatch TRIGGER action, just SUCCESS action
-                            GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[Company.getLabel(jsonResponse)]][CrudType.CREATE][RequestStatus.SUCCESS].action({ uuid: jsonResponse.uuid })
+                            GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[Company.getLabel(jsonResponse)]][CrudType.CREATE][RequestStatus.SUCCESS].action({
+                                jsonResponse: { uuid: jsonResponse.uuid }
+                            })
                         );
                         // Only TRIGGER/SUCCESS has success callback. Since this is CREATE/SUCCESS, we can only call the func here. This is necessary because the form component rely on this callback to carry out order-critical operations, like page transition after create, etc.
                         successCallback && successCallback(jsonResponse);

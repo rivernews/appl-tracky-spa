@@ -67,11 +67,9 @@ export interface IListRestApiResponse<Schema> {
 export type ISingleRestApiResponse<Schema> = TObject<Schema>;
 
 export function IsSingleRestApiResponseTypeGuard<Schema>(
-    response: ISingleRestApiResponse<Schema> | IListRestApiResponse<Schema> |
-        // used by GroupedCompanyActionCreators
-        { uuid: string }
+    response: any
 ): response is ISingleRestApiResponse<Schema> {
-    return (<ISingleRestApiResponse<Schema>>response).uuid !== undefined;
+    return response && (<ISingleRestApiResponse<Schema>>response).uuid !== undefined;
 }
 
 function IsSingleFormDataTypeGuard<Schema>(

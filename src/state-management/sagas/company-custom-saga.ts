@@ -1,7 +1,7 @@
-import { ISuccessSagaHandlerArgs, IObjectStore } from "../types/factory-types";
+import { ISuccessSagaHandlerArgs, IObjectStore, IObjectBase } from "../types/factory-types";
 import { CrudType, RequestStatus } from "../../utils/rest-api";
-import { Company, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
-import { CompanyActionCreators, GroupedCompanyActionCreators, ApplicationStatusActionCreators, ApplicationActionCreators } from "../action-creators/root-actions";
+import { Company, companyGroups, companyGroupTypes, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
+import { CompanyActionCreators, GroupedCompanyActionCreators, ApplicationStatusActionCreators, ApplicationActionCreators, SearchCompanyActionCreators } from "../action-creators/root-actions";
 
 import { put, select } from "redux-saga/effects";
 import { getApplicationStore } from "../store/store-config";
@@ -29,13 +29,17 @@ export const companyDoneUpdateSuccessSagaHandler = function*(args: ISuccessSagaH
     // dispatch a success/CREATE action to the destination company group's action
     const destinationCreateAction = GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[destinationLabelText]][CrudType.CREATE][RequestStatus.SUCCESS].action;
     yield put(
-        destinationCreateAction({ uuid: destinationCompany.uuid })
+        destinationCreateAction({
+            jsonResponse: { uuid: destinationCompany.uuid }
+        })
     );
     
     // dispatch a success/DELETE action of the original (current) company group 
     const currentDeleteAction = GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[currentLabelText]][CrudType.DELETE][RequestStatus.SUCCESS].action;
     yield put(
-        currentDeleteAction(undefined, { uuid: currentCompany.uuid })
+        currentDeleteAction({
+            triggerFormData: { uuid: currentCompany.uuid }
+        })
     );
 }
 export const companyOverrideDeleteSuccessSagaHandler = function*(args: ISuccessSagaHandlerArgs<Company>) {
@@ -47,7 +51,9 @@ export const companyOverrideDeleteSuccessSagaHandler = function*(args: ISuccessS
     const currentLabelText = Company.getLabel(currentCompany);
     const currentAction = GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[currentLabelText]][CrudType.DELETE][RequestStatus.SUCCESS].action;
     yield put(
-        currentAction(undefined, { uuid: currentCompany.uuid })
+        currentAction({
+            triggerFormData: { uuid: currentCompany.uuid }
+        })
     );
 
     // handle cascade delete - delete relational data in their redux
@@ -56,10 +62,6 @@ export const companyOverrideDeleteSuccessSagaHandler = function*(args: ISuccessS
     const applicationStore: IObjectStore<Application> = yield select(getApplicationStore);
     alert(`currentCompany applications: ${JSON.stringify(currentCompany.applications)}`);
     const deleteStatusUuids = (currentCompany.applications as Array<IReference>).flatMap((applicationUuid) => {
-        alert(`flatMap, application uuid: ${applicationUuid}`);
-        alert(`applicationUuid in applicationStore.collection?: ${applicationUuid in applicationStore.collection}`);
-        alert(`hasownProperty?: ${applicationStore.collection.hasOwnProperty(applicationUuid)}`);
-        alert(`statuses?: ${JSON.stringify(applicationStore.collection[applicationUuid].statuses)}`);
         return applicationUuid in applicationStore.collection ? (
             applicationStore.collection[applicationUuid].statuses as Array<IReference>
         ) : []
@@ -67,26 +69,23 @@ export const companyOverrideDeleteSuccessSagaHandler = function*(args: ISuccessS
     alert(`cascade delete statuses: ${JSON.stringify(deleteStatusUuids)}`);
 
     yield put(
-        ApplicationStatusActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action(
-            undefined,
-            deleteStatusUuids
-        )
+        ApplicationStatusActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action({
+            triggerFormData: deleteStatusUuids
+        })
     );
 
     // delete related applications
     yield put(
-        ApplicationActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action(
-            undefined,
-            currentCompany.applications
-        )
+        ApplicationActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action({
+            triggerFormData: currentCompany.applications
+        })
     );
 
     // handle deleting company itself
     yield put(
-        CompanyActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action(
-            undefined,
-            currentCompany
-        )
+        CompanyActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action({
+            triggerFormData: currentCompany
+        })
     );
 }
 
@@ -95,18 +94,23 @@ export const companyOverrideDeleteSuccessSagaHandler = function*(args: ISuccessS
 export const groupedCompanyListSuccessSagaHandler = function*(args: ISuccessSagaHandlerArgs<Company>) {
     // In redux factory saga, already ensure the right CRUD so no need to check crudType
 
-    if (!args.data || Array.isArray(args.data) && !args.data.length) {
+    if (!args.data || !Array.isArray(args.data)) {
+        return;
+    }
+
+    if (!args.companyGroupType) {
+        console.error('companyGroupType is not supplied');
         return;
     }
 
     const fetchedCompanyList: Array<Company> = Array.isArray(args.data) ? args.data : [args.data];
 
-    const currentLabelText = Company.getLabel(fetchedCompanyList[0]);
-
     // place company objects in pool redux
     yield put(
         CompanyActionCreators[CrudType.LIST][RequestStatus.SUCCESS].action({
-            results: fetchedCompanyList
+            jsonResponse: {
+                results: fetchedCompanyList
+            }
         })
     );
 
@@ -115,6 +119,82 @@ export const groupedCompanyListSuccessSagaHandler = function*(args: ISuccessSaga
         uuid: company.uuid
     }));
     yield put(
-        GroupedCompanyActionCreators[labelTypesMapToCompanyGroupTypes[currentLabelText]][CrudType.LIST][RequestStatus.SUCCESS].action({ results: fetchedCompanyListUuids })
+        GroupedCompanyActionCreators[args.companyGroupType][CrudType.LIST][RequestStatus.SUCCESS].action({
+            jsonResponse: { results: fetchedCompanyListUuids },
+            // pass over endCursor for each company group for pagination
+            // no need to pass endCursor for `CompanyActionCreators` since company store only serve as saving complete company objects;
+            // the UI render (and thus pagination) will be based on each company group's store
+            graphqlEndCursor: args.graphqlEndCursor
+        })
+    );
+}
+
+export const searchCompanyListSuccessSagaHandler = function*(args: ISuccessSagaHandlerArgs<Company>) {
+    // In redux factory saga, already ensure the right CRUD so no need to check crudType
+
+    if (!args.data || !Array.isArray(args.data)) {
+        return;
+    }
+
+    const fetchedCompanyList: Array<Company> = Array.isArray(args.data) ? args.data : [args.data];
+
+    // place company objects in pool redux - store the complete object
+    yield put(
+        CompanyActionCreators[CrudType.LIST][RequestStatus.SUCCESS].action({
+            jsonResponse: { results: fetchedCompanyList }
+        })
+    );
+
+    // place "references/pointers", i.e., uuids, of company objects to grouped redux
+    const fetchedCompanyReferenceCollections = {
+        ...(companyGroups.reduce((accumulated, companyGroupText) => {
+            return {
+                ...accumulated,
+                [companyGroupText]: []
+            }
+        }, {}) as {
+            [groupText in companyGroupTypes]: Array<IObjectBase>
+        }),
+        all: [] as Array<IObjectBase>
+    };
+    // collect all references in one pass
+    for (let company of fetchedCompanyList) {
+        fetchedCompanyReferenceCollections[
+            labelTypesMapToCompanyGroupTypes[ Company.getLabel(company) ]
+        ].push({ uuid: company.uuid })
+        fetchedCompanyReferenceCollections.all.push({ uuid: company.uuid });
+    }
+    for (let companyGroupType of companyGroups) {
+        const companyReferences = fetchedCompanyReferenceCollections[companyGroupType];
+        if (companyReferences.length === 0) {
+            continue;
+        }
+
+        yield put(
+            GroupedCompanyActionCreators[companyGroupType][CrudType.LIST][RequestStatus.SUCCESS].action({
+                jsonResponse: { results: companyReferences }
+            })
+        );
+    }
+
+    // place "references/pointers" to searchCompany redux
+    if (args.clearPreviousCollection) {
+        // means user changed a keyword to search instead of pressing 'load more' button
+        // we should clear out previous searchCompany results before we pour new results into redux
+        yield put(
+            SearchCompanyActionCreators[CrudType.DELETE][RequestStatus.SUCCESS].action({
+                clearAll: true
+            })
+        )
+    }
+    yield put(
+        SearchCompanyActionCreators[CrudType.LIST][RequestStatus.SUCCESS].action({
+            jsonResponse: {
+                results: fetchedCompanyReferenceCollections.all,
+            },
+            // pagination for search company since this is the saga for search,
+            // so make sure not to mix up with grouped company's `graphqlEndCursor`
+            graphqlEndCursor: args.graphqlEndCursor
+        })
     );
 }

@@ -9,23 +9,26 @@ import { RestApiReducerFactory } from "./reducer-factory";
 import { ApplicationStatus } from "../../data-model/application-status/application-status";
 import { Application } from "../../data-model/application/application";
 // rest api
-import { labelTypesMapToCompanyGroupTypes, companyGroupTypes, Company } from "../../data-model/company/company";
+import { companyGroupTypes, Company, companyGroups } from "../../data-model/company/company";
 
 /** router */
 import { History } from "history";
 import { selectCompanyReducer } from "./select-company-reducers";
+import { userAppPageReducer } from "./user-app-page-reducers";
 
 
 // create reducer for each data model
 
 export const CompanyReducer = RestApiReducerFactory<Company>("companies");
 
-export const GroupCompanyReducer = Object.values(labelTypesMapToCompanyGroupTypes).reduce((accumulated, companyGroupText) => {
+export const GroupCompanyReducer = companyGroups.reduce((accumulated, companyGroupText) => {
     return {
         ...accumulated,
         [companyGroupText]: RestApiReducerFactory(companyGroupText)
     }
 }, {}) as { [key in companyGroupTypes]: Reducer<IObjectStore<Company>> };
+
+export const SearchCompanyReducer = RestApiReducerFactory<Company>("searchCompany");
 
 export const ApplicationReducer = RestApiReducerFactory<Application>("applications");
 
@@ -56,12 +59,16 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             rootStateChecked.auth = undefined;
 
             rootStateChecked.company = undefined;
-            Object.values(labelTypesMapToCompanyGroupTypes).forEach((companyGroupText) => {
+            companyGroups.forEach((companyGroupText) => {
                 rootStateChecked[companyGroupText] = undefined;
             });
+            rootStateChecked.searchCompany = undefined
 
             rootStateChecked.application = undefined;
             rootStateChecked.applicationStatus = undefined;
+
+            rootStateChecked.selectCompany = undefined;
+            rootStateChecked.userAppPage = undefined;
             // add initial state for new sub-store here
             // ...
         } else if (action.type === RootActionNames.ResetAllStore) {
@@ -81,7 +88,7 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
             company: CompanyReducer(rootStateChecked.company, action),
             
             // add grouped company reducers
-            ...(Object.values(labelTypesMapToCompanyGroupTypes).reduce((accumulate, companyGroupText) => {
+            ...(companyGroups.reduce((accumulate, companyGroupText) => {
                 const Reducer = GroupCompanyReducer[companyGroupText];
                 return ({
                     ...accumulate,
@@ -91,10 +98,13 @@ export const createRootReducer = (history: History<any>): Reducer<IRootState> =>
                 [key in companyGroupTypes]: IObjectStore<Company>
             }),
 
+            searchCompany: SearchCompanyReducer(rootStateChecked.searchCompany, action),
+
             application: ApplicationReducer(rootStateChecked.application, action),
             applicationStatus: ApplicationStatusReducer(rootStateChecked.applicationStatus, action),
 
             selectCompany: selectCompanyReducer(rootStateChecked.selectCompany, action),
+            userAppPage: userAppPageReducer(rootStateChecked.userAppPage, action),
             
             // add new reducer here
             // ...

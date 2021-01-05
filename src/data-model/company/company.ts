@@ -64,7 +64,6 @@ export class Company extends BaseModel {
     }
 }
 
-
 export type companyGroupTypes = "targetCompany" | "appliedCompany" | "interviewingCompany" | "archivedCompany";
 
 export const labelTypesMapToCompanyGroupTypes: {
@@ -75,3 +74,5 @@ export const labelTypesMapToCompanyGroupTypes: {
     [labelTypes.INTERVIEWING]: "interviewingCompany",
     [labelTypes.ARCHIVED]: "archivedCompany"
 };
+
+export const companyGroups = Object.values(labelTypesMapToCompanyGroupTypes);

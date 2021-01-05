@@ -59,7 +59,9 @@ function* selectCompanyApplySagaHandler(
             labelTypesMapToCompanyGroupTypes[label]
         ][CrudType.DELETE][RequestStatus.SUCCESS].action;
         return put(
-            deleteAction(undefined, Array.from(uuidSet).map(uuid => ({ uuid })) )
+            deleteAction({
+                triggerFormData: Array.from(uuidSet).map(uuid => ({ uuid }))
+            })
         );
     }));
 
@@ -68,17 +70,21 @@ function* selectCompanyApplySagaHandler(
         labelTypesMapToCompanyGroupTypes[destinationStatus]
     ][CrudType.BATCHCREATE][RequestStatus.SUCCESS].action;
     yield put(
-        batchCreateAction(updateCompaniesResult.map(company => {
-            return { uuid: company.uuid }
-        }))
+        batchCreateAction({
+            jsonResponse: updateCompaniesResult.map(company => {
+                return { uuid: company.uuid }
+            })
+        })
     )
     
     // update companies (TODO: limit to just status, but need to pull in company redux state)
     const batchUpdateAction = CompanyActionCreators[CrudType.BATCHUPDATE][RequestStatus.SUCCESS].action;
     yield put(
-        batchUpdateAction(updateCompaniesResult.map(company => {
-            return { uuid: company.uuid, labels: company.labels }
-        }))
+        batchUpdateAction({
+            jsonResponse: updateCompaniesResult.map(company => {
+                return { uuid: company.uuid, labels: company.labels }
+            })
+        })
     );
 
     yield put(
