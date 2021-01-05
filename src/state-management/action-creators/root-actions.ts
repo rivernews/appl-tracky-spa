@@ -1,5 +1,5 @@
 import { RestApiActionCreatorsFactory } from "./action-creator-factory";
-import { companyGroupTypes, labelTypesMapToCompanyGroupTypes, Company } from "../../data-model/company/company";
+import { companyGroupTypes, Company, companyGroups } from "../../data-model/company/company";
 import { IObjectRestApiReduxFactoryActions } from "../types/factory-types";
 import { Application } from "../../data-model/application/application";
 import { ApplicationStatus } from "../../data-model/application-status/application-status";
@@ -21,7 +21,7 @@ export const resetAllStoreAction = () => {
 export const CompanyActionCreators = RestApiActionCreatorsFactory<Company>("companies");
 
 const groupedCompanyActionCreatorsHelper = () => {
-    return Object.values(labelTypesMapToCompanyGroupTypes).reduce((accumulated, companyGroupText) => {
+    return companyGroups.reduce((accumulated, companyGroupText) => {
         return {
             ...accumulated,
             [companyGroupText]: RestApiActionCreatorsFactory<Company>(companyGroupText)
@@ -32,6 +32,7 @@ export const GroupedCompanyActionCreators = groupedCompanyActionCreatorsHelper()
     [key in companyGroupTypes]: IObjectRestApiReduxFactoryActions<Company>
 };
 
+export const SearchCompanyActionCreators = RestApiActionCreatorsFactory<Company>("searchCompany");
 
 // action creators for application
 

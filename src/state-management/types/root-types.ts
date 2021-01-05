@@ -1,6 +1,6 @@
 import { IUpdateAuthState } from "./auth-types";
 
-import { IObjectStore } from "./factory-types";
+import { IObjectBase, IObjectStore } from "./factory-types";
 import { Company, companyGroupTypes } from "../../data-model/company/company";
 import { Application } from "../../data-model/application/application";
 import { ApplicationStatus } from "../../data-model/application-status/application-status";
@@ -17,6 +17,7 @@ export type IRootState = {
     applicationStatus: IObjectStore<ApplicationStatus>;
 
     selectCompany: ISelectCompanyState;
+    searchCompany: IObjectStore<IObjectBase>;
     
     // add more state types here here (for each reducer)
     // ...
