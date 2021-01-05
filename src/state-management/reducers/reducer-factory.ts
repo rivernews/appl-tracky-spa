@@ -128,6 +128,10 @@ export const RestApiReducerFactory = <ObjectRestApiSchema extends IObjectBase>(
 
             // DELETE & BATCH DELETE
             else if (objectAction.crudType === CrudType.DELETE) {
+                if (objectAction.clearAll) {
+                    return initialState;
+                }
+
                 let targetDeleteUuids: Array<string> = [];
                 if (objectAction.triggerFormData) {
                     if (!Array.isArray(objectAction.triggerFormData) && typeof objectAction.triggerFormData === 'object') {

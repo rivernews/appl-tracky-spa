@@ -1,4 +1,4 @@
-import { IObjectBase, TObject, IObjectRestApiReduxFactoryActions, IObjectAction, ObjectRestApiJsonResponse, IObjectTriggerActionArgs } from "../types/factory-types";
+import { IObjectBase, TObject, IObjectRestApiReduxFactoryActions, IObjectAction, ObjectRestApiJsonResponse, IObjectTriggerActionArgs, IObjectSuccessActionArgs } from "../types/factory-types";
 
 import { CrudType, RequestStatus, IsSingleRestApiResponseTypeGuard, ISingleRestApiResponse, IListRestApiResponse } from "../../utils/rest-api";
 
@@ -58,29 +58,48 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
             [RequestStatus.SUCCESS]: {
                 actionTypeName: successActionTypeName,
                 action: 
-                    (
+                    ({
                         /** api response */
-                        jsonResponse: ObjectRestApiJsonResponse<ObjectRestApiSchema> | { uuid: string },
-                        triggerFormData?: TObject<ObjectRestApiSchema> | Array<TObject<ObjectRestApiSchema>>,
-                        graphqlEndCursor?: string
-                    ): IObjectAction<ObjectRestApiSchema> => {
-                        let newState = {
+                        jsonResponse,
+                        triggerFormData,
+                        graphqlEndCursor,
+                        clearAll
+                    }: IObjectSuccessActionArgs<ObjectRestApiSchema>): IObjectAction<ObjectRestApiSchema> => {
+                        let actionBase = {
                             type: successActionTypeName,
                             crudType: crudKeyword
                         };
                         // if is delete success, we don't need formData (& the server responds nothing for DELETE as well)
                         if (crudKeyword === CrudType.DELETE) {
+                            if (clearAll) {
+                                return {
+                                   ...actionBase,
+                                   clearAll,
+                                   payload: {
+                                       requestStatus: RequestStatus.SUCCESS
+                                   } 
+                                }    
+                            }
                             return {
-                                ...newState,
+                                ...actionBase,
                                 triggerFormData,
                                 payload: {
                                     requestStatus: RequestStatus.SUCCESS,
                                 }
                             }
                         }
-                        else if (IsSingleRestApiResponseTypeGuard(jsonResponse)) {
+                        else if (jsonResponse === undefined) {
+                            console.error(`action is ${crudKeyword} and not DELETE - so jsonResponse is required but it's undefined. Please make sure to pass in jsonResponse if not a DELETE action.`)
                             return {
-                                ...newState,
+                                ...actionBase,
+                                payload: {
+                                    requestStatus: RequestStatus.SUCCESS
+                                }
+                            }
+                        }
+                        else if (IsSingleRestApiResponseTypeGuard<ObjectRestApiSchema>(jsonResponse)) {
+                            return {
+                                ...actionBase,
                                 payload: {
                                     requestStatus: RequestStatus.SUCCESS,
                                     formData: <ISingleRestApiResponse<ObjectRestApiSchema>>(
@@ -97,7 +116,7 @@ export const RestApiActionCreatorsFactory = <ObjectRestApiSchema extends IObject
                                 (<IListRestApiResponse<ObjectRestApiSchema>>(jsonResponse)).results;
                             
                             return {
-                                ...newState,
+                                ...actionBase,
                                 graphqlEndCursor,
                                 payload: {
                                     requestStatus: RequestStatus.SUCCESS,
