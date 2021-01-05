@@ -23,7 +23,9 @@ export const applicationStatusDoneCreateSuccessSagaHandler = function*(args: ISu
         ...updatedApplication.statuses as Array<IReference>
     ];
     yield put(
-        ApplicationActionCreators[CrudType.UPDATE][RequestStatus.SUCCESS].action(updatedApplication)
+        ApplicationActionCreators[CrudType.UPDATE][RequestStatus.SUCCESS].action({
+            jsonResponse: updatedApplication
+        })
     );
 }
 export const applicationStatusDoneDeleteSuccessSagaHandler = function*(args: ISuccessSagaHandlerArgs<ApplicationStatus>) {
@@ -37,6 +39,8 @@ export const applicationStatusDoneDeleteSuccessSagaHandler = function*(args: ISu
     updatedApplication.statuses = (updatedApplication.statuses as Array<IReference>).filter(applicationStatusUuid => applicationStatusUuid !== status.uuid);
 
     yield put(
-        ApplicationActionCreators[CrudType.UPDATE][RequestStatus.SUCCESS].action(updatedApplication)
+        ApplicationActionCreators[CrudType.UPDATE][RequestStatus.SUCCESS].action({
+            jsonResponse: updatedApplication
+        })
     );
 }

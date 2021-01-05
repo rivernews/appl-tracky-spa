@@ -5,7 +5,7 @@ import { SagaIterator } from "redux-saga";
 import { actionChannel, take, call, put } from "redux-saga/effects";
 import { normalize } from "normalizr";
 import { GraphQLApiService } from "../../utils/graphql-api";
-import { companyGroupTypes, labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
+import { companyGroups, companyGroupTypes } from "../../data-model/company/company";
 
 
 export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
@@ -136,7 +136,9 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                                 const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions<IObjectBase>;
 
                                 yield put(
-                                    relationalActions[CrudType.LIST][RequestStatus.SUCCESS].action(dispatchResponseData)
+                                    relationalActions[CrudType.LIST][RequestStatus.SUCCESS].action({
+                                        jsonResponse: dispatchResponseData
+                                    })
                                 );
                             }
                             break;
@@ -164,7 +166,9 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                                 ) as Array<TObject<IObjectBase>>;
 
                                 yield put(
-                                    relationalActions[CrudType.DELETE][RequestStatus.SUCCESS].action(undefined, dispatchDeleteData)
+                                    relationalActions[CrudType.DELETE][RequestStatus.SUCCESS].action({
+                                        triggerFormData: dispatchDeleteData
+                                    })
                                 );
                             }
                             break;
@@ -192,7 +196,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                         graphqlEndCursor: (crudKeyword === CrudType.LIST && graphqlFunctionName) ?
                             jsonResponse.pageInfo.endCursor :
                             undefined,
-                        companyGroupType: (Object.values(labelTypesMapToCompanyGroupTypes) as string[]).includes(objectName) ? objectName as companyGroupTypes : undefined,
+                        companyGroupType: (companyGroups as string[]).includes(objectName) ? objectName as companyGroupTypes : undefined,
                     });
                 }
                 else {
@@ -201,19 +205,20 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                         yield put(
                             ObjectRestApiActions[CrudType.DELETE][
                                 RequestStatus.SUCCESS
-                            ].action(undefined, formData)
+                            ].action({
+                                triggerFormData: formData
+                            })
                         );
                     } else {
                         yield put(
                             ObjectRestApiActions[crudKeyword][
                                 RequestStatus.SUCCESS
-                            ].action(
+                            ].action({
                                 jsonResponse,
-                                undefined,
-                                crudKeyword === CrudType.LIST && graphqlFunctionName ?
+                                graphqlEndCursor: crudKeyword === CrudType.LIST && graphqlFunctionName ?
                                     jsonResponse.pageInfo.endCursor :
                                     undefined
-                            )
+                            })
                         );
                     }
                 }

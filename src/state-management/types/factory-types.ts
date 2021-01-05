@@ -32,47 +32,30 @@ export interface IObjectStore<Schema> {
 
 /** action */
 
-export interface IObjectRestApiReduxFactoryActions<ObjectApiSchema>  {
+export interface IObjectRestApiReduxFactoryActions<ObjectSchema>  {
     [crudType: string]: {
         [RequestStatus.TRIGGERED]: {
             actionTypeName: string;
             action:
-                (args:IObjectTriggerActionArgs<ObjectApiSchema>) => IObjectAction<ObjectApiSchema>;
+                (args:IObjectTriggerActionArgs<ObjectSchema>) => IObjectAction<ObjectSchema>;
             saga?: () => SagaIterator;
         };
 
         [RequestStatus.REQUESTING]: {
             actionTypeName: string;
-            action: () => IObjectAction<ObjectApiSchema>;
+            action: () => IObjectAction<ObjectSchema>;
             saga?: () => SagaIterator;
         };
 
         [RequestStatus.SUCCESS]: {
             actionTypeName: string;
-            action(
-                jsonResponse?:
-                    ObjectRestApiJsonResponse<ObjectApiSchema> |
-                    // used by GroupedCompanyActionCreators
-                    IObjectBase |
-                    // used by batch operation e.g. `BATCHCREATE`, `BATCHUPDATE`
-                    Array<IObjectBase> |
-                    // used by GroupedCompanyActionCreators
-                    { results: Array<ObjectApiSchema> | Array<IObjectBase>},
-                triggerFormData?: TObject<ObjectApiSchema> | Array<TObject<ObjectApiSchema>> |
-                    // used by GroupedCompanyActionCreators (DELETE, ...)
-                    IObjectBase |
-                    // used by batch delete (see `select-company-saga.ts`)
-                    Array<IObjectBase> |
-                    // used by GroupedCompanyActionCreators
-                    string[],
-                graphqlEndCursor?: string
-            ): IObjectAction<ObjectApiSchema>;
+            action(args: IObjectSuccessActionArgs<ObjectSchema>): IObjectAction<ObjectSchema>;
             saga?: () => SagaIterator;
         };
 
         [RequestStatus.FAILURE]: {
             actionTypeName: string;
-            action: (error: any) => IObjectAction<ObjectApiSchema>;
+            action: (error: any) => IObjectAction<ObjectSchema>;
             saga?: () => SagaIterator;
         };
     };
@@ -92,7 +75,8 @@ export interface IObjectBaseAction<Schema> extends Action {
     failureCallback?: (error: any) => void;
     finalCallback?: Function;
     // for deleteAction or other actions to obtain the original instance obj passed into trigger action
-    triggerFormData?: TObject<Schema> | Array<TObject<Schema>> | Array<IReference>;
+    triggerFormData?: TObject<Schema> | Array<TObject<Schema>> | Array<IReference> |
+        IObjectBase | Array<IObjectBase>;
     // for customized api call
     absoluteUrl?: string;
     // for graphql API
@@ -102,7 +86,12 @@ export interface IObjectBaseAction<Schema> extends Action {
     triggerActionOptions?: ITriggerActionOptions<Schema>
 
     // below are only for SUCCESS actions
+    //
     graphqlEndCursor?: string;
+
+    // below are only for DELETE-SUCCESS action
+    //
+    clearAll?: boolean;
 
     payload: {
         formData?:
@@ -115,21 +104,46 @@ export interface IObjectBaseAction<Schema> extends Action {
     };
 }
 
-export interface IObjectTriggerActionArgs<ObjectApiSchema> {
-    objectClassInstance?: ObjectApiSchema |
+export interface IObjectTriggerActionArgs<ObjectSchema> {
+    objectClassInstance?: ObjectSchema |
         // used by GroupedCompanyActionCreators
         IObjectBase,
-    successCallback?: (jsonResponse: JsonResponseType<ObjectApiSchema>) => void,
+    successCallback?: (jsonResponse: JsonResponseType<ObjectSchema>) => void,
     failureCallback?: (error: any) => void,
     finalCallback?: Function,
     absoluteUrl?: string,
-    triggerActionOptions?: ITriggerActionOptions<ObjectApiSchema>
+    triggerActionOptions?: ITriggerActionOptions<ObjectSchema>
 
     // if specified, use graphql client instead of rest api client for fetching
     graphqlFunctionName?: string;
     graphqlArgs?: IGraphQLQueryArgs;
 }
 
+export type IObjectSuccessActionArgs<ObjectSchema> = IObjectSuccessActionArgsBase<ObjectSchema>;
+
+interface IObjectSuccessActionArgsBase<ObjectSchema> {
+    jsonResponse?:
+        ObjectRestApiJsonResponse<ObjectSchema> |
+        // used by GroupedCompanyActionCreators
+        IObjectBase |
+        // used by batch operation e.g. `BATCHCREATE`, `BATCHUPDATE`
+        Array<IObjectBase> |
+        // used by GroupedCompanyActionCreators
+        { results: Array<ObjectSchema> | Array<IObjectBase>};
+
+    triggerFormData?: TObject<ObjectSchema> | Array<TObject<ObjectSchema>> |
+        // used by GroupedCompanyActionCreators (DELETE, ...)
+        IObjectBase |
+        // used by batch delete (see `select-company-saga.ts`)
+        Array<IObjectBase> |
+        // used by GroupedCompanyActionCreators
+        string[];
+
+    graphqlEndCursor?: string
+
+    // only for DELETE
+    clearAll?: boolean
+}
 
 /** factory API */
 
