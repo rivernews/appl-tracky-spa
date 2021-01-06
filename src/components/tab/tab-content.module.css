@@ -1,4 +1,5 @@
 .TabContent {
+    min-width: 70%;
     max-width: 100%;
     padding: 5vmin;
     overflow-x: hidden;
