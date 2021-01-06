@@ -107,7 +107,7 @@ export const UserComAppPage = (props: IUserComAppPageProps) => {
             <div className={styles.UserCompanyPage}>
                 <Button
                     onClick={_ => {
-                        props.history.length > 1 ? props.history.goBack()  : props.history.push('/home/');
+                        props.history.push('/home/');
                     }}
                 >
                     Back
