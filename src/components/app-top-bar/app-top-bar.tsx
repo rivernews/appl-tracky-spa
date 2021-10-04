@@ -42,7 +42,7 @@ export const AppTopBar = () => {
     const selectCompanyCollection = useSelector((state: IRootState) => state.selectCompany.selectCompanyCollection);
 
     return (<>
-        <TopAppBar>
+        <TopAppBar prominent dense>
             <TopAppBarRow>
                 <TopAppBarSection align="start">
                     {/* <TopAppBarIcon>
@@ -50,12 +50,6 @@ export const AppTopBar = () => {
                     </TopAppBarIcon> */}
                     <TopAppBarTitle className={styles.topAppBarTitle} onClick={goHome}>Appl Tracky</TopAppBarTitle>
                 </TopAppBarSection>
-
-                {selectCompanyCollection.size ? (
-                    <TopAppBarSection align="start">
-                        <SelectCompanyMenu />
-                    </TopAppBarSection>
-                ) : null}
 
                 <TopAppBarSection align='end' role='toolbar'>
                     <TopAppBarIcon navIcon tabIndex={0}>
@@ -88,6 +82,13 @@ export const AppTopBar = () => {
                     </TopAppBarIcon>
                 </TopAppBarSection>
             </TopAppBarRow>
+            {selectCompanyCollection.size ? (
+                <TopAppBarRow>
+                    <TopAppBarSection align="start">
+                        <SelectCompanyMenu />
+                    </TopAppBarSection>
+                </TopAppBarRow>
+            ) : null}
         </TopAppBar>
     </>)
 }
