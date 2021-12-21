@@ -5,6 +5,7 @@ import { IRootState } from "../../state-management/types/root-types";
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import MaterialUIBox from '@material-ui/core/Box';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 import { labelTypes } from "../../data-model/label";
@@ -38,7 +39,7 @@ const CompanyDropdownList = () => {
 
     return (
         <>
-            <Button onClick={onMenuClick} size="small">{selectCompanyCollection.size} companies</Button>
+            <Button onClick={onMenuClick} size="small">{selectCompanyCollection.size} orgs</Button>
             <Menu anchorEl={menuAnchorElement} keepMounted open={Boolean(menuAnchorElement)} onClose={closeMenu}>
                 {[...selectCompanyCollection].map(([uuid, company], index) => {
                     // only support single label/status on company for now
@@ -46,13 +47,13 @@ const CompanyDropdownList = () => {
                     return (
                         <MenuItem key={index} dense>
                             {label ? (
-                                <Chip className={classes.chip} label={company.labels[0].text} size="small" 
+                                <Chip className={classes.chip} label={company.labels[0].text} size="small"
                                     color={label === labelTypes.INTERVIEWING ? 'secondary' :
                                         label === labelTypes.TARGET ? 'primary' : 'default'}
                                 />
                             ) : null}
                             <Typography noWrap>
-                                {company.name} 
+                                {company.name}
                             </Typography>
                         </MenuItem>
                     )
@@ -103,34 +104,36 @@ export const SelectCompanyMenu = () => {
     const onCancel = useCallback(() => {
         dispatch(CancelAllSelectCompany());
     }, [dispatch]);
-    
-    
+
+
     return (
         <MuiThemeProvider theme={darkTheme}>
-            Move <CompanyDropdownList /> to 
+            <MaterialUIBox p={1}>
+                Move <CompanyDropdownList /> to
 
-            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={onDropdownListClick}>
-                {stagedStatus} <ArrowDropDownIcon />
-            </Button>
-            <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={closeDropdownList}
-            >
-                {Object.values(labelTypes).map((label, index) => {
-                    return <div key={index}>
-                        <CompanyStatusDropdownListItem label={label} onSelect={closeDropdownList} />
-                    </div>
-                })}
-            </Menu>
-            <Button onClick={onApply} disabled={selectCompanyApplyRequestStatus === RequestStatus.REQUESTING} size="small" variant="contained">
-                Apply
-            </Button>
-            <Button onClick={onCancel} disabled={selectCompanyApplyRequestStatus === RequestStatus.REQUESTING} size="small" variant="contained">
-                Cancel
-            </Button>
+                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={onDropdownListClick}>
+                    {stagedStatus} <ArrowDropDownIcon />
+                </Button>
+                <Menu
+                    id="simple-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={closeDropdownList}
+                >
+                    {Object.values(labelTypes).map((label, index) => {
+                        return <div key={index}>
+                            <CompanyStatusDropdownListItem label={label} onSelect={closeDropdownList} />
+                        </div>
+                    })}
+                </Menu>
+                <Button onClick={onApply} disabled={selectCompanyApplyRequestStatus === RequestStatus.REQUESTING} size="small" variant="contained">
+                    Apply
+                </Button>
+                <Button onClick={onCancel} disabled={selectCompanyApplyRequestStatus === RequestStatus.REQUESTING} size="small" variant="contained">
+                    Cancel
+                </Button>
+            </MaterialUIBox>
         </MuiThemeProvider>
     )
 }

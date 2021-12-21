@@ -133,7 +133,7 @@ const SearchCompanyLoadMoreButton = ({ searchText, disabled }: ISearchCompanyLoa
 
 const UserAppPage = (props: IUserAppPageProps) => {
     const styleClasses = useStyles();
-    
+
     const dispatch = useDispatch();
     const [lastSearchText, searchingRequestStatus] = useSelector((state: IRootState) => [
         state.userAppPage.lastSearchText,
@@ -164,7 +164,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                     }
                 })
             );
-    
+
             // fetch companies by their label status, so each can be displayed separately in their tabs
             for (let labelText of Object.values(labelTypes)) {
                 dispatch(
@@ -248,7 +248,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
     return (
         <div>
             <div className={styles.UserAppPageHeader}>
-                <Headline3>Your Organizations</Headline3>
+                <Headline3>My Orgs</Headline3>
                 <Button
                     color="secondary"
                     variant="contained"
@@ -264,7 +264,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                     const allCompanyTab = (<TabContent label={
                         <Badge badgeContent={searchCompanies.length} color="secondary">
                             <div className={styleClasses.centerVertically}>
-                                Search <SearchIcon /> 
+                                Search <SearchIcon />
                             </div>
                         </Badge>
                     }>
@@ -357,7 +357,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                                         })
                                     }
                                 </div>
-                                
+
                                 <div className={styleClasses.loadMoreButtonContainer}>
                                     <GroupedCompanyLoadMoreButton labelText={labelText} />
                                 </div>

@@ -1,9 +1,10 @@
 .UserAppPageHeader {
     background-color: var(--mdc-theme-primary);
     color: var(--mdc-theme--text-primary-on-dark);
-    padding: 5px 0px 20px 35px;
+    padding: 5px 0px 20px 5px;
 
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-around;
 }

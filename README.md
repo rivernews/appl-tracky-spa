@@ -4,7 +4,7 @@ Okay, Appl Tracky, I admit it's never the most creative name. It's more of an al
 
 ## What it does
 
-Appl Tracky is a job application tracker that aims to replace your convoluted, messy spreadsheet workflow. It's common to use a spreadsheet to keep track of jobs you applied or want to apply for. It turns out, however, those small cells can only store text and are hard to scale. This app is designed to solve this problem - make the tracking easier, faster and more reliable. 
+Appl Tracky is a job application tracker that aims to replace your convoluted, messy spreadsheet workflow. It's common to use a spreadsheet to keep track of jobs you applied or want to apply for. It turns out, however, those small cells can only store text and are hard to scale. This app is designed to solve this problem - make the tracking easier, faster and more reliable.
 
 ## Tech stack
 
@@ -58,18 +58,19 @@ Special credit to [The React + Redux Container Pattern](https://www.thegreatcode
 
 ![User Profile](docs/img/TechMockup/user-profile-page.png)
 
-## UX Design: Reflection for Frontend UI: 
+## UX Design: Reflection for Frontend UI:
 
 Is this easier to use than spreadsheet? The UI should make the registering process as quick as possible. If we split into too many steps and pages, it'll dramatically slow down the process.
 But sure, we're still not sure what is the best and what are the needs. We can always iterate the layout or process at a later point.
 
 ## Development experience
 
+Frontend library uses [material-ui](https://mui.com/).
 ES Linter [rules](https://eslint.org/docs/rules/), can be specified in `package.json`.
 
 ## Project Motivation
 
-During this season of job searching (as of March 2019), many people must be crazy working with some spreadsheet keeping track of their job application, especially when you're applying for 50+ or even 100+. When a recruiter finally get back to you and invite you to an interview, you don't want to ask that disastrous question - "Could you tell me what is the position I was applying to?" Surprisingly, there aren't many tools out there so far - just google "job application track tool" and you'll see not many options. Seems like most of us are still using a spreadsheet, including me. An option out there is called Huntr (https://huntr.co/), and it looks like a Trello board. But it charges you once you add more than 40 records. The UI is beautiful, but it's a bit too complicate for me. 
+During this season of job searching (as of March 2019), many people must be crazy working with some spreadsheet keeping track of their job application, especially when you're applying for 50+ or even 100+. When a recruiter finally get back to you and invite you to an interview, you don't want to ask that disastrous question - "Could you tell me what is the position I was applying to?" Surprisingly, there aren't many tools out there so far - just google "job application track tool" and you'll see not many options. Seems like most of us are still using a spreadsheet, including me. An option out there is called Huntr (https://huntr.co/), and it looks like a Trello board. But it charges you once you add more than 40 records. The UI is beautiful, but it's a bit too complicate for me.
 
 In this project I want to build a Job Application Tracking System that can help you keep track of every application you sent and any hiring process you're currently in. Another thing I want to integrate into the system, is to have a Glassdoor/Indeed rating ready to review, so you can filter out companies that you don't think you want to work at first and stop wasting time going through the hiring process. Of course, rating is just one factor you might consider, there are way more like product, tech stack, team culture, and many things you can only know after you get into the process, but those are out of scope of this app. Anyway, in terms of data, first I'll retrieve a [dataset on company ratings](https://github.com/rivernews/fortune-500-analysis) from Glassdoor & Indeed, load that into database, then think of ways to port that in our system. Second, I'll build the tracking system for end users, which requires you to login. Once signed in, you can lookup a company's rating if there's one, you can start tracking application progress for a company, link to the job post, give a datetime, mark a status like "applied / technical interview prep / waiting (for interview time confirmation) ..." (ideally you can create your own status), and add some side notes. In terms of tech stack, we are having React + Django REST, so Django as an API, not doing too much, just serving the data.
 
@@ -100,8 +101,8 @@ new FormLabelFieldMeta({
         1. Let Formik value for the field be an array type. The object type will be handled for you - using the data model you have.
         2. The field will display a button "New Label" at first. After user click on it, user can generate a nested, child form that provides the field input(s). User can create as many forms as they want by clicking the button.
     */
-    isDynamic: false, 
-    
+    isDynamic: false,
+
     /* optional, defaults to behavior in `form-base-field-meta` */
     /*
         In case you have a special need of transforming object shape, from values stored in Formik, to the request payload while submitting to your backend server API, you can do it here.

@@ -8,8 +8,8 @@ import { Application } from "../../data-model/application/application";
 import '@material/react-card/dist/card.css';
 import List, { ListItem, ListItemText } from "@material/react-list";
 import MaterialUIListItem from "@material-ui/core/ListItem";
+import MaterialUIBox from "@material-ui/core/Box";
 import MaterialUIButton from "@material-ui/core/Button";
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import '@material/react-list/dist/list.css';
 // mdc-chips
@@ -31,8 +31,8 @@ interface ICompanyListItemProps {
 
 const CompanyListItem = (props: ICompanyListItemProps) => {
     return (
-        <MaterialUIListItem className={false ? styles.companyCard : ''}>
-            <div className={styles.companyCardContent}>
+        <MaterialUIListItem className={false ? styles.companyCard : ''} dense>
+            <MaterialUIBox display="flex" flexWrap="wrap">
                 <Link to={`/com-app/${props?.company?.uuid}`}>
                     <MaterialUIButton>
                         <Typography variant="h5">
@@ -55,25 +55,30 @@ const CompanyListItem = (props: ICompanyListItemProps) => {
                     <Skeleton width="40px" />
                 )}
 
-                <List nonInteractive>
-                    {
-                        props.applications ? props.applications.map((application: Application) => (
-                            <ListItem key={application.uuid}>
-                                <ListItemText primaryText={application.position_title} />
-                            </ListItem>
-                        )) : (
-                                <div className="skeletonGroup">
+                {
+                    props.applications ? (
+                        <MaterialUIBox display="flex" flexWrap="wrap">
+                            {props.applications.map((application: Application) => (
+                                <ListItem key={application.uuid}>
+                                    <ListItemText primaryText={application.position_title} />
+                                </ListItem>
+                            ))}
+                        </MaterialUIBox>
+                    ) : (
+                            <List nonInteractive>
+                                <React.Fragment>
                                     <div><Skeleton duration={1.1} width="40vmin" /></div>
                                     <div><Skeleton duration={1.1} width="60vmin" /></div>
                                     <div><Skeleton duration={1.1} width="50vmin" /></div>
-                                </div>
-                            )
-                    }
-                </List>
-                <ListItemSecondaryAction>
+                                </React.Fragment>
+                            </List>
+                        )
+                }
+
+                <React.Fragment>
                     {props.company?.uuid ? <CompanyListItemCheckBox company={props.company} /> : null}
-                </ListItemSecondaryAction>
-            </div>
+                </React.Fragment>
+            </MaterialUIBox>
         </MaterialUIListItem>
     );
 }
