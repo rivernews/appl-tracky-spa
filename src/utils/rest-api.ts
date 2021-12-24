@@ -83,7 +83,7 @@ export class RestApi {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
         code: ``,
         redirectUri: `postmessage`,
-        apiBaseUrl: (process.env.NODE_ENV === 'development') ? 
+        apiBaseUrl: (process.env.NODE_ENV === 'development') ?
         `http://localhost:8000/api/`
         :
         `https://appl-tracky.api.shaungc.com/api/`
@@ -159,7 +159,7 @@ export class RestApi {
     };
 
     /** helper */
-    private getRelativeUrl = <Schema>({
+    public getRelativeUrl = <Schema>({
         objectName,
         data,
         endpointUrl,
