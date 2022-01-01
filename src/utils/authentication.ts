@@ -14,15 +14,19 @@ export interface IRefreshObjectProps {
 }
 
 class RefreshObject extends BaseModel {
-    token: string;
+    refresh: string;
 
     constructor({
         token = "",
         ...args
     }: IRefreshObjectProps & IBaseModelProps) {
         super(args);
-        this.token = token;
+        this.refresh = token;
     }
+}
+
+interface IRefreshResponse {
+    access: string;
 }
 
 class LoginObject extends BaseModel {
@@ -43,6 +47,20 @@ class LoginObject extends BaseModel {
     }
 }
 
+interface ISocialJWTLoginResponse {
+    token: string;
+    refresh: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    avatar_url: string
+}
+
+interface IJWTLoginResponse {
+    access: string;
+    refresh: string;
+}
+
 class Authentication {
     state = {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
@@ -53,6 +71,7 @@ class Authentication {
         socialAuthProvider: `google-oauth2`,
 
         apiLoginToken: ``,
+        apiRefreshToken: ``,
     };
 
     serverLogin = async (loginMode: RequestedLoginMode, params: RequestedLoginAuthActionParams) => {
@@ -65,13 +84,15 @@ class Authentication {
 
             if (sessionAuthState.isLogin) {
                 this.apiCallToken = sessionAuthState.apiToken;
+                this.apiCallTokenRefresher = sessionAuthState.apiTokenRefresher;
 
                 try {
-                    const refreshTokenReponse = await this.refreshToken();
+                    const refreshTokenReponse: IRefreshResponse = await this.refreshToken();
 
                     return {
                         email: sessionAuthState.userName,
-                        token: refreshTokenReponse.token,
+                        token: refreshTokenReponse.access,
+                        refresh: this.apiCallTokenRefresher, // unchanged if backend doesn't rotate refresh token
                         avatar_url: sessionAuthState.avatarUrl,
                         isLocal: sessionAuthState.isLocal
                     };
@@ -83,7 +104,7 @@ class Authentication {
                         );
                 }
             }
-            
+
             // in case cannot restore login session,
             // will let saga dispatch logout to reset authState in session storage
             return {};
@@ -96,21 +117,23 @@ class Authentication {
                 provider: this.state.socialAuthProvider,
                 redirect_uri: this.state.redirectUri
             });
-    
+
             try {
-                const resp = await RestApiService.post<LoginObject>({
+                const resp: ISocialJWTLoginResponse = await RestApiService.post<LoginObject>({
                     data: loginObject,
                     endpointUrl: this.state.apiSocialLoginUrl
                 });
-    
+
                 this.apiCallToken = resp.token;
+                this.apiCallTokenRefresher = resp.refresh;
+
                 return {
                     ...resp,
                     isLocal: false
                 };
             }
             catch (error) {
-                throw Error(error);
+                throw new Error(error);
             }
         }
 
@@ -129,24 +152,26 @@ class Authentication {
                         username: params.username, password: params.password
                     })
                 });
-    
+
                 if (!res.ok) {
-                    throw Error(res.statusText)
+                    throw new Error(res.statusText);
                 }
-    
-                const parsedJsonResponse = await res.json();
-                
-                this.apiCallToken = parsedJsonResponse.token;
-    
+
+                const parsedJsonResponse: IJWTLoginResponse = await res.json();
+
+                this.apiCallToken = parsedJsonResponse.access;
+                this.apiCallTokenRefresher = parsedJsonResponse.refresh;
+
                 return {
                     email: params.username,
-                    token: parsedJsonResponse.token,
-                    avatar_url: parsedJsonResponse.avatar_url,
+                    token: parsedJsonResponse.access,
+                    refresh: parsedJsonResponse.refresh,
+                    avatar_url: "",
                     isLocal: true
                 }
             }
             catch (error) {
-                throw Error(error)
+                throw new Error(error);
             }
         }
     };
@@ -159,21 +184,31 @@ class Authentication {
         this.state.apiLoginToken = token;
     }
 
+    get apiCallTokenRefresher() {
+        return this.state.apiRefreshToken;
+    }
+
+    set apiCallTokenRefresher(refreshToken) {
+        this.state.apiRefreshToken = refreshToken;
+    }
+
     refreshToken = async () => {
         const refreshObject = new RefreshObject({
-            token: this.apiCallToken
+            token: this.apiCallTokenRefresher
         });
         try {
-            const resp = await RestApiService.post<RefreshObject>({
+            const resp: IRefreshResponse = await RestApiService.post<RefreshObject>({
                 data: refreshObject,
                 endpointUrl: this.state.apiLoginRefreshUrl
             });
 
-            this.apiCallToken = resp.token;
+            // only update access token, no need to update `this.apiCallTokenRefresher`
+            // because backend does not rotate refresher
+            this.apiCallToken = resp.access;
 
             return resp;
         } catch (error) {
-            throw Error(error);
+            throw new Error(error);
         }
     };
 
@@ -181,9 +216,10 @@ class Authentication {
         // no server-side invalidate implement at this point (a common case for JWT, however)
 
         this.apiCallToken = "";
-        
+        this.apiCallTokenRefresher = "";
+
         // will let saga dispatch logout to reset authState in session storage
-        
+
         return;
     };
 }

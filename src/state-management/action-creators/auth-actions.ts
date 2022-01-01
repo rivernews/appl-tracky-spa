@@ -43,7 +43,7 @@ export const RequestedLogoutAuth = (): IRequestedLogoutAuthAction => {
     };
 };
 
-export const SuccessLoginAuth = (userName: string, expireDateTime: string, apiToken: string, avatarUrl: string, isLocal: boolean): ISuccessAuthAction => {
+export const SuccessLoginAuth = (userName: string, expireDateTime: string, apiToken: string, apiTokenRefresher: string, avatarUrl: string, isLocal: boolean): ISuccessAuthAction => {
 
     return {
         type: AuthActionNames.SUCCESS_AUTH,
@@ -54,6 +54,7 @@ export const SuccessLoginAuth = (userName: string, expireDateTime: string, apiTo
             userName,
             expireDateTime,
             apiToken,
+            apiTokenRefresher,
             avatarUrl
         }
     };
@@ -69,6 +70,7 @@ export const SuccessLogoutAuth = (): ISuccessAuthAction => {
             userName: "",
             expireDateTime: "",
             apiToken: "",
+            apiTokenRefresher: "",
             avatarUrl: "",
         }
     };

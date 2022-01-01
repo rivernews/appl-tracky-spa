@@ -42,6 +42,7 @@ function* authLoginSagaHandler(
         yield put(SuccessLoginAuth(
             jsonResponse.email, "",
             jsonResponse.token,
+            jsonResponse.refresh,
             jsonResponse.avatar_url,
             jsonResponse.isLocal
         ));

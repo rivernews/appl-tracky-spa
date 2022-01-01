@@ -40,6 +40,7 @@ export interface ISuccessAuthState {
     userName: string
     expireDateTime: string
     apiToken: string
+    apiTokenRefresher: string
     avatarUrl: string
 }
 
