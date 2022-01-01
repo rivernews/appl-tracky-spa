@@ -26,15 +26,7 @@ class SocialAuthButton extends Component<
 > {
     state = {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
-        
         code: ``, // get `code` from social login button, then obtain token from django server
-        apiLoginToken: ``,
-
-        userEmail: ``,
-        userFirstName: ``,
-        userLastName: ``,
-
-        objectID: ``
     };
 
     onSocialLoginSuccess = (googleOauthResponse: any) => {
@@ -71,7 +63,7 @@ class SocialAuthButton extends Component<
                     <SocialAuthLogoutButton
                         onSuccess={this.onSocialLogoutSuccess}
                         onClick={this.onSocialLogoutSuccess}
-                        
+
                         // TODO: logout - ideally no need to wait for request status, just interrupt existing requests (actually this should be possible by looking at `axios` and its abort request feature, or the native javascript `AbortController` and its `AbortController.abort()`).
                         // However, we'll have to cancel those ongoing sagas for data fetching
                         // disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}

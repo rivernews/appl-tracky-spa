@@ -9,28 +9,25 @@ import {
     SuccessLogoutAuth,
     FailureAuth
 } from "../action-creators/auth-actions";
-import { resetAllStoreAction, GroupedCompanyActionCreators } from "../action-creators/root-actions";
-import { labelTypesMapToCompanyGroupTypes } from "../../data-model/company/company";
-import { labelTypes } from "../../data-model/label";
+import { resetAllStoreAction } from "../action-creators/root-actions";
 // redux-saga
 import { takeEvery, call, put } from "redux-saga/effects";
 
 /** api */
 import { AuthenticationService } from "../../utils/authentication";
-import { CrudType, RequestStatus, RestApiService } from "../../utils/rest-api";
 
 
 function* authLoginSagaHandler(
     requestedLoginAuthAction: IRequestedLoginAuthAction
 ) {
     // RequestAuth action triggered & injecting side effects here...
-    
+
     const {
-        loginMode, 
+        loginMode,
         params={},
         onCompleteCallback,
     } = requestedLoginAuthAction;
-    
+
     try {
         // TODO: define interface typing for api response
 
@@ -43,8 +40,8 @@ function* authLoginSagaHandler(
         }
 
         yield put(SuccessLoginAuth(
-            jsonResponse.email, "", 
-            jsonResponse.token, 
+            jsonResponse.email, "",
+            jsonResponse.token,
             jsonResponse.avatar_url,
             jsonResponse.isLocal
         ));
