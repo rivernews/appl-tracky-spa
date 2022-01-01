@@ -83,7 +83,6 @@ class Authentication {
                 : {};
 
             if (sessionAuthState.isLogin) {
-                this.apiCallToken = sessionAuthState.apiToken;
                 this.apiCallTokenRefresher = sessionAuthState.apiTokenRefresher;
 
                 try {
@@ -100,12 +99,12 @@ class Authentication {
                     // catch: refresh failed or data-fetching failed
                     process.env.NODE_ENV === "development" &&
                         console.error(
-                            `Error after refreshing token in Authentication service: ${error}`
+                            `Failed to refresh token in Authentication service: ${error}`
                         );
                 }
             }
 
-            // in case cannot restore login session,
+            // raech here means cannot restore login session
             // will let saga dispatch logout to reset authState in session storage
             return {};
         }
