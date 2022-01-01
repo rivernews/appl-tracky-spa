@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import { RouteComponentProps } from "react-router";
 
 /** Redux */
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import { IRootState } from "../../state-management/types/root-types";
 // rest api
@@ -59,8 +59,10 @@ export const UserComAppPage = (props: IUserComAppPageProps) => {
     const company = props.companyStore.collection[companyUuid];
     const dispatch = useDispatch();
 
+    const isLogin = useSelector((state: IRootState) => state.auth.isLogin);
+
     useEffect(() => {
-        if (companyUuid) {
+        if (companyUuid && isLogin) {
             if ((!company || !company.modified_at) && props.companyStore.requestStatus !== RequestStatus.REQUESTING) {
                 dispatch(
                     CompanyActionCreators[CrudType.READ][RequestStatus.TRIGGERED].action({
@@ -69,7 +71,7 @@ export const UserComAppPage = (props: IUserComAppPageProps) => {
                 )
             }
         }
-    }, [company, companyUuid])
+    }, [company, companyUuid, isLogin])
 
 
     const goBackToCompanyListPage = () => {
@@ -143,7 +145,7 @@ export const UserComAppPage = (props: IUserComAppPageProps) => {
                         />
                     )
                 }) : (
-                    <ApplicationComponentController 
+                    <ApplicationComponentController
                         disableApplicationActionButtons
                     />
                 )}
