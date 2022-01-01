@@ -134,13 +134,16 @@ const SearchCompanyLoadMoreButton = ({ searchText, disabled }: ISearchCompanyLoa
 const UserAppPage = (props: IUserAppPageProps) => {
     const styleClasses = useStyles();
 
-    const dispatch = useDispatch();
+    const isLogin = useSelector((state: IRootState) => state.auth.isLogin);
+
     const [lastSearchText, searchingRequestStatus] = useSelector((state: IRootState) => [
         state.userAppPage.lastSearchText,
         state.searchCompany.requestStatus
     ]);
     const [searchText, setSearchText] = useState<string>(lastSearchText);
     const [isFiltering, setIsFiltering] = useState<boolean>(false);
+
+    const dispatch = useDispatch();
 
     // memorize last search text
     // so that when page mount again (re-visit), the search text still persist
@@ -154,7 +157,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
     // avoid re-fetch first pagination of group companies when leaving and re-visiting home page again
     const anyGroupCompanyEndCursor = useSelector((state: IRootState) => state.interviewingCompany.graphqlEndCursor);
     useEffect(() => {
-        if (anyGroupCompanyEndCursor === undefined) {
+        if (anyGroupCompanyEndCursor === undefined && isLogin) {
             // fetch companies that do not have label status yet, treat them as `target` and put them in target group
             dispatch(
                 GroupedCompanyActionCreators["targetCompany"][CrudType.LIST][RequestStatus.TRIGGERED].action({
@@ -177,7 +180,7 @@ const UserAppPage = (props: IUserAppPageProps) => {
                 );
             }
         }
-    }, [anyGroupCompanyEndCursor])
+    }, [anyGroupCompanyEndCursor, isLogin])
 
     const searchFieldTextIsEmpty = () => {
         return Utilities.normalizeText(searchText) === '';
