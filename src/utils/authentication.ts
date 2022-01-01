@@ -85,6 +85,8 @@ class Authentication {
             if (sessionAuthState.isLogin) {
                 this.apiCallTokenRefresher = sessionAuthState.apiTokenRefresher;
 
+                // Refresh token every time user restore previous session
+                // TODO: refresh only if we're close to token expiration
                 try {
                     const refreshTokenReponse: IRefreshResponse = await this.refreshToken();
 
