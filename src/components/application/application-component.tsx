@@ -24,6 +24,7 @@ import GlobeIcon from '@material-ui/icons/Language';
 import OpenInNewTabIcon from '@material-ui/icons/Launch';
 import PlusIcon from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
+import { IconButtonLink } from "../link";
 
 import { ApplicationStatusComponentContainer } from "../application-status/application-status-component";
 import { ApplicationFormComponentContainer } from "./application-form-component";
@@ -144,35 +145,14 @@ export class ApplicationComponent extends Component<
             <div className="application-component-display">
                 {/* application display view */}
                 <h2>{application ? application.position_title : <Skeleton />}
-                    {/* external link icon */}
-                    {
-                        application?.job_description_page ? (
-                            <IconButton
-                                disabled={application.job_description_page.url == "#"}
-                            >
-                                <OpenInNewTabIcon />
-                            </IconButton>
-                        ) : (
-                                <IconButton disabled>
-                                    <OpenInNewTabIcon />
-                                </IconButton>
-                            )
-                    }
-
-                    {/* external link icon */}
-                    {
-                        application?.job_source ? (
-                            <IconButton
-                                disabled={application.job_source.url == "#"}
-                            >
-                                <GlobeIcon />
-                            </IconButton>
-                        ) : (
-                                <IconButton disabled>
-                                    <GlobeIcon />
-                                </IconButton>
-                            )
-                    }
+                    <IconButtonLink
+                        url={application?.job_description_page?.url}
+                        iconComponent={OpenInNewTabIcon}
+                    />
+                    <IconButtonLink
+                        url={application?.job_source?.url}
+                        iconComponent={GlobeIcon}
+                    />
 
                     {/* application actions */}
                     {
@@ -311,7 +291,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IObjectAction<Application>>) => {
                 ApplicationActionCreators[CrudType.DELETE][
                     RequestStatus.TRIGGERED
                 ].action({
-                    objectClassInstance: applicationToDelete, 
+                    objectClassInstance: applicationToDelete,
                     successCallback: callback
                 })
             )
