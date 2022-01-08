@@ -13,10 +13,8 @@ import {
 // input field
 import { IFormRichTextFieldProps } from "./form-rich-text-field-meta";
 // ckeditor
-// import CKEditor from '@ckeditor/ckeditor5-react';
-import CKEditor from '@shaungc/custom-ckeditor5-react';
-// import BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
-import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+import { CKEditor } from '@shaungc/custom-ckeditor5-react';
+import BalloonEditor from '@shaungc/ckeditor5-custom-balloon-block';
 import Typography from "@material-ui/core/Typography";
 import { RestApiService } from "../../../utils/rest-api";
 import { AuthenticationService } from "../../../utils/authentication";
@@ -44,7 +42,7 @@ export class FormRichTextField extends Component<IFormRichTextFieldProps> {
                                     onChange={(event: any, editor: any) => {
                                         form.setFieldValue(field.name, editor.getData());
                                     }}
-                                    onInit={onEditorReady}
+                                    onReady={onEditorReady}
                                     onSaveKeystroke={this.props.onSaveKeystroke}
                                 />
                             </>

@@ -4,8 +4,8 @@ import React, { Component } from "react";
 import { Company } from "../../data-model/company/company";
 
 /** Components */
-import CKEditor from '@shaungc/custom-ckeditor5-react';
-import BalloonEditor from '@shaungc/ckeditor5-custom-balloon';
+import { CKEditor } from '@shaungc/custom-ckeditor5-react';
+import BalloonEditor from '@shaungc/ckeditor5-custom-balloon-block';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -91,7 +91,7 @@ export class CompanyComponent extends Component<ICompanyComponentProps> {
                                 data={company.notes}
                             />
                         ) : <p>No company quick notes yet</p>
-                    ) : 
+                    ) :
                     <>
                         <div><Skeleton width="70vmin" /></div>
                         <div><Skeleton width="30vmin" /></div>

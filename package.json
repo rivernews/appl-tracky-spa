@@ -21,8 +21,8 @@
     "@material/react-text-field": "^0.11.0",
     "@material/react-top-app-bar": "^0.15.0",
     "@material/react-typography": "^0.15.0",
-    "@shaungc/ckeditor5-custom-balloon": "^2.1.16",
-    "@shaungc/custom-ckeditor5-react": "^2.0.9",
+    "@shaungc/ckeditor5-custom-balloon-block": "^31.3.0",
+    "@shaungc/custom-ckeditor5-react": "^3.0.4",
     "@types/jest": "24.0.9",
     "@types/lodash": "^4.14.144",
     "@types/node": "11.10.4",
@@ -49,8 +49,8 @@
     "yup": "^0.27.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --max_old_space_size=8192 start",
+    "build": "react-scripts --max_old_space_size=8192 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build && cp build/index.html build/404.html && cp src/CNAME build/CNAME ",
