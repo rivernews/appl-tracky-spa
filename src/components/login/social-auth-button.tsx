@@ -5,8 +5,8 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { IRootState } from "../../state-management/types/root-types";
-import { IUpdateAuthAction, IRequestedLoginAuthAction, TAuthActions, IUpdateAuthState, RequestedLoginMode } from "../../state-management/types/auth-types";
-import { UpdateAuth, RequestedLoginAuth, RequestedLogoutAuth } from "../../state-management/action-creators/auth-actions";
+import { TAuthActions, IUpdateAuthState, RequestedLoginMode } from "../../state-management/types/auth-types";
+import { RequestedLoginAuth, RequestedLogoutAuth } from "../../state-management/action-creators/auth-actions";
 
 /** rest api */
 import { RequestStatus } from "../../utils/rest-api";
@@ -26,19 +26,11 @@ class SocialAuthButton extends Component<
 > {
     state = {
         clientID: `732988498848-vuhd6g61bnlqe372i3l5pbpnerteu6na.apps.googleusercontent.com`,
-        code: ``, // get `code` from social login button, then obtain token from django server
     };
 
     onSocialLoginSuccess = (googleOauthResponse: any) => {
-        this.setState(
-            {
-                code: googleOauthResponse.code
-            },
-            () => {
-                // this.apiLogin();
-                this.props.requestedLoginAuth(this.state.code);
-            }
-        );
+        // get `code` from social login button, then obtain token from django server
+        this.props.requestedLoginAuth(googleOauthResponse.code);
     };
 
     onSocialLoginFailure = (error: any) => {

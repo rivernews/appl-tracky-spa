@@ -13,7 +13,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
     ObjectRestApiActions: IObjectRestApiReduxFactoryActions<ObjectRestApiSchema>,
     sagaFactoryOptions: ISagaFactoryOptions<ObjectRestApiSchema>
 ): Array<() => SagaIterator> => {
-    
+
     const sagas = CrudKeywords.map((crudKeyword) => {
 
         const sagaHandler = function* (
@@ -30,9 +30,9 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
 
             try {
                 // api call
-                
+
                 // note that yield will always return `any`
-                let jsonResponse = !(graphqlFunctionName) ? 
+                let jsonResponse = !(graphqlFunctionName) ?
                     (yield call(
                         <(params: IRequestParams<ObjectRestApiSchema>) => void>RestApiService[CrudMapToRest(crudKeyword)],
                         {
@@ -95,7 +95,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                     // prepare relational data for later use
                     relationalNormalizeData = Object.keys(sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap).filter(key => normalizeDataSource.entities.hasOwnProperty(key)).reduce((accumulate, relationalEntityKey) => ({
                         ...accumulate,
-                        [relationalEntityKey]: Object.values(normalizeDataSource.entities[relationalEntityKey])
+                        [relationalEntityKey]: Object.values(normalizeDataSource.entities[relationalEntityKey] || {})
                     }), {});
                 }
 
@@ -132,7 +132,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                                 const dispatchResponseData = {
                                         results: relationalNormalizeData[relationalEntityKey]
                                     };
-                                
+
                                 const relationalActions = sagaFactoryOptions.normalizeManifest.relationalEntityReduxActionsMap[relationalEntityKey] as IObjectRestApiReduxFactoryActions<IObjectBase>;
 
                                 yield put(
@@ -150,7 +150,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                                 break;
                             }
 
-                            // because formData is always already normalized and we only have 1st-level-relationship's uuids, we will only dispatch delete action for 1st level relational fields. 
+                            // because formData is always already normalized and we only have 1st-level-relationship's uuids, we will only dispatch delete action for 1st level relational fields.
                             // we will not do cascade delete for nested && relational field.
                             // if you need cascade delete to deal with nested relational fields, you'll have to write your own `overrideCrudSuccessHandler.delete` in the sagaOptions.
 
@@ -197,7 +197,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
                             jsonResponse.pageInfo.endCursor :
                             undefined,
                         clearPreviousCollection: triggerAction.triggerActionOptions?.clearPreviousCollection,
-                        
+
                         companyGroupType: (companyGroups as string[]).includes(objectName) ? objectName as companyGroupTypes : undefined,
                     });
                 }
@@ -268,7 +268,7 @@ export const RestApiSagaFactory = <ObjectRestApiSchema extends IObjectBase>(
         // saga listener
         const saga = function* () {
 
-            // queue style 
+            // queue style
             const objectTriggerActionChannel = yield actionChannel(
                 ObjectRestApiActions[crudKeyword][RequestStatus.TRIGGERED]
                     .actionTypeName
