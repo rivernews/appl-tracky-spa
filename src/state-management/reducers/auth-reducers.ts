@@ -1,18 +1,20 @@
 import { Reducer, Action } from 'redux';
 
-import { 
+import {
     /** store */
-    IUpdateAuthState, 
+    IUpdateAuthState,
     /** action */
-    AuthActionNames, TAuthActions, AuthActionNamesValue 
+    AuthActionNames, TAuthActions, AuthActionNamesValue
 } from "../types/auth-types";
 
 import { RequestStatus } from "../../utils/rest-api";
 
 const initialAuthState: IUpdateAuthState = {
-    requestStatus: RequestStatus.SUCCESS, // initial status just set to SUCCESS
+    // if iniitally user is in private/inner page, the App will start requesting auth anyway;
+    // if user enters from home landing page, the App should still start requesting auth, and redirect user to private/inner page if logged in
+    requestStatus: RequestStatus.TRIGGERED,
     isLogin: false,
-    isLocal: false,
+    isLocal: undefined,
     socialAuthToken: "",
     apiToken: "",
     userName: "",

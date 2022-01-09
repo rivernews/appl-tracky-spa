@@ -14,7 +14,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 /** Components */
 import "./user-profile-page.css"
 
-import { SocialAuthButtonContainer } from "../../components/login/social-auth-button";
+import { SocialAuthButtonContainer, SocialAuthButtonType } from "../../components/login/social-auth-button";
 import { LocalLogoutButton } from "../../components/login/local-logout-button";
 
 
@@ -40,10 +40,10 @@ class UserProfilePage extends Component<IUserProfilePageProps, any> {
                 </div>
                 <UserInfo auth={this.props.auth} />
                 {
-                    !this.props.auth.isLocal ? (
-                        <SocialAuthButtonContainer />
+                    this.props.auth.isLocal === false ? (
+                        <SocialAuthButtonContainer buttonType={SocialAuthButtonType.LOGOUT} />
                     ) : (
-                        <LocalLogoutButton 
+                        <LocalLogoutButton
                             onClick={this.localLogoutButton}
                         />
                     )
@@ -59,7 +59,7 @@ const mapStateToProps = (store: IRootState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => { 
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
     return {
         requestedLogoutAuth: () => {
             dispatch(

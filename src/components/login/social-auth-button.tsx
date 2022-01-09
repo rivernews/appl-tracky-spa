@@ -17,8 +17,14 @@ import { SocialAuthLogoutButton } from "./social-auth-logout-button";
 
 interface ISocialAuthButtonProps extends RouteComponentProps {
     auth: IUpdateAuthState;
+    buttonType: SocialAuthButtonType;
     requestedLoginAuth: (socialAuthToken: string) => void;
     requestedLogoutAuth: () => void;
+}
+
+export enum SocialAuthButtonType {
+    LOGIN = "login",
+    LOGOUT = "logout"
 }
 
 class SocialAuthButton extends Component<
@@ -44,14 +50,15 @@ class SocialAuthButton extends Component<
     render() {
         return (
             <div className="SocialAuth">
-                {!this.props.auth.isLogin ? (
+                {this.props.buttonType === SocialAuthButtonType.LOGIN ? (
                     <SocialAuthLoginButton
                         clientID={this.state.clientID}
                         onSuccess={this.onSocialLoginSuccess}
                         onFailure={this.onSocialLoginFailure}
                         disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
                     />
-                ) : (
+                ) :
+                this.props.buttonType === SocialAuthButtonType.LOGOUT ? (
                     <SocialAuthLogoutButton
                         onSuccess={this.onSocialLogoutSuccess}
                         onClick={this.onSocialLogoutSuccess}
@@ -60,6 +67,8 @@ class SocialAuthButton extends Component<
                         // However, we'll have to cancel those ongoing sagas for data fetching
                         // disabled={this.props.auth.requestStatus === RequestStatus.REQUESTING}
                     />
+                ) : (
+                    <></>
                 )}
             </div>
         );
