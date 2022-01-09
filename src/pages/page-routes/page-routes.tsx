@@ -85,7 +85,7 @@ class PageRoutes extends Component<IPageRoutesProps> {
                 {this.isCurrentPublicPage() ? (
                     <div className="PublicRoutesContainer">
                         {/** direct user to internal page if logged in */
-                            this.props.auth.isLogin && <Redirect to={this.goInternal()} />}
+                        this.props.auth.isLogin && <Redirect to={this.goInternal()} />}
 
                         <Switch>
                             <Route path="/" exact component={LandingPageContainer} />
@@ -98,8 +98,8 @@ class PageRoutes extends Component<IPageRoutesProps> {
                     </div>
                 ) : (
                         <div className="PrivateRoutesContainer">
-                            {/** protect private routes, but let people come back the internal page they want to access after they login */
-                                !this.props.auth.isLogin && <Redirect to={`/?next=${this.props.location.pathname}`} />}
+                            {/** kick out to home page to protect private routes, but let people come back the internal page they want to access after they login */
+                            (!this.props.auth.isLogin && ![RequestStatus.REQUESTING, RequestStatus.TRIGGERED].includes(this.props.auth.requestStatus)) && <Redirect to={`/?next=${this.props.location.pathname}`} />}
 
                             <AppTopBar />
 

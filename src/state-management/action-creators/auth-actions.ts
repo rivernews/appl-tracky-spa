@@ -66,7 +66,7 @@ export const SuccessLogoutAuth = (): ISuccessAuthAction => {
         payload: {
             requestStatus: RequestStatus.SUCCESS,
             isLogin: false,
-            isLocal: false,
+            isLocal: undefined,
             userName: "",
             expireDateTime: "",
             apiToken: "",
