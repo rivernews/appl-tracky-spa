@@ -51,6 +51,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "buildmaxmem": "react-scripts --max_old_space_size=8192 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build && cp build/index.html build/404.html && cp src/CNAME build/CNAME ",

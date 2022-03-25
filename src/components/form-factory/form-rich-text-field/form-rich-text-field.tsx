@@ -75,14 +75,19 @@ class MyUploadAdapter {
                     return reject('Upload image in development mode is not allowed!');
                 }
 
-                /** Check file size limit to 1M */
-                // const fileSizeMB = file.size/1024/1024;
-                // if (fileSizeMB > 1.0) {
-                //     const errorMessage = `🛑 File size limit is 1MB, but file size too large: ${+fileSizeMB.toFixed(3)}MB.`;
-                //     console.error(errorMessage);
-                //     // reject will already trigger `alert`, which is the behavior of the ckeditor uploader; so we will not make another `popUpMessage`
-                //     return reject(errorMessage);
-                // }
+                // Check file size limit to 1M
+                // Even if frontend don't do this check
+                // backend server forbids large file by default
+                // nginx default 1M limit: https://stackoverflow.com/questions/36994828/413-request-entity-too-large-nginx-django/56180132
+                // Django request 2.5M limit: https://stackoverflow.com/questions/66929579/django-nginx-413-request-entity-too-large
+                //              official doc: https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-FILE_UPLOAD_MAX_MEMORY_SIZE
+                const fileSizeMB = file.size/1024/1024;
+                if (fileSizeMB > 1.0) {
+                    const errorMessage = `🛑 File size limit is 1MB, but file size too large: ${+fileSizeMB.toFixed(3)}MB.`;
+                    console.error(errorMessage);
+                    // reject will already trigger `alert`, which is the behavior of the ckeditor uploader; so we will not make another `popUpMessage`
+                    return reject(errorMessage);
+                }
 
                 this._initRequest();
                 this._initListeners( resolve, reject, file );
