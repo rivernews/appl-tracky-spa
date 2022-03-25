@@ -10,7 +10,7 @@ import { RequestStatus } from "../../utils/rest-api";
 export interface IUpdateAuthState {
     requestStatus: RequestStatus
     isLogin: boolean
-    isLocal: boolean
+    isLocal?: boolean
     userName: string
     socialAuthToken: string
     apiToken: string
@@ -36,7 +36,7 @@ export interface IRequestedLogoutAuthState {
 export interface ISuccessAuthState {
     requestStatus: RequestStatus
     isLogin: boolean
-    isLocal: boolean
+    isLocal?: boolean
     userName: string
     expireDateTime: string
     apiToken: string

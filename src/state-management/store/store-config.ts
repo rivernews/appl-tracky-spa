@@ -14,7 +14,7 @@ import { sagaMiddleware, runSagaMiddleaware } from "../sagas/root-saga";
 
 
 export const history = createBrowserHistory({
-    basename: (process.env.NODE_ENV === 'development') ?  
+    basename: (process.env.NODE_ENV === 'development') ?
     ``
     :
     // since we use custom domain which has root dir of /
@@ -31,8 +31,8 @@ const preloadedState = {
 // generate the singleton store from redux
 export const store = createStore<IRootState, any, any, any>(
     createRootReducer(history),
-    preloadedState,
-    
+    preloadedState as any,
+
     // for redux debugging (only enabled in development)
     // https://extension.remotedev.io/#usage
     composeWithDevTools(

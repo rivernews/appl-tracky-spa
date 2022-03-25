@@ -8,7 +8,7 @@ import { IRootState } from "../../state-management/types/root-types";
 import { IUpdateAuthState } from "../../state-management/types/auth-types";
 
 /** Components */
-import { SocialAuthButtonContainer } from "../../components/login/social-auth-button";
+import { SocialAuthButtonContainer, SocialAuthButtonType } from "../../components/login/social-auth-button";
 import MaterialIcon from "@material/react-material-icon";
 // mdc react button
 import "@material/react-button/dist/button.css";
@@ -64,7 +64,7 @@ class LandingPage extends Component<ILandingPageProps> {
 
                     <div className={styles.loginActionsContainer}>
                         <Headline4>Sign up & login now to get organized</Headline4>
-                        <SocialAuthButtonContainer />
+                        <SocialAuthButtonContainer buttonType={SocialAuthButtonType.LOGIN} />
                         <Body1>
                             Just want to try things out and don't want to sign up yet? No problem, here's a guest account you can use:
                         </Body1>
